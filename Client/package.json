@@ -1,0 +1,19 @@
+{
+  "name": "kkutu-client",
+  "version": "2.5.0",
+  "description": "Rule the words! KKuTu Online Client",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/JJoriping/KKuTu",
+  "keywords": [
+    "kkutu"
+  ],
+  "author": "JJoriping",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "electron": "^1.4.15",
+    "electron-pug": "^1.5.1"
+  }
+}
