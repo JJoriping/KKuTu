@@ -40,9 +40,11 @@ function page(req, res, file, data){
 	var sid = req.session.id || "";
 	
 	data.published = global.isPublic;
-	data.lang = "ko_KR"; //req.query.locale || "ko_KR";
+	data.lang = req.query.locale || "ko_KR";
+	if(!Language[data.lang]) data.lang = "ko_KR";
+	// URL ...?locale=en_US will show the page in English
 	
-	if(exports.STATIC) data.static = exports.STATIC[data.lang];
+	// if(exports.STATIC) data.static = exports.STATIC[data.lang];
 	data.season = GLOBAL.SEASON;
 	data.season_pre = GLOBAL.SEASON_PRE;
 	

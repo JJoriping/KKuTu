@@ -1,6 +1,12 @@
 # KKuTu
-- [English](#english)
-- [한국어](#한국어)
+- Made by [JJoriping](http://blog.jjo.kr/)
+- Special thanks to
+	* [샌드박스 :: SDBX](http://cafe.naver.com/sdbx)
+	* [SWMaestro](http://www.swmaestro.kr)
+	* You to have interested in this repository :)
+- Languages
+	* [English](#english)
+	* [한국어](#한국어)
 
 ## English
 > Rule the words! KKuTu Online
@@ -10,7 +16,7 @@ Players can play alone with a robot, or play with other players who have entered
 This repository provides you what you have to prepare to play **KKuTu**.
 
 ### KKuTu Client
-- Under construction...
+- *Not implemented*
 
 ### KKuTu server
 #### For Windows
@@ -49,7 +55,7 @@ This repository provides you what you have to prepare to play **KKuTu**.
 이 저장소는 여러분이 **끄투**를 즐기기 위해 준비해야 할 것들에 대해 알리고 있습니다.
 
 ### 끄투 클라이언트
-- 공사 중...
+- *구현되지 않음*
 
 ### 끄투 서버
 #### Windows 전용

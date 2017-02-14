@@ -1,13 +1,2 @@
 This is an error log file of the game server.
 You may use like `tail -f KKUTU_ERROR.log` to watch this.
-:8496 [2017-02-14 18:45:19] ERROR: TypeError: Cannot read property 'getSurround' of undefined
-TypeError: Cannot read property 'getSurround' of undefined
-    at D:\KKuTu\Server\lib\Game\kkutu.js:1197:22
-    at then (D:\KKuTu\Server\lib\sub\lizard.js:32:8)
-    at my.roundEnd (D:\KKuTu\Server\lib\Game\kkutu.js:1191:19)
-    at exports.roundReady (D:\KKuTu\Server\lib\Game\games\classic.js:129:6)
-    at my.route.my.routeSync (D:\KKuTu\Server\lib\Game\kkutu.js:1306:13)
-    at Timeout.my.roundReady (D:\KKuTu\Server\lib\Game\kkutu.js:1112:13)
-    at ontimeout (timers.js:365:14)
-    at tryOnTimeout (timers.js:237:5)
-    at Timer.listOnTimeout (timers.js:207:5)
