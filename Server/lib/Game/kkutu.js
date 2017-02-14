@@ -203,7 +203,9 @@ exports.Client = function(socket, profile, sid){
 		my._age = profile._age;
 		delete my.profile.birth;
 		delete my.profile._age;
-		
+		delete my.profile.token;
+		delete my.profile.sid;
+
 		if(my.profile.title) my.profile.name = "anonymous";
 	}else{
 		gp = guestProfiles[Math.floor(Math.random() * guestProfiles.length)];
