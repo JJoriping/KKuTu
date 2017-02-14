@@ -38,6 +38,8 @@ This repository provides you what you have to prepare to play **KKuTu**.
 - You should edit the file(`./Server/lib/sub/global.json`) to connect to your PostgreSQL database server.
 - The host `127.0.0.2` is reserved for connections between your web server and game server.
 - Once the server is successfully installed, you can do just the last step of above-mentioned guideline whenever you want to run the server.
+- You can open a browser and go `127.0.0.1`(external IP address for other people) to play **KKuTu**.
+- Ranking and some session features must be supported after you installed [Redis](https://redis.io/) server. This is optional.
 
 ## 한국어
 > 글자로 놀자! 끄투 온라인
@@ -75,5 +77,7 @@ This repository provides you what you have to prepare to play **KKuTu**.
 - PostgreSQL 데이터베이스 서버에 접속하기 위해서는 설정 파일(`./Server/lib/sub/global.json`)에서 `PG_PASS` 값을 수정해야 합니다.
 - 호스트 `127.0.0.2`는 웹 서버와 게임 서버 사이의 연결을 위해 예약된 주소이므로 이 주소를 사용하지 말아야 합니다.
 - 서버가 정상적으로 설치된 다음부터는 서버를 실행시키기 위해서 가장 마지막 단계만 수행하면 됩니다.
+- 서버가 성공적으로 열린 후 웹 브라우저에서 `127.0.0.1`(다른 사람들은 해당 컴퓨터의 외부 IP 주소)로 접속하여 끄투를 즐길 수 있습니다.
+- 랭킹 및 세션 기능 일부는 [Redis](https://redis.io/) 서버가 실행되어야만 작동합니다. 일단 이를 설치하지 않아도 서버가 작동할 수 있도록 조치했습니다.
 
-[dev-blog]: http://blog.jjo.kr/
+[dev-blog]: http://blog.jjo.kr/220935346136
