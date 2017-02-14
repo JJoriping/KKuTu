@@ -17,8 +17,9 @@ This repository provides you what you have to prepare to play **KKuTu**.
 
 ### KKuTu Client
 - *Not implemented*
+- But you can connect to a server via your web browser if you know an address of the server!
 
-### KKuTu server
+### KKuTu Server
 #### For Windows
 1. Download or clone this repository to your machine.
 1. Install [node.js](https://nodejs.org/en/) and npm(this will be installed automatically).
@@ -56,6 +57,7 @@ This repository provides you what you have to prepare to play **KKuTu**.
 
 ### 끄투 클라이언트
 - *구현되지 않음*
+- 하지만 접속할 서버의 주소를 알고 있다면 웹 브라우저를 이용하여 서버에 접속할 수 있습니다!
 
 ### 끄투 서버
 #### Windows 전용
