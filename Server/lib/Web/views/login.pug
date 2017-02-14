@@ -1,0 +1,17 @@
+include module
+
+doctype html
+html
+	head
+		title= L('title')
+		script(src="https://apis.google.com/js/platform.js")
+		meta(name="google-signin-client_id" content="????????????????")
+		+PageHead()
+	body
+		span#locale= JSON.stringify(LANG)
+		span#stateKey= locals._id
+		div.login-with= locals.text ? L(locals.text) : L('loginWith')
+		button.with-naver= L('withNaver')
+		button.with-facebook= L('withFacebook')
+		div#with-google(style='border-radius: 5px; margin: 8px auto; width: 210px; overflow: hidden;')
+		div.login-legal!= L('loginLegal')

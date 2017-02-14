@@ -1,0 +1,12 @@
+doctype html
+- const TITLE = `KKuTu Server v${locals.version} - ${locals.serverName}`;
+
+html
+	head
+		title= TITLE
+		link(rel="stylesheet", href="./style.css")
+		script(type="text/javascript", src="./jquery.js")
+		script(type="text/javascript", src="./index.js")
+	body
+		div#title.server-off= TITLE
+		div#log-board

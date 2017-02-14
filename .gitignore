@@ -1,2 +1,4 @@
 Client/node_modules
+Server/run.bat
 Server/node_modules
+Server/lib/node_modules

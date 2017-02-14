@@ -1,29 +1,41 @@
 const PKG = require("./package.json");
-const Electron = require('electron');
-const BrowserWindow = Electron.BrowserWindow;
+const SETTINGS = require("../settings.json");
+const {
+	app: App,
+	BrowserWindow,
+	Menu
+} = require('electron');
 const Pug = require('electron-pug')({ pretty: true }, {
-	title: "KKuTu Server v" + PKG.version
+	version: PKG.version,
+	serverName: SETTINGS['server-name']
 });
+const Runner = require("./runner.js");
 
-let main;
+let mainWindow;
 
-Electron.app.on('ready', onReady);
-Electron.app.on('window-all-closed', () => {
+App.on('ready', main);
+App.on('window-all-closed', () => {
 	if(process.platform != 'darwin'){
-		Electron.app.quit();
+		App.quit();
 	}
 });
-Electron.app.on('activate', () => {
-	if(main === null){
-		onReady();
+App.on('activate', () => {
+	if(mainWindow === null){
+		main();
 	}
 });
+Runner.send = (...argv) => {
+	mainWindow.webContents.send.apply(mainWindow.webContents, argv);
+};
 
-function onReady(){
-	main = new BrowserWindow({
+function main(){
+	Menu.setApplicationMenu(Menu.buildFromTemplate(Runner.MAIN_MENU));
+
+	mainWindow = new BrowserWindow({
+		title: `${PKG['name']} ${PKG['version']} - Now loading`,
 		width: 800,
-		height: 600
+		height: 600,
+		icon: __dirname + "/../logo.ico"
 	});
-
-	main.loadURL(__dirname + "/index.pug");
+	mainWindow.loadURL(__dirname + "/views/index.pug");
 }

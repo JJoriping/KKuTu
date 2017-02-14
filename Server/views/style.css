@@ -1,0 +1,36 @@
+html, body{
+	height: calc(100% - 2px);
+	margin: 0px;
+}
+body{
+	font-family: Consolas;
+	font-size: 13px;
+	color: white;
+	background-color: #161616;
+}
+#title{
+	border-bottom: 2px solid #777;
+	margin: 4px;
+	font-size: 24px;
+	font-weight: bold;
+	height: 28px;
+}
+	#title::before{
+		float: left;
+		content: "";
+		border-radius: 5px;
+		width: 10px;
+		height: 10px;
+		margin: 5px;
+	}
+	.server-off::before{ background-color: #444; }
+	.server-warn::before{ background-color: #CC4; }
+	.server-on::before{ background-color: #4C4; }
+#log-board{
+	overflow-y: scroll;
+	white-space: normal;
+	height: calc(100% - 40px);
+	color: #CCC;
+}
+	.log-item:hover{ margin: 1px 0px; background-color: #333; }
+	.lt-error{ background-color: orangered; }
