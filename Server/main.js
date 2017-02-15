@@ -23,9 +23,10 @@ const {
 	BrowserWindow,
 	Menu
 } = require('electron');
+// please set the environmental variable KKT_SV_NAME as the name of your server.
 const Pug = require('electron-pug')({ pretty: true }, {
 	version: PKG.version,
-	serverName: SETTINGS['server-name']
+	serverName: SETTINGS['server-name'] || process.env['KKT_SV_NAME']
 });
 const Runner = require("./runner.js");
 
