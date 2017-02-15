@@ -42,6 +42,7 @@ This repository provides you what you have to prepare to play **KKuTu**.
 	1. (Game server) `node lib/Game/cluster.js 0 1`
 
 #### Common
+- This repository contains some data from [WordNet](https://wordnet.princeton.edu/). Please provide users the license of WordNet when you operate this server.
 - You should edit the file(`./Server/lib/sub/global.json`) to connect to your PostgreSQL database server.
 - The host `127.0.0.2` is reserved for connections between your web server and game server.
 - Once the server is successfully installed, you can do just the last step of above-mentioned guideline whenever you want to run the server.
@@ -82,6 +83,7 @@ This repository provides you what you have to prepare to play **KKuTu**.
 	1. (게임 서버) `node lib/Game/cluster.js 0 1`
 
 #### 공통
+- 본 레포지토리에는 [WordNet](https://wordnet.princeton.edu/) 자료가 포함되어 있습니다. 서버를 운영할 때 반드시 사용자에게 이에 대한 라이선스를 안내해야 합니다.
 - PostgreSQL 데이터베이스 서버에 접속하기 위해서는 설정 파일(`./Server/lib/sub/global.json`)에서 `PG_PASS` 값을 수정해야 합니다.
 - 호스트 `127.0.0.2`는 웹 서버와 게임 서버 사이의 연결을 위해 예약된 주소이므로 이 주소를 사용하지 말아야 합니다.
 - 서버가 정상적으로 설치된 다음부터는 서버를 실행시키기 위해서 가장 마지막 단계만 수행하면 됩니다.
