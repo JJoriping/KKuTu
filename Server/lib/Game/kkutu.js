@@ -21,7 +21,7 @@ var Cluster = require("cluster");
 var Const = require('../const');
 var Lizard = require('../sub/lizard');
 var JLog = require('../sub/jjlog');
-var Ajae = require("../sub/ajae");
+// 망할 셧다운제 var Ajae = require("../sub/ajae");
 var DB;
 var SHOP;
 var DIC;
@@ -47,7 +47,7 @@ exports.init = function(_DB, _DIC, _ROOM, _GUEST_PERMISSION, _CHAN){
 	GUEST_PERMISSION = _GUEST_PERMISSION;
 	CHAN = _CHAN;
 	_rid = 100;
-	if(Cluster.isMaster) setInterval(exports.processAjae, 60000);
+	// 망할 셧다운제 if(Cluster.isMaster) setInterval(exports.processAjae, 60000);
 	DB.kkutu_shop.find().on(function($shop){
 		SHOP = {};
 		
@@ -62,6 +62,7 @@ exports.init = function(_DB, _DIC, _ROOM, _GUEST_PERMISSION, _CHAN){
 		Rule[k].init(DB, DIC);
 	}
 };
+/* 망할 셧다운제
 exports.processAjae = function(){
 	var i;
 	
@@ -75,6 +76,7 @@ exports.processAjae = function(){
 		}
 	}
 };
+*/
 exports.getUserList = function(){
 	var i, res = {};
 	
@@ -212,6 +214,7 @@ exports.Client = function(socket, profile, sid){
 	if(profile){
 		my.id = profile.id;
 		my.profile = profile;
+		/* 망할 셧다운제
 		if(Cluster.isMaster){
 			my.isAjae = Ajae.checkAjae(profile.birth, profile._age);
 		}else{
@@ -221,6 +224,7 @@ exports.Client = function(socket, profile, sid){
 		my._age = profile._age;
 		delete my.profile.birth;
 		delete my.profile._age;
+		*/
 		delete my.profile.token;
 		delete my.profile.sid;
 
@@ -287,6 +291,7 @@ exports.Client = function(socket, profile, sid){
 		
 		exports.onClientMessage(my, data);
 	});
+	/* 망할 셧다운제
 	my.confirmAjae = function(input){
 		if(Ajae.confirmAjae(input, my._birth, my._age)){
 			DB.users.update([ '_id', my.id ]).set([ 'birthday', input.join('-') ]).on(function(){
@@ -298,6 +303,7 @@ exports.Client = function(socket, profile, sid){
 			});
 		}
 	};
+	*/
 	my.getData = function(gaming){
 		var o = {
 			id: my.id,
@@ -415,6 +421,7 @@ exports.Client = function(socket, profile, sid){
 				black = false;
 				my.noChat = true;
 			}
+			/* 망할 셧다운제
 			if(Cluster.isMaster && !my.isAjae){ // null일 수는 없다.
 				my.isAjae = Ajae.checkAjae(($user.birthday || "").split('-'));
 				if(my.isAjae === null){
@@ -428,7 +435,7 @@ exports.Client = function(socket, profile, sid){
 						return;
 					}
 				}
-			}
+			}*/
 			my.exordial = $user.exordial || "";
 			my.equip = $user.equip || {};
 			my.box = $user.box || {};

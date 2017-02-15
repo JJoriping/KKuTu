@@ -497,6 +497,7 @@ KKuTu.onClientMessage = function($c, msg){
 			}
 			delete $c._invited;
 			break;
+		/* 망할 셧다운제
 		case 'caj':
 			if(!$c._checkAjae) return;
 			clearTimeout($c._checkAjae);
@@ -506,6 +507,7 @@ KKuTu.onClientMessage = function($c, msg){
 				$c.socket.close();
 			}
 			break;
+		*/
 		case 'test':
 			checkTailUser($c.id, $c.place, msg);
 			break;

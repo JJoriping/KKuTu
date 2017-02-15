@@ -49,6 +49,9 @@ This repository provides you what you have to prepare to play **KKuTu**.
 - You can open a browser and go to `127.0.0.1`(or external IP address for other people) to play **KKuTu**.
 - Ranking and some session features require [Redis](https://redis.io/) server. This is optional.
 
+#### License
+- GNU General Public License
+
 ## 한국어
 > 글자로 놀자! 끄투 온라인
 
@@ -89,5 +92,8 @@ This repository provides you what you have to prepare to play **KKuTu**.
 - 서버가 정상적으로 설치된 다음부터는 서버를 실행시키기 위해서 가장 마지막 단계만 수행하면 됩니다.
 - 서버가 성공적으로 열린 후 웹 브라우저에서 `127.0.0.1`(다른 사람들은 해당 컴퓨터의 외부 IP 주소)로 접속하여 끄투를 즐길 수 있습니다.
 - 랭킹 및 세션 기능 일부는 [Redis](https://redis.io/) 서버가 실행되어야만 작동합니다. 일단 이를 설치하지 않아도 서버가 작동할 수 있도록 조치했습니다.
+
+#### 라이선스
+- GNU 일반 공중 사용 라이선스
 
 [dev-blog]: http://blog.jjo.kr/220935346136

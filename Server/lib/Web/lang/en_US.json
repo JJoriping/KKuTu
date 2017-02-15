@@ -2,6 +2,8 @@
 	"__README__": "English table is not built yet due to the absence of my English skill. Please translate this if you are good at English.",
 
 	"GLOBAL": {
+		"GPL": "<div style='color: #666;'>Rule the words! KKuTu Online Copyright (C) 2017 JJoriping(op@jjo.kr)<br>This program comes with ABSOLUTELY NO WARRANTY.<br>This is free software, and you are welcome to redistribute it under certain conditions.<br>For details visit the repository of this software: <a target='_blank' href='https://github.com/JJoriping/KKuTu'>https://github.com/JJoriping/KKuTu</a></div>",
+		
 		"CREATOR":	"개발자 블로그",
 		"HOME":		"FA{home}",
 		"DB":		"쪼롤백과",
