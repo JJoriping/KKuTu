@@ -60,7 +60,7 @@ exports.roundReady = function(){
 			my.game.late = false;
 			my.game.answer = $ans || {};
 			my.game.done.push($ans._id);
-			$ans.mean = ($ans.mean.length > 5) ? $ans.mean : getConsonants($ans._id, Math.round($ans._id.length / 2));
+			$ans.mean = ($ans.mean.length > 20) ? $ans.mean : getConsonants($ans._id, Math.round($ans._id.length / 2));
 			my.game.hint = getHint($ans);
 			my.byMaster('roundReady', {
 				round: my.game.round,
@@ -249,7 +249,7 @@ function getAnswer(theme, nomean){
 		if(!len) return R.go(null);
 		do{
 			pick = Math.floor(Math.random() * len);
-			if($res[pick]._id.length >= 2) if($res[pick].type == "INJEONG" || $res[pick].mean.length >= 30){
+			if($res[pick]._id.length >= 2) if($res[pick].type == "INJEONG" || $res[pick].mean.length >= 0){
 				return R.go($res[pick]);
 			}
 			$res.splice(pick, 1);
