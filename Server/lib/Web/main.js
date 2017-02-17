@@ -91,8 +91,12 @@ DB.ready = function(){
 	}, 600000);
 	setInterval(function(){
 		gameServers.forEach(function(v){
-			if(v.socket) v.socket.send(`{"type":"seek"}`);
-			else v.seek = undefined;
+			if(v.socket) {
+				v.socket.send(`{"type":"seek"}`);
+			} else {
+				v.seek = undefined;
+				v.maxPlayer = undefined;
+			}
 		});
 	}, 4000);
 	JLog.success("DB is ready.");
@@ -148,7 +152,8 @@ function GameClient(id, url){
 		
 		switch(data.type){
 			case "seek":
-				my.seek = data.value;
+				my.seek = data.playerCount;
+				my.maxPlayer = data.maxPlayer;
 				break;
 			case "narrate-friend":
 				for(i in data.list){
@@ -221,11 +226,13 @@ Server.get("/", function(req, res){
 });
 Server.get("/servers", function(req, res){
 	var list = [];
+	var maxList = [];
 	
 	gameServers.forEach(function(v, i){
 		list[i] = v.seek;
+		maxList[i] = v.maxPlayer;
 	});
-	res.send({ list: list });
+	res.send({ list: list }, {maxPlayer: maxList});
 });
 
 Server.get("/login", function(req, res){
