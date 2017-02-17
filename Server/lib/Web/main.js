@@ -153,7 +153,7 @@ function GameClient(id, url){
 		switch(data.type){
 			case "seek":
 				my.seek = data.playerCount;
-				my.maxPlayer = data.maxPlayer;
+				my.maxPlayer = data.maxPlayerCount;
 				break;
 			case "narrate-friend":
 				for(i in data.list){
