@@ -225,7 +225,7 @@ Server.get("/servers", function(req, res){
 	gameServers.forEach(function(v, i){
 		list[i] = v.seek;
 	});
-	res.send({ list: list });
+	res.send({ list: list, max: Const.KKUTU_MAX });
 });
 
 Server.get("/login", function(req, res){
