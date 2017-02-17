@@ -232,7 +232,7 @@ Server.get("/servers", function(req, res){
 		list[i] = v.seek;
 		maxList[i] = v.maxPlayer;
 	});
-	res.send({ list: list }, {maxPlayer: maxList});
+	res.send({ list: list, maxPlayer: maxList});
 });
 
 Server.get("/login", function(req, res){
