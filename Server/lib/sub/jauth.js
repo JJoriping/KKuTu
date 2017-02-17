@@ -151,6 +151,7 @@ exports.login = function(type, token, sid, token2){
 						$p.name = doc.name;
 						$p.image = doc.picture;
 						
+						R.go($p);
 						/* 망할 셧다운제
 
 						$p._age = _doc.ageRange;
@@ -159,7 +160,6 @@ exports.login = function(type, token, sid, token2){
 							$p.birth.push($p.birth.shift());
 						}
 						$p.isAjae = Ajae($p.birth, $p._age);
-						R.go($p);
 					}
 				});*/
 			}
