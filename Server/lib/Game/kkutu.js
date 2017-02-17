@@ -197,7 +197,7 @@ exports.WebServer = function(socket){
 		
 		switch(msg.type){
 			case 'seek':
-				my.send('seek', { value: Object.keys(DIC).length });
+				my.send('seek', { playerCount: Object.keys(DIC).length, maxPlayerCount: Const.KKUTU_MAX });
 				break;
 			case 'narrate-friend':
 				exports.narrate(msg.list, 'friend', { id: msg.id, s: msg.s, stat: msg.stat });
