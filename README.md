@@ -4,6 +4,8 @@
 	* [샌드박스 :: SDBX](http://cafe.naver.com/sdbx)
 	* [SWMaestro](http://www.swmaestro.kr)
 	* You to have interested in this repository :)
+- [KKuTu Wiki](https://github.com/JJoriping/KKuTu/wiki)
+- [Free Server List](http://jjo.kr/kkutu)
 - Languages
 	* [English](#english)
 	* [한국어](#한국어)

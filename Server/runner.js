@@ -114,25 +114,28 @@ class ChildProcess{
 		if(this.process) this.process.kill(sig || 'SIGINT');
 	}
 }
-let webServer, gameServer;
+let webServer, gameServers;
 
 function startServer(){
 	if(webServer) webServer.kill();
-	if(gameServer) gameServer.kill();
+	if(gameServers) gameServers.forEach(v => v.kill);
 
 	if(SETTINGS['server-name']) process.env['KKT_SV_NAME'] = SETTINGS['server-name'];
 	
 	webServer = new ChildProcess('W', "node", `${__dirname}/lib/Web/cluster.js`, SETTINGS['web-num-cpu']);
-	gameServer = new ChildProcess('G', "node", `${__dirname}/lib/Game/cluster.js`, 0, SETTINGS['game-num-cpu']);
+	gameServers = [];
 	
+	for(let i=0; i<SETTINGS['game-num-inst']; i++){
+		gameServers.push(new ChildProcess('G', "node", `${__dirname}/lib/Game/cluster.js`, i, SETTINGS['game-num-cpu']));
+	}
 	exports.send('server-status', getServerStatus());
 }
 function stopServer(){
 	webServer.kill();
-	gameServer.kill();
+	gameServer.forEach(v => v.kill);
 }
 function getServerStatus(){
-	if(!webServer || !gameServer) return 0;
-	if(webServer.process && gameServer.process) return 2;
+	if(!webServer || !gameServers) return 0;
+	if(webServer.process && gameServers.every(v => v.process)) return 2;
 	return 1;
 }
