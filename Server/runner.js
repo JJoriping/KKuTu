@@ -117,9 +117,7 @@ class ChildProcess{
 let webServer, gameServers;
 
 function startServer(){
-	if(webServer) webServer.kill();
-	if(gameServers) gameServers.forEach(v => v.kill);
-
+	stopServer();
 	if(SETTINGS['server-name']) process.env['KKT_SV_NAME'] = SETTINGS['server-name'];
 	
 	webServer = new ChildProcess('W', "node", `${__dirname}/lib/Web/cluster.js`, SETTINGS['web-num-cpu']);
@@ -131,8 +129,8 @@ function startServer(){
 	exports.send('server-status', getServerStatus());
 }
 function stopServer(){
-	webServer.kill();
-	gameServer.forEach(v => v.kill);
+	if(webServer) webServer.kill();
+	if(gameServers) gameServers.forEach(v => v.kill());
 }
 function getServerStatus(){
 	if(!webServer || !gameServers) return 0;
