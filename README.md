@@ -39,9 +39,9 @@ This repository provides you what you have to prepare to play **KKuTu**.
 1. Put the SQL file(`./db.sql`) into your database.
 	1. Run a command like: `sudo -u postgres psql --quiet main < ./db.sql`
 1. Run the shell script file(`./server-setup.bat`). (It is a bat file for Windows but it will also work on Linux.)
-1. Run these on working directory `./Server`:
-	1. (Web server) `node lib/Web/cluster.js 1`
+1. Run these on working directory `./Server` in order:
 	1. (Game server) `node lib/Game/cluster.js 0 1`
+	1. (Web server) `node lib/Web/cluster.js 1`
 
 #### Common
 - This repository contains some data from [WordNet](https://wordnet.princeton.edu/). Please provide users the license of WordNet when you operate this server.
@@ -86,9 +86,9 @@ This repository provides you what you have to prepare to play **KKuTu**.
 1. SQL 파일(`./db.sql`)을 데이터베이스에 입력시킵니다.
 	1. 명령어를 다음 예와 같이 입력할 수 있습니다: `sudo -u postgres psql --quite main < ./db.sql`
 1. 섈 스크립트 파일(`./server-setup.bat`)을 실행시킵니다. (Windows 전용 파일이지만 Linux에서도 작동합니다.)
-1. 경로 `./Server`에서 다음 명령어들을 실행합니다:
-	1. (웹 서버) `node lib/Web/cluster.js 1`
+1. 경로 `./Server`에서 다음 명령어들을 차례대로 실행합니다:
 	1. (게임 서버) `node lib/Game/cluster.js 0 1`
+	1. (웹 서버) `node lib/Web/cluster.js 1`
 
 #### 공통
 - 본 레포지토리에는 [WordNet](https://wordnet.princeton.edu/) 자료가 포함되어 있습니다. 서버를 운영할 때 반드시 사용자에게 이에 대한 라이선스를 안내해야 합니다.
