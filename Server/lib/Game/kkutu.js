@@ -232,7 +232,7 @@ exports.Client = function(socket, profile, sid){
 	}else{
 		gp = guestProfiles[Math.floor(Math.random() * guestProfiles.length)];
 		
-		my.id = sid;
+		my.id = "guest:" + sid;
 		my.guest = true;
 		my.isAjae = false;
 		my.profile = {
