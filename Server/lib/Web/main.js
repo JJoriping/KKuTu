@@ -30,6 +30,8 @@ var JLog	 = require("../sub/jjlog");
 var WebInit	 = require("../sub/webinit");
 var GLOBAL	 = require("../sub/global.json");
 var Const	 = require("../const");
+var https	 = require('https');
+var fs		 = require('fs');
 
 var Language = {
 	'ko_KR': require("./lang/ko_KR.json"),
@@ -111,17 +113,35 @@ DB.ready = function(){
 		}
 	});
 	Server.listen(80);
+	if(Const.IS_SECURED) {
+		const options = {};
+		if(Const.SSL_OPTIONS.isPFX == true) {
+			options.pfx = fs.readFileSync(Const.SSL_OPTIONS.PFX);
+		} else {
+			options.key = fs.readFileSync(Const.SSL_OPTIONS.PRIVKEY);
+			options.cert = fs.readFileSync(Const.SSL_OPTIONS.CERT);
+			if(Const.SSL_OPTIONS.isCA == true) {
+				options.ca = fs.readFileSync(Const.SSL_OPTIONS.CA);
+			}
+		}
+		https.createServer(options, Server).listen(443);
+	}
 };
 Const.MAIN_PORTS.forEach(function(v, i){
 	var KEY = process.env['WS_KEY'];
-	
-	gameServers[i] = new GameClient(KEY, `ws://127.0.0.2:${v}/${KEY}`);
+	var protocol;
+	if(Const.IS_SECURED) {
+		protocol = 'wss';
+	} else {
+		protocol = 'ws';
+	}
+	gameServers[i] = new GameClient(KEY, `${protocol}://127.0.0.2:${v}/${KEY}`);
 });
 function GameClient(id, url){
 	var my = this;
 	
 	my.id = id;
-	my.socket = new WS(url, { perMessageDeflate: false });
+	my.socket = new WS(url, { perMessageDeflate: false, rejectUnauthorized: false});
 	
 	my.send = function(type, data){
 		if(!data) data = {};
@@ -199,6 +219,7 @@ Server.get("/", function(req, res){
 			'_id': id,
 			'PORT': Const.MAIN_PORTS[server],
 			'HOST': req.hostname,
+			'PROTOCOL': Const.IS_SECURED ? 'wss' : 'ws',
 			'TEST': req.query.test,
 			'MOREMI_PART': Const.MOREMI_PART,
 			'AVAIL_EQUIP': Const.AVAIL_EQUIP,

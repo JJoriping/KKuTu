@@ -19,10 +19,30 @@
 var WebSocket = require('ws');
 var File = require('fs');
 var Const = require("../const");
-var Server = new WebSocket.Server({
-	port: global.test ? (Const.TEST_PORT + 416) : process.env['KKUTU_PORT'],
-	perMessageDeflate: false
-});
+var https = require('https');
+var Server;
+var HTTPS_Server
+
+if(Const.IS_SECURED) {
+	const options = {};
+	if(Const.SSL_OPTIONS.isPFX == true) {
+		options.pfx = File.readFileSync(Const.SSL_OPTIONS.PFX);
+	} else {
+		options.key = File.readFileSync(Const.SSL_OPTIONS.PRIVKEY);
+		options.cert = File.readFileSync(Const.SSL_OPTIONS.CERT);
+		if(Const.SSL_OPTIONS.isCA == true) {
+			options.ca = File.readFileSync(Const.SSL_OPTIONS.CA);
+		}
+	}
+	HTTPS_Server = https.createServer(options)
+		.listen(global.test ? (Const.TEST_PORT + 416) : process.env['KKUTU_PORT']);
+	Server = new WebSocket.Server({server: HTTPS_Server});
+} else {
+	Server = new WebSocket.Server({
+		port: global.test ? (Const.TEST_PORT + 416) : process.env['KKUTU_PORT'],
+		perMessageDeflate: false
+	});
+}
 var Master = require('./master');
 var KKuTu = require('./kkutu');
 var Lizard = require('../sub/lizard');

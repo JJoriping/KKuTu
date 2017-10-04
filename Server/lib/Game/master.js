@@ -19,6 +19,8 @@
 var Cluster = require("cluster");
 var File = require('fs');
 var WebSocket = require('ws');
+var https = require('https');
+var HTTPS_Server;
 // var Heapdump = require("heapdump");
 var KKuTu = require('./kkutu');
 var GLOBAL = require("../sub/global.json");
@@ -270,10 +272,26 @@ exports.init = function(_SID, CHAN){
 		JLog.success("Master DB is ready.");
 		
 		MainDB.users.update([ 'server', SID ]).set([ 'server', "" ]).on();
-		Server = new WebSocket.Server({
-			port: global.test ? Const.TEST_PORT : PORT,
-			perMessageDeflate: false
-		});
+		if(Const.IS_SECURED) {
+			const options = {};
+			if(Const.SSL_OPTIONS.isPFX == true) {
+				options.pfx = File.readFileSync(Const.SSL_OPTIONS.PFX);
+			} else {
+				options.key = File.readFileSync(Const.SSL_OPTIONS.PRIVKEY);
+				options.cert = File.readFileSync(Const.SSL_OPTIONS.CERT);
+				if(Const.SSL_OPTIONS.isCA == true) {
+					options.ca = File.readFileSync(Const.SSL_OPTIONS.CA);
+				}
+			}
+			HTTPS_Server = https.createServer(options)
+				.listen(global.test ? (Const.TEST_PORT + 416) : process.env['KKUTU_PORT']);
+			Server = new WebSocket.Server({server: HTTPS_Server});
+		} else {
+			Server = new WebSocket.Server({
+				port: global.test ? (Const.TEST_PORT + 416) : process.env['KKUTU_PORT'],
+				perMessageDeflate: false
+			});
+		}
 		Server.on('connection', function(socket){
 			var key = socket.upgradeReq.url.slice(1);
 			var $c;
