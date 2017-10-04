@@ -65,6 +65,18 @@ Server.use(Exession({
 	resave: false,
 	saveUninitialized: true
 }));
+Server.use((req, res, next) => {
+	if(Const.IS_SECURED) {
+		if(req.protocol == 'http') {
+			let url = 'https://'+req.get('host')+req.path;
+			res.status(302).redirect(url);
+		} else {
+			next();
+		}
+	} else {
+		next();
+	}
+});
 /* use this if you want
 
 DDDoS = new DDDoS({
