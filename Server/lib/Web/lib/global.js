@@ -16,6 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * 볕뉘 수정사항:
+ * getCookie 코드오류로 인한 코드 수정
+ */
 var global = {};
 var L;
 
@@ -33,18 +37,17 @@ var L;
         document.cookie = cookies;
     }
     function getCookie(cName) {
-        var cookieData = document.cookie;
-        var start = cookieData.indexOf(cName);
-        var cValue = '';
-		
-        cName = cName + '=';
-        if(start != -1){
-            start += cName.length;
-            var end = cookieData.indexOf(';', start);
-            if(end == -1) end = cookieData.length;
-            cValue = cookieData.substring(start, end);
-        }
-        return unescape(cValue);
+        //볕뉘 수정
+        var cName = cName+"=";
+		var allCookie = decodeURIComponent(document.cookie).split(';');
+		var cval = [];
+		for(var i=0; i < allCookie.length; i++) {
+			if (allCookie[i].trim().indexOf(cName) == 0) {
+				cval = allCookie[i].trim().split("=");
+			}
+		}
+		return unescape((cval.length > 0) ? cval[1] : "");
+		//볕뉘 수정 끝
     }
 	
 	$.prototype.hotkey = function($f, code){
@@ -161,13 +164,8 @@ var L;
 			location.href = "/logout";
 			return;
 		}*/
-		if(global.profile.type == "facebook") FB.getLoginStatus(function(res){
-			if(res.status == "connected") FB.logout(function(res){
-				location.href = "/logout";
-			});
-			else location.href = "/logout";
-		});
-		else location.href = "/logout";
+		//볕뉘 수정 구문 삭제(161~167, facebook js SDK 대응코드 삭제)
+		location.href = "/logout";
 	}
 	function onWatchInput($o, prev){
 		var cid = $o.attr('id');

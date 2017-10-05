@@ -5,7 +5,7 @@
 	"PASS":"Your password for management Here",
 	"PG_PASS": "Your PostgreSQL Password Here",
 	"PG_PORT": 5432,
-	"IS_SECURED": true,
+	"IS_SECURED": false,
 	"SSL_OPTIONS": {
 		"PRIVKEY": "Your SSL Private Key Here",
 		"CERT": "Your SSL Certificate Here",

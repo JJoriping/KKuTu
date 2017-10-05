@@ -45,6 +45,16 @@ button{
 	color: #FFFFFF;
 	background-color: #55ACEE;
 }
+/*볕뉘 수정*/
+.with-google{
+	color: #000000;
+	background-color: #FFFFFF;
+}
+.with-kakao{
+	color: #3C1E1E;
+	background-color: #FFDE00;
+}
+/*볕뉘 수정 끝*/
 .login-legal{
 	padding-top: 50px;
 	color: #BBBBBB;
