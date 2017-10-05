@@ -81,12 +81,9 @@ exports.run = (Server, page) => {
         (req, accessToken, refreshToken, profile, done) => {
             const $p = {};
 
-            $p.token = accessToken;
-            $p.sid = req.session.id;
-
             Web.post({
                 url: "https://openapi.naver.com/v1/nid/me",
-                headers: { 'Authorization': "Bearer " + $p.token }
+                headers: { 'Authorization': "Bearer " + accessToken }
             }, function(err, res, doc){
                 if(err) return done(null, false, { error: 400 });
                 if(!doc) return done(null, false, { error: 500 });
@@ -111,19 +108,7 @@ exports.run = (Server, page) => {
                     */
                     // $p.sex = doc.response[0].gender[0];
 
-                    let now = Date.now();
-                    $p.sid = req.session.id;
-                    req.session.admin = GLOBAL.ADMIN.includes($p.id);
-                    MainDB.session.upsert([ '_id', req.session.id ]).set({
-                        'profile': $p,
-                        'createdAt': now
-                    }).on();
-                    MainDB.users.findOne([ '_id', $p.id ]).on(function($body){
-                        req.session.profile = $p;
-                        MainDB.users.update([ '_id', $p.id ]).set([ 'lastLogin', now ]).on();
-                    });
-
-                    done(null, $p);
+                    process(req, accessToken, MainDB, $p, done);
                 }else{
                     done(null, false, { error: 401 });
                 }
@@ -146,27 +131,12 @@ exports.run = (Server, page) => {
     }, (req, accessToken, refreshToken, profile, done) => {
         const $p = {};
 
-        $p.token = accessToken;
-        $p.sid = req.session.id;
-
         $p.type = "facebook";
         $p.id = profile.id;
         $p.name = profile.displayName;
         $p.title = profile.displayName;
         $p.image = "https://graph.facebook.com/"+profile.id+"/picture";
 
-        let now = Date.now();
-        $p.sid = req.session.id;
-        req.session.admin = GLOBAL.ADMIN.includes($p.id);
-        MainDB.session.upsert([ '_id', req.session.id ]).set({
-            'profile': $p,
-            'createdAt': now
-        }).on();
-        MainDB.users.findOne([ '_id', $p.id ]).on(function($body){
-            req.session.profile = $p;
-            MainDB.users.update([ '_id', $p.id ]).set([ 'lastLogin', now ]).on();
-        });
-        
         /* 망할 셧다운제
         
         $p._age = profile.age_range;
@@ -177,7 +147,7 @@ exports.run = (Server, page) => {
         */
         // $p.sex = profile.gender;
     
-        done(null, $p);
+        process(req, accessToken, MainDB, $p, done);
     }));
 
     //google
@@ -190,12 +160,10 @@ exports.run = (Server, page) => {
         clientID: config.google.clientID,
         clientSecret: config.google.clientSecret,
         callbackURL: config.google.callbackURL,
-        passReqToCallback: true
+        passReqToCallback: true,
+        scope: ['profile', 'email', 'https://www.googleapis.com/auth/plus.login']
     }, (req, accessToken, refreshToken, profile, done) => {
         const $p = {};
-
-        $p.token = accessToken;
-        $p.sid = req.session.id;
 
         $p.type = "google";
         $p.id = profile.id;
@@ -203,19 +171,7 @@ exports.run = (Server, page) => {
         $p.title = profile.nickname;
         $p.image = profile.photos[0].value;
 
-        let now = Date.now();
-        $p.sid = req.session.id;
-        req.session.admin = GLOBAL.ADMIN.includes($p.id);
-        MainDB.session.upsert([ '_id', req.session.id ]).set({
-            'profile': $p,
-            'createdAt': now
-        }).on();
-        MainDB.users.findOne([ '_id', $p.id ]).on(function($body){
-            req.session.profile = $p;
-            MainDB.users.update([ '_id', $p.id ]).set([ 'lastLogin', now ]).on();
-        });
-
-        done(null, $p);
+        process(req, accessToken, MainDB, $p, done);
     }));
 
     //twitter
@@ -232,28 +188,13 @@ exports.run = (Server, page) => {
     }, (req, accessToken, refreshToken, profile, done) => {
         const $p = {};
 
-        $p.token = accessToken;
-        $p.sid = req.session.id;
-
         $p.type = "twitter";
         $p.id = profile.id;
         $p.name = profile.displayName;
         $p.title = profile.displayName;
         $p.image = profile.photos[0].value;
 
-        let now = Date.now();
-        $p.sid = req.session.id;
-        req.session.admin = GLOBAL.ADMIN.includes($p.id);
-        MainDB.session.upsert([ '_id', req.session.id ]).set({
-            'profile': $p,
-            'createdAt': now
-        }).on();
-        MainDB.users.findOne([ '_id', $p.id ]).on(function($body){
-            req.session.profile = $p;
-            MainDB.users.update([ '_id', $p.id ]).set([ 'lastLogin', now ]).on();
-        });
-    
-        done(null, $p);
+        process(req, accessToken, MainDB, $p, done);
     }));
 
     //kakao
@@ -269,14 +210,27 @@ exports.run = (Server, page) => {
     }, (req, accessToken, refreshToken, profile, done) => {
         const $p = {};
 
-        $p.token = accessToken;
-        $p.sid = req.session.id;
-
         $p.type = "kakao";
         $p.id = profile.id.toString();
         $p.name = +profile.username;
         $p.title = profile.displayName;
         $p.image = profile._json.properties.profile_image;
+
+        process(req, accessToken, MainDB, $p, done);
+    }));
+
+    Server.get("/logout", (req, res) => {
+        if(!req.session.profile){
+            return res.redirect("/");
+        } else {
+            req.session.destroy();
+            res.redirect('/');
+        }
+    });
+
+    function process(req, accessToken, MainDB, $p, done) {
+        $p.token = accessToken;
+        $p.sid = req.session.id;
 
         let now = Date.now();
         $p.sid = req.session.id;
@@ -291,14 +245,5 @@ exports.run = (Server, page) => {
         });
 
         done(null, $p);
-    }));
-
-    Server.get("/logout", (req, res) => {
-        if(!req.session.profile){
-            return res.redirect("/");
-        } else {
-            req.session.destroy();
-            res.redirect('/');
-        }
-    });
+    }
 }
