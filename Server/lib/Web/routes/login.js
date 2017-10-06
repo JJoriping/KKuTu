@@ -85,7 +85,7 @@ exports.run = (Server, page) => {
             $p.id = profile.id;
             $p.name = profile.displayName;
             $p.title = profile.displayName;
-            $p.image = profile.profile_image;
+            $p.image = profile._json.profile_image;
             
             /* 망할 셧다운제
             $p._age = profile._json.age.split('-').map(Number);
