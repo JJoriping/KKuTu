@@ -215,6 +215,10 @@ exports.run = (Server, page) => {
         }
     });
 
+    Server.get("/loginfail", (req, res) => {
+        page(req, res, "loginfail");
+    });
+
     function process(req, accessToken, MainDB, $p, done) {
         $p.token = accessToken;
         $p.sid = req.session.id;

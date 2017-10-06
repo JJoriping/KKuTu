@@ -129,6 +129,11 @@
 		
 		"loginLegal": "로그인이 이루어지면 JJO.KR이 공지하는 <a href='/legal/agreement' target='_blank'>서비스 이용 약관</a> 및 <a href='/legal/privacy' target='_blank'>개인정보 취급 방침</a>에 동의하게 됩니다."
 	},
+	"loginfail": {
+		"title": "로그인 실패",
+		"description": "로그인에 실패하였습니다. 다시 시도해주세요.",
+		"login": "로그인"
+	},
 	"kkutu": {
 		"title": "글자로 놀자! 끄투 온라인",
 		"version": "2.5.0",
