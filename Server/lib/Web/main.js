@@ -84,7 +84,6 @@ Server.use((req, res, next) => {
 	}
 	next();
 });
-//볕뉘 수정 끝
 Server.use((req, res, next) => {
 	if(Const.IS_SECURED) {
 		if(req.protocol == 'http') {
@@ -97,6 +96,7 @@ Server.use((req, res, next) => {
 		next();
 	}
 });
+//볕뉘 수정 끝
 /* use this if you want
 
 DDDoS = new DDDoS({
@@ -146,16 +146,7 @@ DB.ready = function(){
 	});
 	Server.listen(80);
 	if(Const.IS_SECURED) {
-		const options = {};
-		if(Const.SSL_OPTIONS.isPFX == true) {
-			options.pfx = fs.readFileSync(Const.SSL_OPTIONS.PFX);
-		} else {
-			options.key = fs.readFileSync(Const.SSL_OPTIONS.PRIVKEY);
-			options.cert = fs.readFileSync(Const.SSL_OPTIONS.CERT);
-			if(Const.SSL_OPTIONS.isCA == true) {
-				options.ca = fs.readFileSync(Const.SSL_OPTIONS.CA);
-			}
-		}
+		const options = secure();
 		https.createServer(options, Server).listen(443);
 	}
 };
