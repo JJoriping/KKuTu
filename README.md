@@ -84,7 +84,7 @@ This repository provides you what you have to prepare to play **KKuTu**.
 1. 패키지 매니저를 이용하여 *node.js*와 *npm*을 설치합니다.
 1. 패키지 매니저를 이용하여 *PostgreSQL*과 *psql*을 설치합니다.
 1. SQL 파일(`./db.sql`)을 데이터베이스에 입력시킵니다.
-	1. 명령어를 다음 예와 같이 입력할 수 있습니다: `sudo -u postgres psql --quite main < ./db.sql`
+	1. 명령어를 다음 예와 같이 입력할 수 있습니다: `sudo -u postgres psql --quiet main < ./db.sql`
 1. 섈 스크립트 파일(`./server-setup.bat`)을 실행시킵니다. (Windows 전용 파일이지만 Linux에서도 작동합니다.)
 1. 경로 `./Server`에서 다음 명령어들을 차례대로 실행합니다:
 	1. (게임 서버) `node lib/Game/cluster.js 0 1`
