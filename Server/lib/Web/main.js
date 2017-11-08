@@ -34,6 +34,7 @@ var DB		 = require("./db");
 var JLog	 = require("../sub/jjlog");
 var WebInit	 = require("../sub/webinit");
 var GLOBAL	 = require("../sub/global.json");
+var Secure = require('../sub/secure');
 //볕뉘 수정
 var passport = require('passport');
 //볕뉘 수정 끝
@@ -146,7 +147,7 @@ DB.ready = function(){
 	});
 	Server.listen(80);
 	if(Const.IS_SECURED) {
-		const options = secure();
+		const options = Secure();
 		https.createServer(options, Server).listen(443);
 	}
 };
