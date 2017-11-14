@@ -1,17 +1,17 @@
 /**
  * Rule the words! KKuTu Online
  * Copyright (C) 2017 JJoriping(op@jjo.kr)
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -30,6 +30,7 @@ var JLog	 = require("../sub/jjlog");
 var WebInit	 = require("../sub/webinit");
 var GLOBAL	 = require("../sub/global.json");
 var Const	 = require("../const");
+var request = require('request');
 
 var Language = {
 	'ko_KR': require("./lang/ko_KR.json"),
@@ -54,7 +55,7 @@ Server.use(Express.static(__dirname + "/public"));
 Server.use(Parser.urlencoded({ extended: true }));
 Server.use(Exession({
 	/* use only for redis-installed
-	
+
 	store: new Redission({
 		client: Redis.createClient(),
 		ttl: 3600 * 12
@@ -86,7 +87,7 @@ WebInit.init(Server, true);
 DB.ready = function(){
 	setInterval(function(){
 		var q = [ 'createdAt', { $lte: Date.now() - 3600000 * 12 } ];
-		
+
 		DB.session.remove(q).on();
 	}, 600000);
 	setInterval(function(){
@@ -96,14 +97,14 @@ DB.ready = function(){
 		});
 	}, 4000);
 	JLog.success("DB is ready.");
-	
+
 	DB.kkutu_shop_desc.find().on(function($docs){
 		var i, j;
-		
+
 		for(i in Language) flush(i);
 		function flush(lang){
 			var db;
-			
+
 			Language[lang].SHOP = db = {};
 			for(j in $docs){
 				db[$docs[j]._id] = [ $docs[j][`name_${lang}`], $docs[j][`desc_${lang}`] ];
@@ -114,19 +115,19 @@ DB.ready = function(){
 };
 Const.MAIN_PORTS.forEach(function(v, i){
 	var KEY = process.env['WS_KEY'];
-	
+
 	gameServers[i] = new GameClient(KEY, `ws://127.0.0.2:${v}/${KEY}`);
 });
 function GameClient(id, url){
 	var my = this;
-	
+
 	my.id = id;
 	my.socket = new WS(url, { perMessageDeflate: false });
-	
+
 	my.send = function(type, data){
 		if(!data) data = {};
 		data.type = type;
-		
+
 		my.socket.send(JSON.stringify(data));
 	};
 	my.socket.on('open', function(){
@@ -143,9 +144,9 @@ function GameClient(id, url){
 	my.socket.on('message', function(data){
 		var _data = data;
 		var i;
-		
+
 		data = JSON.parse(data);
-		
+
 		switch(data.type){
 			case "seek":
 				my.seek = data.value;
@@ -162,32 +163,72 @@ function GameClient(id, url){
 ROUTES.forEach(function(v){
 	require(`./routes/${v}`).run(Server, WebInit.page);
 });
-Server.get("/", function(req, res){
-	var server = req.query.server;
-	
-	if(req.query.code){ // 네이버 토큰
-		req.session.authType = "naver";
-		req.session.token = req.query.code;
-		res.redirect("/register");
-	}else if(req.query.token){ // 페이스북 토큰
-		req.session.authType = "facebook";
-		req.session.token = req.query.token;
-		res.redirect("/register");
-	}else{
-		DB.session.findOne([ '_id', req.session.id ]).on(function($ses){
-			// var sid = (($ses || {}).profile || {}).sid || "NULL";
-			if(global.isPublic){
-				onFinish($ses);
-				// DB.jjo_session.findOne([ '_id', sid ]).limit([ 'profile', true ]).on(onFinish);
-			}else{
-				if($ses) $ses.profile.sid = $ses._id;
-				onFinish($ses);
-			}
-		});
-	}
+
+function verifyRecaptcha(responseToken, remoteIp, callback) {
+    const verifyUrl = `https://google.com/recaptcha/api/siteverify?secret=${GLOBAL.GOOGLE_RECAPTCHA_SECRET_KEY}&response=${responseToken}&remoteip=${remoteIp}`;
+    request(verifyUrl, (err, response, body) => {
+        try {
+            const responseBody = JSON.parse(body);
+            callback(responseBody.success);
+        } catch (e) {
+            callback(false);
+        }
+    });
+}
+
+Server.get("/", function (req, res) {
+    const server = req.query.server;
+    if (server !== undefined) {
+        if (req.session.authType !== undefined
+            && req.session.authType !== null
+            && req.session.authType !== '') {
+            // 로그인 상태
+            processRequest();
+            return;
+        }
+
+        // 비 로그인 상태, 캽챠 인증 확인
+        const recaptchaToken = req.query.recaptchaToken;
+        verifyRecaptcha(recaptchaToken, req.connection.remoteAddress, function (success) {
+            if (!success) {
+                JLog.warn(`Failed recaptcha from IP ${req.connection.remoteAddress}`);
+                // 캽챠 인증 실패, 메인 화면으로 이동 - 별도 페이지를 띄우는 등이 필요하다면 하단 부분 수정 요망
+                res.redirect("/");
+                return;
+            }
+
+            processRequest();
+        });
+    } else {
+        processRequest();
+    }
+
+    function processRequest() {
+        if (req.query.code) { // 네이버 토큰
+            req.session.authType = "naver";
+            req.session.token = req.query.code;
+            res.redirect("/register");
+        } else if (req.query.token) { // 페이스북 토큰
+            req.session.authType = "facebook";
+            req.session.token = req.query.token;
+            res.redirect("/register");
+        } else {
+            DB.session.findOne(['_id', req.session.id]).on(function ($ses) {
+                // var sid = (($ses || {}).profile || {}).sid || "NULL";
+                if (global.isPublic) {
+                    onFinish($ses);
+                    // DB.jjo_session.findOne([ '_id', sid ]).limit([ 'profile', true ]).on(onFinish);
+                } else {
+                    if ($ses) $ses.profile.sid = $ses._id;
+                    onFinish($ses);
+                }
+            });
+        }
+    }
+
 	function onFinish($doc){
 		var id = req.session.id;
-		
+
 		if($doc){
 			req.session.profile = $doc.profile;
 			id = $doc.profile.sid;
@@ -219,9 +260,10 @@ Server.get("/", function(req, res){
 		});
 	}
 });
+
 Server.get("/servers", function(req, res){
 	var list = [];
-	
+
 	gameServers.forEach(function(v, i){
 		list[i] = v.seek;
 	});
@@ -261,13 +303,13 @@ Server.get("/logout", function(req, res){
 });
 Server.get("/register", function(req, res){
 	if(!req.session.token) return res.sendStatus(400);
-	
+
 	JAuth.login(req.session.authType, req.session.token, req.session.id, req.session.token2).then(function($profile){
 		var now = Date.now();
-		
+
 		if($profile.error) return res.sendStatus($profile.error);
 		if(!$profile.id) return res.sendStatus(401);
-		
+
 		$profile.sid = req.session.id;
 		req.session.admin = GLOBAL.ADMIN.includes($profile.id);
 		DB.session.upsert([ '_id', req.session.id ]).set({
@@ -289,7 +331,7 @@ Server.post("/login/google", function(req, res){
 });
 Server.post("/session", function(req, res){
 	var o;
-	
+
 	if(req.session.profile) o = {
 		authType: req.session.authType,
 		createdAt: req.session.createdAt,

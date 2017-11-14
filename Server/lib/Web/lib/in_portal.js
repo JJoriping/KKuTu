@@ -1,17 +1,17 @@
 /**
  * Rule the words! KKuTu Online
  * Copyright (C) 2017 JJoriping(op@jjo.kr)
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,7 +20,7 @@
 	var $stage;
 	var LIMIT = 400;
 	var LIST;
-	
+
 	$(document).ready(function(){
 		$stage = {
 			list: $("#server-list"),
@@ -29,15 +29,19 @@
 			ref: $("#server-refresh"),
 			refi: $("#server-refresh>i")
 		};
-		
+
+        if ($("#account-info").html() !== L['LOGIN']) {
+            $('#captcha-container').empty();
+        }
+
 		$("#Background").attr('src', "").addClass("jt-image").css({
 			'background-image': "url(/img/kkutu/gamebg.png)",
 			'background-size': "200px 200px"
 		});
 		$stage.start.prop('disabled', true).on('click', function(e){
 			var i, j;
-			
-			if($("#account-info").html() == L['LOGIN']){
+
+			if($("#account-info").html() === L['LOGIN']){
 				return $("#server-0").trigger('click');
 			}
 			for(i=0.9; i<1; i+=0.01){
@@ -64,7 +68,7 @@
 	function seekServers(){
 		$.get("/servers", function(data){
 			var sum = 0;
-			
+
 			$stage.list.empty();
 			LIST = data.list;
 			data.list.forEach(function(v, i){
@@ -72,7 +76,7 @@
 				var people = (status == "x") ? "-" : (v + " / " + LIMIT);
 				var limp = v / LIMIT * 100;
 				var $e;
-				
+
 				sum += v || 0;
 				if(status == "o"){
 					if(limp >= 99) status = "q";
@@ -87,9 +91,22 @@
 					)
 					.append($("<div>").addClass("server-enter").html(L['serverEnter']))
 				);
-				if(status != "x") $e.on('click', function(e){
-					location.href = "/?server=" + i;
-				}); else $e.children(".server-enter").html("-");
+                if (status != "x") $e.on('click', function (e) {
+                    var grecaptchaResponse = '';
+                    if ($('#captcha-container').html() !== '') {
+                        grecaptchaResponse = grecaptcha.getResponse();
+                        if ($("#account-info").html() === L['LOGIN']) {
+                            if (grecaptchaResponse === undefined
+                                || grecaptchaResponse === null
+                                || grecaptchaResponse === '') {
+                                alert('게스트는 캽챠 인증이 필요합니다.\n"로봇이 아닙니다" 를 클릭해주세요.');
+                                return;
+                            }
+                        }
+                    }
+
+                    location.href = "/?server=" + i + (grecaptchaResponse !== '' ? '&recaptchaToken=' + grecaptchaResponse : '');
+                }); else $e.children(".server-enter").html("-");
 			});
 			$stage.total.html("&nbsp;" + L['TOTAL'] + " " + sum + L['MN']);
 			$stage.refi.removeClass("fa-spin");
