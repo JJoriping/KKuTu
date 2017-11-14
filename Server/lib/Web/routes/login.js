@@ -81,7 +81,7 @@ exports.run = (Server, page) => {
         (req, accessToken, refreshToken, profile, done) => {
             const $p = {};
 
-            $p.type = "naver";
+            $p.authType = "naver";
             $p.id = profile.id;
             $p.name = profile.displayName;
             $p.title = profile.displayName;
@@ -118,7 +118,7 @@ exports.run = (Server, page) => {
     }, (req, accessToken, refreshToken, profile, done) => {
         const $p = {};
 
-        $p.type = "facebook";
+        $p.authType = "facebook";
         $p.id = profile.id;
         $p.name = profile.displayName;
         $p.title = profile.displayName;
@@ -152,7 +152,7 @@ exports.run = (Server, page) => {
     }, (req, accessToken, refreshToken, profile, done) => {
         const $p = {};
 
-        $p.type = "google";
+        $p.authType = "google";
         $p.id = profile.id;
         $p.name = (profile.name.familyName != '' ? profile.name.familyName+' ' : '')+profile.name.givenName;
         $p.title = profile.nickname;
@@ -175,7 +175,7 @@ exports.run = (Server, page) => {
     }, (req, accessToken, refreshToken, profile, done) => {
         const $p = {};
 
-        $p.type = "twitter";
+        $p.authType = "twitter";
         $p.id = profile.id;
         $p.name = profile.displayName;
         $p.title = profile.displayName;
@@ -197,7 +197,7 @@ exports.run = (Server, page) => {
     }, (req, accessToken, refreshToken, profile, done) => {
         const $p = {};
 
-        $p.type = "kakao";
+        $p.authType = "kakao";
         $p.id = profile.id.toString();
         $p.name = +profile.username;
         $p.title = profile.displayName;
