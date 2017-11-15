@@ -30,7 +30,6 @@ var JLog	 = require("../sub/jjlog");
 var WebInit	 = require("../sub/webinit");
 var GLOBAL	 = require("../sub/global.json");
 var Const	 = require("../const");
-var request = require('request');
 
 var Language = {
 	'ko_KR': require("./lang/ko_KR.json"),
@@ -164,67 +163,28 @@ ROUTES.forEach(function(v){
 	require(`./routes/${v}`).run(Server, WebInit.page);
 });
 
-function verifyRecaptcha(responseToken, remoteIp, callback) {
-    const verifyUrl = `https://google.com/recaptcha/api/siteverify?secret=${GLOBAL.GOOGLE_RECAPTCHA_SECRET_KEY}&response=${responseToken}&remoteip=${remoteIp}`;
-    request(verifyUrl, (err, response, body) => {
-        try {
-            const responseBody = JSON.parse(body);
-            callback(responseBody.success);
-        } catch (e) {
-            callback(false);
-        }
-    });
-}
-
 Server.get("/", function (req, res) {
-    const server = req.query.server;
-    if (server !== undefined) {
-        if (req.session.authType !== undefined
-            && req.session.authType !== null
-            && req.session.authType !== '') {
-            // 로그인 상태
-            processRequest();
-            return;
-        }
-
-        // 비 로그인 상태, 캽챠 인증 확인
-        const recaptchaToken = req.query.recaptchaToken;
-        verifyRecaptcha(recaptchaToken, req.connection.remoteAddress, function (success) {
-            if (!success) {
-                JLog.warn(`Failed recaptcha from IP ${req.connection.remoteAddress}`);
-                // 캽챠 인증 실패, 메인 화면으로 이동 - 별도 페이지를 띄우는 등이 필요하다면 하단 부분 수정 요망
-                res.redirect("/");
-                return;
-            }
-
-            processRequest();
-        });
-    } else {
-        processRequest();
-    }
-
-    function processRequest() {
-        if (req.query.code) { // 네이버 토큰
-            req.session.authType = "naver";
-            req.session.token = req.query.code;
-            res.redirect("/register");
-        } else if (req.query.token) { // 페이스북 토큰
-            req.session.authType = "facebook";
-            req.session.token = req.query.token;
-            res.redirect("/register");
-        } else {
-            DB.session.findOne(['_id', req.session.id]).on(function ($ses) {
-                // var sid = (($ses || {}).profile || {}).sid || "NULL";
-                if (global.isPublic) {
-                    onFinish($ses);
-                    // DB.jjo_session.findOne([ '_id', sid ]).limit([ 'profile', true ]).on(onFinish);
-                } else {
-                    if ($ses) $ses.profile.sid = $ses._id;
-                    onFinish($ses);
-                }
-            });
-        }
-    }
+	const server = req.query.server;
+	if (req.query.code) { // 네이버 토큰
+		req.session.authType = "naver";
+		req.session.token = req.query.code;
+		res.redirect("/register");
+	} else if (req.query.token) { // 페이스북 토큰
+		req.session.authType = "facebook";
+		req.session.token = req.query.token;
+		res.redirect("/register");
+	} else {
+		DB.session.findOne(['_id', req.session.id]).on(function ($ses) {
+			// var sid = (($ses || {}).profile || {}).sid || "NULL";
+			if (global.isPublic) {
+				onFinish($ses);
+				// DB.jjo_session.findOne([ '_id', sid ]).limit([ 'profile', true ]).on(onFinish);
+			} else {
+				if ($ses) $ses.profile.sid = $ses._id;
+				onFinish($ses);
+			}
+		});
+	}
 
 	function onFinish($doc){
 		var id = req.session.id;

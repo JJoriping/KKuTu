@@ -91,22 +91,9 @@
 					)
 					.append($("<div>").addClass("server-enter").html(L['serverEnter']))
 				);
-                if (status != "x") $e.on('click', function (e) {
-                    var grecaptchaResponse = '';
-                    if ($('#captcha-container').html() !== '') {
-                        grecaptchaResponse = grecaptcha.getResponse();
-                        if ($("#account-info").html() === L['LOGIN']) {
-                            if (grecaptchaResponse === undefined
-                                || grecaptchaResponse === null
-                                || grecaptchaResponse === '') {
-                                alert('게스트는 캽챠 인증이 필요합니다.\n"로봇이 아닙니다" 를 클릭해주세요.');
-                                return;
-                            }
-                        }
-                    }
-
-                    location.href = "/?server=" + i + (grecaptchaResponse !== '' ? '&recaptchaToken=' + grecaptchaResponse : '');
-                }); else $e.children(".server-enter").html("-");
+				if (status != "x") $e.on('click', function (e) {
+					location.href = "/?server=" + i;
+				}); else $e.children(".server-enter").html("-");
 			});
 			$stage.total.html("&nbsp;" + L['TOTAL'] + " " + sum + L['MN']);
 			$stage.refi.removeClass("fa-spin");

@@ -974,7 +974,25 @@ $(document).ready(function(){
 			);*/
 		};
 		ws.onmessage = _onMessage = function(e){
-			onMessage(JSON.parse(e.data));
+			var data = JSON.parse(e.data);
+
+			if (data.type === 'recaptcha') {
+				var $introText = $("#intro-text");
+				$introText.empty();
+				$introText.html('게스트는 캽챠 인증이 필요합니다.' +
+					'<br/>로그인을 하시면 캽챠 인증을 건너뛰실 수 있습니다.' +
+					'<br/><br/>');
+				$introText.append($('<div class="g-recaptcha" id="recaptcha" style="display: table; margin: 0 auto;"></div>'));
+
+				grecaptcha.render('recaptcha', {
+					'sitekey': data.siteKey,
+					'callback': recaptchaCallback
+				});
+
+				return;
+			}
+
+			onMessage(data);
 		};
 		ws.onclose = function(e){
 			var ct = L['closed'] + " (#" + e.code + ")";
@@ -989,5 +1007,11 @@ $(document).ready(function(){
 		ws.onerror = function(e){
 			console.warn(L['error'], e);
 		};
+
+		function recaptchaCallback(response) {
+			ws.send(JSON.stringify({type: 'recaptcha', token: response}));
+			
+			delete window.setTimeout;
+		}
 	}
 });
