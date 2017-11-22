@@ -29,7 +29,7 @@ This repository provides you what you have to prepare to play **KKuTu**.
 1. Using NPM, install grunt by running: `sudo npm install -g grunt grunt-cli`
 1. Run pgAdmin and put the SQL file(`./db.sql`) into your database.
 	* For further details, visit [my blog][dev-blog].
-1. (Optional) If you want to have Ranking System working, download Redis from [here][https://github.com/MicrosoftArchive/redis/releases].
+1. (Optional) If you want to have Ranking System working, download Redis from [here](https://github.com/MicrosoftArchive/redis/releases).
 1. Change`PG_PASS` of `KKuTu\Server\lib\sub\global.json` to your `PostgreSQL` password.
 1. Run the batch file(`./server-setup.bat`).
 1. Run the batch file(`./Server/run.bat`).
@@ -37,9 +37,9 @@ This repository provides you what you have to prepare to play **KKuTu**.
 
 #### For Linux
 1. Download or clone this repository to your machine. If you have Git installed, run the following: `git clone https://github.com/JJoriping/KKuTu.git`.
-1. Install *node.js* and *npm* via a package manager. To install, follow the directions [here][https://nodejs.org/en/download/package-manager/].
+1. Install *node.js* and *npm* via a package manager. To install, follow the directions [here](https://nodejs.org/en/download/package-manager/).
 1. Using NPM, install grunt by running: `sudo npm install -g grunt grunt-cli`
-1. Install *PostgreSQL* database server via a package manager. [Download Link][https://www.postgresql.org/download/]
+1. Install *PostgreSQL* database server via a package manager. [Download Link](https://www.postgresql.org/download/)
 1. In `KKuTu` directory, put the SQL file(`./db.sql`) into your database.
 	1. Run a command like: `sudo -u postgres psql --quiet main < ./db.sql`
 1. In Terminal, type `psql` then type `\password` to change/define the password.
@@ -54,7 +54,6 @@ This repository provides you what you have to prepare to play **KKuTu**.
 - The host `127.0.0.2` is reserved for connections between your web server and game server.
 - Once the server is successfully installed, you can do just the last step of above-mentioned guideline whenever you want to run the server.
 - You can open a browser and go to `127.0.0.1`(or external IP address for other people) to play **KKuTu**.
-- Ranking and some session features require [Redis](https://redis.io/) server. This is optional.
 - If you use Cloudflare, you should set status of DNS Tab to 'DNS only'. 'DNS and HTTP proxy (CDN)' status is the reason of unable to open and enter the room.
 
 #### License
@@ -81,7 +80,7 @@ This repository provides you what you have to prepare to play **KKuTu**.
 1. [PostgreSQL](https://www.postgresql.org/) 인스톨러를 내려받아 pgAdmin(자동으로 설치됨)과 함께 설치합니다.
 1. pgAdmin을 실행시키고 SQL 파일(`./db.sql`)을 데이터베이스에 입력시킵니다.
 	* 자세한 과정은 [개발자 블로그][dev-blog]를 참고하세요.
-1. (선택사항) 랭킹 기능 작동을 원하시면 아래 레프지토리에서 Redis를 설치하세요: [다운로드 링크(가장 최근의 Release로 인스톨 해주세요.)][https://github.com/MicrosoftArchive/redis/releases]
+1. (선택사항) 랭킹 기능 작동을 원하시면 아래 레프지토리에서 Redis를 설치하세요: [다운로드 링크(가장 최근의 Release로 인스톨 해주세요.)](https://github.com/MicrosoftArchive/redis/releases)
 1. `KKuTu\Server\lib\sub\global.json`에서 `PG_PASS`의 암호를 설정한 `PostgreSQL` 암호로 변경해주세요.
 1. 배치 파일(`./server-setup.bat`)을 실행시킵니다.
 1. 배치 파일(`./Server/run.bat`)을 실행시킵니다.
@@ -91,9 +90,9 @@ This repository provides you what you have to prepare to play **KKuTu**.
 1. 이 레포지토리를 내려받고, 압축을 해제합니다. 만약 Git이 설치되어 있다면 다음 명령어로 수행이 가능합니다:
 `git clone https://github.com/JJoriping/KKuTu.git`
 1. 패키지 매니저를 이용하여 *node.js 6 이상*와 *npm*을 설치합니다. (npm은 node.js와 함께 설치됩니다.)
-자세한 설치 방법은 이곳을 확인하세요: [English][https://nodejs.org/en/download/package-manager/][한국어][https://nodejs.org/ko/download/package-manager/] (한국어 문서는 업데이트가 늦을 수 있습니다.)
+자세한 설치 방법은 이곳을 확인하세요: [English](https://nodejs.org/en/download/package-manager/)[한국어](https://nodejs.org/ko/download/package-manager/) (한국어 문서는 업데이트가 늦을 수 있습니다.)
 1. NPM을 이용하여 다음으로 *grunt*를 설치합니다: `sudo npm install -g grunt grunt-cli`
-1. 패키지 매니저를 이용하여 *PostgreSQL*을 설치합니다. [다운로드 링크][https://www.postgresql.org/download/]
+1. 패키지 매니저를 이용하여 *PostgreSQL*을 설치합니다. [다운로드 링크](https://www.postgresql.org/download/)
 1. `KKuTu` 폴더 내에서 SQL 파일(`./db.sql`)을 데이터베이스에 입력시킵니다.
 	1. 명령어를 다음 예와 같이 입력할 수 있습니다: `sudo -u postgres psql --quiet main < ./db.sql`
 1. (선택사항) 랭킹 기능 작동을 원하시면 `sudo apt-get install redis-server`로 *redis*를 설치해 주세요.
@@ -110,7 +109,6 @@ This repository provides you what you have to prepare to play **KKuTu**.
 - 호스트 `127.0.0.2`는 웹 서버와 게임 서버 사이의 연결을 위해 예약된 주소이므로 이 주소를 사용하지 말아야 합니다.
 - 서버가 정상적으로 설치된 다음부터는 서버를 실행시키기 위해서 가장 마지막 단계만 수행하면 됩니다.
 - 서버가 성공적으로 열린 후 웹 브라우저에서 `127.0.0.1`(다른 사람들은 해당 컴퓨터의 외부 IP 주소)로 접속하여 끄투를 즐길 수 있습니다.
-- 랭킹 및 세션 기능 일부는 [Redis](https://redis.io/) 서버가 실행되어야만 작동합니다. 일단 이를 설치하지 않아도 서버가 작동할 수 있도록 조치했습니다.
 - 클라우드 플레어를 사용하신다면, DNS 탭의 status를 DNS only로 두세요. DNS and HTTP proxy (CDN)으로 둘 경우, 방 만들기와 방 입장이 되지 않습니다.
 
 #### 라이선스
