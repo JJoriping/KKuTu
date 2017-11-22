@@ -26,7 +26,7 @@ This repository provides you what you have to prepare to play **KKuTu**.
 1. Download or clone this repository to your machine.
 1. Install [node.js](https://nodejs.org/en/) and npm(this will be installed automatically).
 1. Install [PostgreSQL](https://www.postgresql.org/) database server and pgAdmin(this will be installed automatically).
-1. Using NPM, install grunt by running: `sudo npm install -g grunt grunt-cli`
+1. Using NPM, install grunt by running: `npm install -g grunt grunt-cli`
 1. Run pgAdmin and put the SQL file(`./db.sql`) into your database.
 	* For further details, visit [my blog][dev-blog].
 1. (Optional) If you want to have Ranking System working, download Redis from [here](https://github.com/MicrosoftArchive/redis/releases).
@@ -76,7 +76,7 @@ This repository provides you what you have to prepare to play **KKuTu**.
 #### Windows 전용
 1. 이 레포지토리를 내려받습니다.
 1. [node.js](https://nodejs.org/ko/) 인스톨러를 내려받아 npm(자동으로 설치됨)과 함께 설치합니다.
-1. NPM을 이용하여 다음으로 *grunt*를 설치합니다: `sudo npm install -g grunt grunt-cli`
+1. NPM을 이용하여 다음으로 *grunt*를 설치합니다: `npm install -g grunt grunt-cli`
 1. [PostgreSQL](https://www.postgresql.org/) 인스톨러를 내려받아 pgAdmin(자동으로 설치됨)과 함께 설치합니다.
 1. pgAdmin을 실행시키고 SQL 파일(`./db.sql`)을 데이터베이스에 입력시킵니다.
 	* 자세한 과정은 [개발자 블로그][dev-blog]를 참고하세요.
