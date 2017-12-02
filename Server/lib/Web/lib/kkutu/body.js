@@ -483,7 +483,7 @@ function onMessage(data){
 					break;
 				}
 			} else if (data.code === 447) {
-				alert("자동화 봇 방지를 위한 캽챠 인증에 실패했습니다. 메인 화면에서 다시 시도해 주세요.");
+				alert("자동화 봇 방지를 위한 캡챠 인증에 실패했습니다. 메인 화면에서 다시 시도해 주세요.");
 				break;
 			}
 			alert("[#" + data.code + "] " + L['error_'+data.code] + i);

@@ -404,7 +404,7 @@ KKuTu.onClientMessage = function ($c, msg) {
 				}
 			});
 		} else {
-			// 캽챠 인증이 되기 전의 요청은 전부 차단
+			// 캡챠 인증이 되기 전의 요청은 전부 차단
 			JLog.warn("block request: " + JSON.stringify(msg));
 		}
 	}
