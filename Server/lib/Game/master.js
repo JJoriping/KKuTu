@@ -333,8 +333,8 @@ exports.init = function(_SID, CHAN){
 						DIC[$c.id] = $c;
 						DNAME[($c.profile.title || $c.profile.name).replace(/\s/g, "")] = $c.id;
 						MainDB.users.update([ '_id', $c.id ]).set([ 'server', SID ]).on();
-						
-						if ($c.guest) {
+
+						if (($c.guest && GLOBAL.GOOGLE_RECAPTCHA_TO_GUEST) || GLOBAL.GOOGLE_RECAPTCHA_TO_USER) {
 							$c.socket.send(JSON.stringify({
 								type: 'recaptcha',
 								siteKey: GLOBAL.GOOGLE_RECAPTCHA_SITE_KEY
