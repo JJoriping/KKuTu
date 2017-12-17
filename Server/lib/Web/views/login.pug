@@ -30,19 +30,8 @@ html
 		//볕뉘 수정 구문삭제(30)
 		div.login-with= locals.text ? L(locals.text) : L('loginWith')
 		//볕뉘 수정
-		a(href="/login/naver")
-			//볕뉘 수정 끝
-			button.with-naver= L('withNaver')
-		//볕뉘 수정
-		a(href="/login/facebook")
-			//볕뉘 수정 끝
-			button.with-facebook= L('withFacebook')
-		//볕뉘 수정
-		a(href="/login/google")
-			button.with-google= L('withGoogle')
-		a(href="/login/twitter")
-			button.with-twitter= L('withTwitter')
-		a(href="/login/kakao")
-			button.with-kakao= L('withKakao')
+		each val in loginList
+			a(href="/login/" + val.vendor)
+				button(style="color: " + val.fontColor + "; background-color: " + val.color + ";")= L(val.displayName)
 		//볕뉘 수정 끝
 		div.login-legal!= L('loginLegal')

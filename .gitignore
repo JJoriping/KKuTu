@@ -6,3 +6,4 @@ Server/lib/Web/public/js/**
 !Server/lib/Web/public/js/jquery.js
 Server/lib/sub/auth.json
 Server/lib/sub/global.json
+.vscode
