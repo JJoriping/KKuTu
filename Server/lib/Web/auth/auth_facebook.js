@@ -1,17 +1,17 @@
 const config = require('../../sub/auth.json');
 
 module.exports.config = {
-    strategy: require('passport-facebook').Strategy, // example: naver, require strategy
-    color: '#235EE3', // example: #1EC800
-    fontColor: '#FFFFFF', //example: #FFFFFF
-    vendor: 'facebook', // example: naver
+    strategy: require('passport-facebook').Strategy,
+    color: '#235EE3',
+    fontColor: '#FFFFFF',
+    vendor: 'facebook',
     displayName: 'withFacebook'
 }
 
 module.exports.strategyConfig = {
-    clientID: config.facebook.clientID,
-        clientSecret: config.facebook.clientSecret,
-        callbackURL: config.facebook.callbackURL,
+    clientID: config.facebook.clientID, // 보안을 위해서입니다.
+        clientSecret: config.facebook.clientSecret, // 이 방법을 사용하는 것을
+        callbackURL: config.facebook.callbackURL, // 적극 권장합니다.
         profileFields: ['id' ,'name' , 'gender', 'age_range', 'displayName'],
         passReqToCallback: true
 }

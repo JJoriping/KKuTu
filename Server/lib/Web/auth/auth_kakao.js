@@ -9,9 +9,9 @@ module.exports.config = {
 }
 
 module.exports.strategyConfig = {
-    clientID: config.kakao.clientID,
-    callbackURL: config.kakao.callbackURL,
-    passReqToCallback: true
+    clientID: config.kakao.clientID, // 보안을 위해서입니다.
+    callbackURL: config.kakao.callbackURL,  // 이 방법을 사용하는 것을
+    passReqToCallback: true  // 적극 권장합니다.
 }
 
 module.exports.strategy = (process, MainDB, Ajae) => {

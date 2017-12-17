@@ -8,10 +8,10 @@ module.exports.config = {
     displayName: 'withTwitter'
 }
 
-module.exports.strategyConfig = { // example: naver
-    consumerKey: config.twitter.consumerKey,
-    consumerSecret: config.twitter.consumerSecret,
-    callbackURL: config.twitter.callbackURL,
+module.exports.strategyConfig = {
+    consumerKey: config.twitter.consumerKey,  // 보안을 위해서입니다.
+    consumerSecret: config.twitter.consumerSecret, // 이 방법을 사용하는 것을
+    callbackURL: config.twitter.callbackURL, // 적극 권장합니다.
     passReqToCallback: true
 }
 
