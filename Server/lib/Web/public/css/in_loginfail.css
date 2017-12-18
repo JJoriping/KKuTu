@@ -16,7 +16,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-body{
+/**
+ * 볕뉘 수정사항:
+ * Login 실패 페이지 제작을 위한 파일 생성
+ */
+
+ body{
 	background-color: #232323;
 }
 button{
@@ -27,16 +32,20 @@ button{
 	cursor: pointer;
 	box-shadow: 0px 2px 2px #141414;
 }
-#with-google span{ display: block; }
-.login-with{
-	padding-top: 30px;
-	margin: 30px 0px;
+.login {
+	color: #FFFFFF;
+	background-color: #0099FF;
+}
+.middle {
+	position: absolute;
+	top: 0; 
+	bottom: 0; 
+	left: 0; 
+	right: 0;
+	margin: auto; 
+	height: 240px; 
+	width: 70%;
+}
+.middle p {
 	text-align: center;
 }
-.login-legal{
-	padding-top: 50px;
-	color: #BBBBBB;
-	font-size: 11px;
-	text-align: center;
-}
-.login-legal a{ color: #DDDDDD; }

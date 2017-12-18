@@ -16,27 +16,23 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-body{
-	background-color: #232323;
+/**
+ * 볕뉘 수정사항
+ * 보안처리 관련 코드 생성
+ */
+
+const Const = require('../const')
+
+module.exports = () => {
+    const options = {};
+    if(Const.SSL_OPTIONS.isPFX == true) {
+        options.pfx = File.readFileSync(Const.SSL_OPTIONS.PFX);
+    } else {
+        options.key = File.readFileSync(Const.SSL_OPTIONS.PRIVKEY);
+        options.cert = File.readFileSync(Const.SSL_OPTIONS.CERT);
+        if(Const.SSL_OPTIONS.isCA == true) {
+            options.ca = File.readFileSync(Const.SSL_OPTIONS.CA);
+        }
+    }
+    return options;
 }
-button{
-	border: none;
-	margin: 8px auto;
-	width: 200px;
-	height: 30px;
-	cursor: pointer;
-	box-shadow: 0px 2px 2px #141414;
-}
-#with-google span{ display: block; }
-.login-with{
-	padding-top: 30px;
-	margin: 30px 0px;
-	text-align: center;
-}
-.login-legal{
-	padding-top: 50px;
-	color: #BBBBBB;
-	font-size: 11px;
-	text-align: center;
-}
-.login-legal a{ color: #DDDDDD; }
