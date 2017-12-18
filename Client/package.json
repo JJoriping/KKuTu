@@ -1,6 +1,6 @@
 {
   "name": "kkutu-client",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "Rule the words! KKuTu Online Client",
   "main": "main.js",
   "scripts": {
