@@ -1,17 +1,17 @@
 /**
  * Rule the words! KKuTu Online
  * Copyright (C) 2017 JJoriping(op@jjo.kr)
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -67,7 +67,7 @@ Server.use(Express.static(__dirname + "/public"));
 Server.use(Parser.urlencoded({ extended: true }));
 Server.use(Exession({
 	/* use only for redis-installed
-	
+
 	store: new Redission({
 		client: Redis.createClient(),
 		ttl: 3600 * 12
@@ -121,7 +121,7 @@ WebInit.init(Server, true);
 DB.ready = function(){
 	setInterval(function(){
 		var q = [ 'createdAt', { $lte: Date.now() - 3600000 * 12 } ];
-		
+
 		DB.session.remove(q).on();
 	}, 600000);
 	setInterval(function(){
@@ -131,14 +131,14 @@ DB.ready = function(){
 		});
 	}, 4000);
 	JLog.success("DB is ready.");
-	
+
 	DB.kkutu_shop_desc.find().on(function($docs){
 		var i, j;
-		
+
 		for(i in Language) flush(i);
 		function flush(lang){
 			var db;
-			
+
 			Language[lang].SHOP = db = {};
 			for(j in $docs){
 				db[$docs[j]._id] = [ $docs[j][`name_${lang}`], $docs[j][`desc_${lang}`] ];
@@ -163,14 +163,14 @@ Const.MAIN_PORTS.forEach(function(v, i){
 });
 function GameClient(id, url){
 	var my = this;
-	
+
 	my.id = id;
 	my.socket = new WS(url, { perMessageDeflate: false, rejectUnauthorized: false});
 	
 	my.send = function(type, data){
 		if(!data) data = {};
 		data.type = type;
-		
+
 		my.socket.send(JSON.stringify(data));
 	};
 	my.socket.on('open', function(){
@@ -187,9 +187,9 @@ function GameClient(id, url){
 	my.socket.on('message', function(data){
 		var _data = data;
 		var i;
-		
+
 		data = JSON.parse(data);
-		
+
 		switch(data.type){
 			case "seek":
 				my.seek = data.value;
@@ -222,7 +222,7 @@ Server.get("/", function(req, res){
 	});
 	function onFinish($doc){
 		var id = req.session.id;
-		
+
 		if($doc){
 			req.session.profile = $doc.profile;
 			id = $doc.profile.sid;
@@ -255,9 +255,10 @@ Server.get("/", function(req, res){
 		});
 	}
 });
+
 Server.get("/servers", function(req, res){
 	var list = [];
-	
+
 	gameServers.forEach(function(v, i){
 		list[i] = v.seek;
 	});

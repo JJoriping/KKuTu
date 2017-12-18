@@ -5,6 +5,10 @@
 	"PASS":"Your password for management Here",
 	"PG_PASS": "Your PostgreSQL Password Here",
 	"PG_PORT": 5432,
+	"GOOGLE_RECAPTCHA_TO_GUEST": false,
+	"GOOGLE_RECAPTCHA_TO_USER": false,
+	"GOOGLE_RECAPTCHA_SITE_KEY": "Your Google Recaptcha site key Here",
+	"GOOGLE_RECAPTCHA_SECRET_KEY": "Your Google Recaptcha secret key Here",
 	"IS_SECURED": false,
 	"SSL_OPTIONS": {
 		"PRIVKEY": "Your SSL Private Key Here",
