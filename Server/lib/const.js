@@ -30,6 +30,8 @@ exports.MAX_OBSERVER = 4;
 exports.TESTER = GLOBAL.ADMIN.concat([
 	"Input tester id here"
 ]);
+exports.IS_SECURED = GLOBAL.IS_SECURED;
+exports.SSL_OPTIONS = GLOBAL.SSL_OPTIONS;
 exports.OPTIONS = {
 	'man': { name: "Manner" },
 	'ext': { name: "Injeong" },

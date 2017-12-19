@@ -16,5 +16,23 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-delete window.WebSocket;
-delete window.setInterval;
+/**
+ * 볕뉘 수정사항
+ * 보안처리 관련 코드 생성
+ */
+
+const Const = require('../const')
+
+module.exports = () => {
+    const options = {};
+    if(Const.SSL_OPTIONS.isPFX == true) {
+        options.pfx = File.readFileSync(Const.SSL_OPTIONS.PFX);
+    } else {
+        options.key = File.readFileSync(Const.SSL_OPTIONS.PRIVKEY);
+        options.cert = File.readFileSync(Const.SSL_OPTIONS.CERT);
+        if(Const.SSL_OPTIONS.isCA == true) {
+            options.ca = File.readFileSync(Const.SSL_OPTIONS.CA);
+        }
+    }
+    return options;
+}

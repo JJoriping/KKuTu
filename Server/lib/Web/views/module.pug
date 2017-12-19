@@ -14,6 +14,9 @@
 	
 	You should have received a copy of the GNU General Public License
 	along with this program. If not, see <http://www.gnu.org/licenses/>.
+//-
+	볕뉘 수정사항:
+	* Login 을 Passport 로 수행하기 위한 수정
 -
 	const MENU = [
 		{ key: 'HOME', href: "http://jjo.kr/" },
@@ -105,10 +108,10 @@ mixin PageHead(min)
 	script(type='text/javascript', src='/language/'+locals.page.replace("/", "_")+'/'+locals.lang)
 	
 	if PUBLIC && !SESSION.admin
-		script(type='text/javascript', src='/js/google.js')
+		//script(type='text/javascript', src='/js/google.js')
 	script(type='text/javascript', src='/js/global.min.js')
 	if !min
-		script(type='text/javascript', src='/js/facebook.js')
+		//script(type='text/javascript', src='/js/facebook.js')
 	if block
 		block
 	link(rel='stylesheet', href='/css/in_'+locals.page.replace("/", "_")+'.css')
