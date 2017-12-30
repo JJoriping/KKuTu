@@ -67,7 +67,8 @@ exports.run = (Server, page) => {
     .then((items) => {
         for (let i in items) {
             let auth = require(items[i])
-            Server.get('/login/' + auth.config.vendor, passport.authenticate(auth.config.vendor))
+            Server.get('/login/' + auth.config.vendor, passport.authenticate(auth.config.vendor,
+                auth.authConfig))
             Server.get('/login/' + auth.config.vendor + '/callback', passport.authenticate(auth.config.vendor, {
                 successRedirect: '/',
                 failureRedirect: '/loginfail'

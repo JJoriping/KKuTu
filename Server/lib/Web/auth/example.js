@@ -13,8 +13,11 @@ module.exports.strategyConfig = { // example: naver
     clientSecret: config.naver.clientSecret, // 이 방법을 사용하는 것을
     callbackURL: config.naver.callbackURL, // 적극 권장합니다.
     passReqToCallback: true /*,
-    profileFields: ['id' ,'name' , 'gender', 'age_range', 'displayName'], -> require facebook
-    scope: ['profile', 'email', 'https://www.googleapis.com/auth/plus.login'], -> require google */
+    profileFields: ['id' ,'name' , 'gender', 'age_range', 'displayName'], -> require facebook */
+}
+
+module.exports.authConfig = {
+    /* scope: ['profile', 'email', 'https://www.googleapis.com/auth/plus.login'], -> require google */
 }
 
 module.exports.strategy = (process, MainDB, Ajae) => {
