@@ -14,6 +14,9 @@ module.exports.strategyConfig = {
     passReqToCallback: true  // 적극 권장합니다.
 }
 
+module.exports.authConfig = {
+}
+
 module.exports.strategy = (process, MainDB, Ajae) => {
     return (req, accessToken, refreshToken, profile, done) => {
         const $p = {};
