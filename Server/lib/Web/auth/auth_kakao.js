@@ -19,8 +19,8 @@ module.exports.strategy = (process, MainDB, Ajae) => {
         const $p = {};
 
         $p.authType = "kakao";
-        $p.id = profile.id.toString();
-        $p.name = +profile.username;
+        $p.id = 'kakao-' + profile.id;
+        $p.name = profile.username;
         $p.title = profile.displayName;
         $p.image = profile._json.properties.profile_image;
 

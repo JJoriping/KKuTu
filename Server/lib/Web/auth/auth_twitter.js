@@ -20,7 +20,7 @@ module.exports.strategy = (process, MainDB, Ajae) => {
         const $p = {};
 
         $p.authType = "twitter";
-        $p.id = profile.id;
+        $p.id = 'twitter-' + profile.id;
         $p.name = profile.displayName;
         $p.title = profile.displayName;
         $p.image = profile.photos[0].value;

@@ -10,10 +10,10 @@ module.exports.config = {
 
 module.exports.strategyConfig = {
     clientID: config.facebook.clientID, // 보안을 위해서입니다.
-        clientSecret: config.facebook.clientSecret, // 이 방법을 사용하는 것을
-        callbackURL: config.facebook.callbackURL, // 적극 권장합니다.
-        profileFields: ['id' ,'name' , 'gender', 'age_range', 'displayName'],
-        passReqToCallback: true
+    clientSecret: config.facebook.clientSecret, // 이 방법을 사용하는 것을
+    callbackURL: config.facebook.callbackURL, // 적극 권장합니다.
+    profileFields: ['id', 'name', 'gender', 'age_range', 'displayName'],
+    passReqToCallback: true
 }
 
 module.exports.strategy = (process, MainDB, Ajae) => {
@@ -21,10 +21,10 @@ module.exports.strategy = (process, MainDB, Ajae) => {
         const $p = {};
 
         $p.authType = "facebook";
-        $p.id = profile.id;
+        $p.id = 'facebook-' + profile.id;
         $p.name = profile.displayName;
         $p.title = profile.displayName;
-        $p.image = "https://graph.facebook.com/"+profile.id+"/picture";
+        $p.image = "https://graph.facebook.com/" + profile.id + "/picture";
 
         /* 망할 셧다운제
         
@@ -35,7 +35,7 @@ module.exports.strategy = (process, MainDB, Ajae) => {
         $p.isAjae = Ajae($p.birth, $p._age);
         */
         // $p.sex = profile.gender;
-    
+
         process(req, accessToken, MainDB, $p, done);
     }
 }
