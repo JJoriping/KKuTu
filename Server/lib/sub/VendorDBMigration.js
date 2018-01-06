@@ -7,8 +7,6 @@ let database;
 
 exports.initDatabase = function (_database) {
     database = _database;
-
-    JLog.info("<< KKuTu Vendor DB Migration Process :: initDatabase >>");
 };
 
 function processVendorMigration(userId) {
@@ -17,7 +15,7 @@ function processVendorMigration(userId) {
     hasUser(oldUserId, function (result) {
         if (result) {
             modifyOldUserId(oldUserId, userId);
-            JLog.info(`${oldUserId} 의 식별 번호가 ${userId} 로 마이그레이션 되었습니다.`)
+            JLog.info(`${oldUserId} 의 식별 번호가 ${userId} 로 마이그레이션 되었습니다.`);
         }
     });
 }
