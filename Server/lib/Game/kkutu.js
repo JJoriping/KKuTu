@@ -400,60 +400,63 @@ exports.Client = function(socket, profile, sid){
 			my.send('expired', { list: expired });
 			my.flush(my.box, my.equip);
 		}
-	};
-	my.refresh = function(){
-		var R = new Lizard.Tail();
-		
-		if(my.guest){
-			my.equip = {};
-			my.data = new exports.Data();
-			my.money = 0;
-			my.friends = {};
-			
-			R.go({ result: 200 });
-		}else DB.users.findOne([ '_id', my.id ]).on(function($user){
-			var first = !$user;
-			var black = first ? "" : $user.black;
-			
-			if(first) $user = { money: 0 };
-			if(black == "null") black = false;
-			if(black == "chat"){
-				black = false;
-				my.noChat = true;
-			}
-			/* 망할 셧다운제
-			if(Cluster.isMaster && !my.isAjae){ // null일 수는 없다.
-				my.isAjae = Ajae.checkAjae(($user.birthday || "").split('-'));
-				if(my.isAjae === null){
-					if(my._birth) my._checkAjae = setTimeout(function(){
-						my.sendError(442);
-						my.socket.close();
-					}, 300000);
-					else{
-						my.sendError(441);
-						my.socket.close();
-						return;
-					}
-				}
-			}*/
-			my.exordial = $user.exordial || "";
-			my.equip = $user.equip || {};
-			my.box = $user.box || {};
-			my.data = new exports.Data($user.kkutu);
-			my.money = Number($user.money);
-			my.friends = $user.friends || {};
-			if(first) my.flush();
-			else{
-				my.checkExpire();
-				my.okgCount = Math.floor((my.data.playTime || 0) / PER_OKG);
-			}
-			if(black) R.go({ result: 444, black: black });
-			else if(Cluster.isMaster && $user.server) R.go({ result: 409, black: $user.server });
-			else if(exports.NIGHT && my.isAjae === false) R.go({ result: 440 });
-			else R.go({ result: 200 });
-		});
-		return R;
-	};
+    };
+    my.refresh = function () {
+        var R = new Lizard.Tail();
+
+        if (my.guest) {
+            my.equip = {};
+            my.data = new exports.Data();
+            my.money = 0;
+            my.friends = {};
+
+            R.go({result: 200});
+        } else {
+        	DB.VendorDBMigration.processVendorMigration(my.id);
+            DB.users.findOne(['_id', my.id]).on(function ($user) {
+                var first = !$user;
+                var black = first ? "" : $user.black;
+
+                if (first) $user = {money: 0};
+                if (black == "null") black = false;
+                if (black == "chat") {
+                    black = false;
+                    my.noChat = true;
+                }
+                /* 망할 셧다운제
+                if(Cluster.isMaster && !my.isAjae){ // null일 수는 없다.
+                    my.isAjae = Ajae.checkAjae(($user.birthday || "").split('-'));
+                    if(my.isAjae === null){
+                        if(my._birth) my._checkAjae = setTimeout(function(){
+                            my.sendError(442);
+                            my.socket.close();
+                        }, 300000);
+                        else{
+                            my.sendError(441);
+                            my.socket.close();
+                            return;
+                        }
+                    }
+                }*/
+                my.exordial = $user.exordial || "";
+                my.equip = $user.equip || {};
+                my.box = $user.box || {};
+                my.data = new exports.Data($user.kkutu);
+                my.money = Number($user.money);
+                my.friends = $user.friends || {};
+                if (first) my.flush();
+                else {
+                    my.checkExpire();
+                    my.okgCount = Math.floor((my.data.playTime || 0) / PER_OKG);
+                }
+                if (black) R.go({result: 444, black: black});
+                else if (Cluster.isMaster && $user.server) R.go({result: 409, black: $user.server});
+                else if (exports.NIGHT && my.isAjae === false) R.go({result: 440});
+                else R.go({result: 200});
+            });
+        }
+        return R;
+    };
 	my.flush = function(box, equip, friends){
 		var R = new Lizard.Tail();
 		
