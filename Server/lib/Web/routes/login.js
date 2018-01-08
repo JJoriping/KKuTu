@@ -73,12 +73,21 @@ exports.run = (Server, page) => {
                 failureRedirect: '/loginfail'
             }))
             passport.use(new auth.config.strategy(auth.strategyConfig, auth.strategy(process, MainDB /*, Ajae */)));
-            strategyList[auth.config.vendor] = {
-                vendor: auth.config.vendor,
-                displayName: auth.config.displayName,
-                color: auth.config.color,
-                fontColor: auth.config.fontColor
-            };
+            if(auth.config['useoAuth-buttons']) {
+                strategyList[auth.config.vendor] = {
+                    'useoAuth-buttons': true,
+                    vendor: auth.config.vendor,
+                    displayName: auth.config.displayName
+                }
+            } else {
+                strategyList[auth.config.vendor] = {
+                    vendor: auth.config.vendor,
+                    displayName: auth.config.displayName,
+                    color: auth.config.color,
+                    fontColor: auth.config.fontColor,
+                    'useoAuth-buttons': false
+                };
+            }
         }
     })
     .catch((e) => {

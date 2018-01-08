@@ -2,21 +2,25 @@
     "naver": {
         "clientID": "",
         "clientSecret": "",
-        "callbackURL": "/login/naver/callback"
-    }, "facebook": {
+        "callbackURL": "{URI}/login/naver/callback"
+    },
+    "facebook": {
         "clientID": "",
         "clientSecret": "",
-        "callbackURL": "/login/facebook/callback"
-    }, "google": {
+        "callbackURL": "{URI}/login/facebook/callback"
+    },
+    "google": {
         "clientID": "",
         "clientSecret": "",
-        "callbackURL": "/login/google/callback"
-    }, "twitter": {
+        "callbackURL": "{URI}/login/google/callback"
+    },
+    "twitter": {
         "consumerKey": "",
         "consumerSecret": "",
-        "callbackURL": "/login/twitter/callback"
-    }, "kakao": {
+        "callbackURL": "{URI}/login/twitter/callback"
+    },
+    "kakao": {
         "clientID": "",
-        "callbackURL": "/login/kakao/callback"
+        "callbackURL": "{URI}/login/kakao/callback"
     }
 }
