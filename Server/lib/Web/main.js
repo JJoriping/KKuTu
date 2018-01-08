@@ -143,7 +143,7 @@ DB.ready = function(){
 	});
 	Server.listen(GLOBAL.WEB_PORT);
 	if(Const.IS_SECURED) {
-		const options = secure(Const.SSL_OPTIONS);
+		const options = Secure();
 		https.createServer(options, Server).listen(GLOBAL.SSL_PORT);
 	}
 };
