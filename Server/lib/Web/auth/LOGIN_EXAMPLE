@@ -6,7 +6,7 @@ module.exports.config = {
     fontColor: '#FFFFFF', //example: #FFFFFF
     vendor: '', // example: naver
     displayName: '네이버',
-    'useoAuth-buttons': false
+    'use-oAuth-buttons': false
 }
 
 module.exports.strategyConfig = { // example: naver

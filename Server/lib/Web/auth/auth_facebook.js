@@ -6,7 +6,7 @@ module.exports.config = {
     fontColor: '#FFFFFF',
     vendor: 'facebook',
     displayName: 'withFacebook',
-    'useoAuth-buttons': false
+    'use-oAuth-buttons': false
 }
 
 module.exports.strategyConfig = {

@@ -30,7 +30,7 @@ html
 		div.login-with= locals.text ? L(locals.text) : L('loginWith')
 		center
 			each val in loginList
-				if val['useoAuth-buttons']
+				if val['use-oAuth-buttons']
 					.lbtn(class="lbtn-" + val.vendor)
 						i.logo
 						a.label(href="/login/" + val.vendor)= L(val.displayName)
