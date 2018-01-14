@@ -318,7 +318,7 @@ $(document).ready(function(){
 		var $target = $(e.currentTarget);
 		var value = $target.val();
 		
-		if(value < 2 || value > 8){
+		if(value < 2 || value > 16){
 			$target.css('color', "#FF4444");
 		}else{
 			$target.css('color', "");

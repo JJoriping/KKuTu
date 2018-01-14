@@ -21,10 +21,10 @@ var Lizard = require('../../sub/lizard');
 var DB;
 var DIC;
 
-const ROBOT_START_DELAY = [ 1200, 800, 400, 200, 0 ];
-const ROBOT_TYPE_COEF = [ 1250, 750, 500, 250, 0 ];
-const ROBOT_THINK_COEF = [ 4, 2, 1, 0, 0 ];
-const ROBOT_HIT_LIMIT = [ 4, 2, 1, 0, 0 ];
+const ROBOT_START_DELAY = [ 0, 0, 0, 0, 0 ];
+const ROBOT_TYPE_COEF = [ 0, 0, 0, 0, 0 ];
+const ROBOT_THINK_COEF = [ 0, 0, 0, 0, 0 ];
+const ROBOT_HIT_LIMIT = [ 0, 0, 0, 0, 0 ];
 
 exports.init = function(_DB, _DIC){
 	DB = _DB;
@@ -35,7 +35,7 @@ exports.getTitle = function(){
 	var my = this;
 	
 	setTimeout(function(){
-		R.go("①②③④⑤⑥⑦⑧⑨⑩");
+		R.go("①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮ⓐⓑⓒⓓⓔ");
 	}, 500);
 	return R;
 };
@@ -66,7 +66,7 @@ exports.turnStart = function(force){
 	var si;
 	
 	if(!my.game.chain) return;
-	my.game.roundTime = Math.min(my.game.roundTime, Math.max(10000, 150000 - my.game.chain.length * 1500));
+	my.game.roundTime = Math.min(my.game.roundTime, Math.max(10000, 600000 - my.game.chain.length * 1500));
 	speed = my.getTurnSpeed(my.game.roundTime);
 	clearTimeout(my.game.turnTimer);
 	clearTimeout(my.game.robotTimer);

@@ -1,2 +1,190 @@
 This is an error log file of the game server.
 You may use like `tail -f KKUTU_ERROR.log` to watch this.
+:8496 [2017-9-22 23:42:03] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:62:26
+    at go (E:\_kkutupriv\Server\lib\sub\lizard.js:43:16)
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:249:21
+    at callback (E:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (E:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (E:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:101:20)
+    at Connection.emit (events.js:188:7)
+    at Socket.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2017-9-30 16:15:55] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:62:26
+    at go (E:\_kkutupriv\Server\lib\sub\lizard.js:43:16)
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:249:21
+    at callback (E:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (E:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (E:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:101:20)
+    at Connection.emit (events.js:188:7)
+    at Socket.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2017-9-30 16:16:31] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:62:26
+    at go (E:\_kkutupriv\Server\lib\sub\lizard.js:43:16)
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:249:21
+    at callback (E:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (E:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (E:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:101:20)
+    at Connection.emit (events.js:188:7)
+    at Socket.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2017-9-30 16:17:06] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:62:26
+    at go (E:\_kkutupriv\Server\lib\sub\lizard.js:43:16)
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:249:21
+    at callback (E:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (E:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (E:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:101:20)
+    at Connection.emit (events.js:188:7)
+    at Socket.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2017-9-30 16:27:13] ERROR: Error: read ECONNRESET
+Error: read ECONNRESET
+    at exports._errnoException (util.js:1018:11)
+    at TCP.onread (net.js:568:26):8496 [2017-10-22 09:07:38] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:62:26
+    at go (E:\_kkutupriv\Server\lib\sub\lizard.js:43:16)
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:249:21
+    at callback (E:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (E:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (E:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:101:20)
+    at Connection.emit (events.js:188:7)
+    at Socket.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2017-10-27 22:12:13] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:62:26
+    at go (E:\_kkutupriv\Server\lib\sub\lizard.js:43:16)
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:249:21
+    at callback (E:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (E:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (E:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:101:20)
+    at Connection.emit (events.js:188:7)
+    at Socket.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2017-10-27 22:13:02] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:62:26
+    at go (E:\_kkutupriv\Server\lib\sub\lizard.js:43:16)
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:249:21
+    at callback (E:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (E:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (E:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:101:20)
+    at Connection.emit (events.js:188:7)
+    at Socket.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2017-10-27 22:13:58] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:62:26
+    at go (E:\_kkutupriv\Server\lib\sub\lizard.js:43:16)
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:249:21
+    at callback (E:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (E:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (E:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:101:20)
+    at Connection.emit (events.js:188:7)
+    at Socket.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2017-10-27 22:14:18] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:62:26
+    at go (E:\_kkutupriv\Server\lib\sub\lizard.js:43:16)
+    at E:\_kkutupriv\Server\lib\Game\games\jaqwi.js:249:21
+    at callback (E:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (E:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (E:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:101:20)
+    at Connection.emit (events.js:188:7)
+    at Socket.<anonymous> (E:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2017-11-7 20:22:45] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at G:\_kkutupriv\Server\lib\Game\games\jaqwi.js:62:26
+    at go (G:\_kkutupriv\Server\lib\sub\lizard.js:43:16)
+    at G:\_kkutupriv\Server\lib\Game\games\jaqwi.js:249:21
+    at callback (G:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (G:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (G:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:101:20)
+    at Connection.emit (events.js:188:7)
+    at Socket.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2017-11-9 21:04:22] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at G:\_kkutupriv\Server\lib\Game\games\jaqwi.js:62:26
+    at go (G:\_kkutupriv\Server\lib\sub\lizard.js:43:16)
+    at G:\_kkutupriv\Server\lib\Game\games\jaqwi.js:249:21
+    at callback (G:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (G:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (G:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:101:20)
+    at Connection.emit (events.js:188:7)
+    at Socket.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2017-12-5 16:32:00] ERROR: SyntaxError: Invalid regular expression: /^(?)./: Invalid group
+SyntaxError: Invalid regular expression: /^(?)./: Invalid group
+    at RegExp (<anonymous>)
+    at produce (G:\_kkutupriv\Server\lib\Game\games\classic.js:457:23)
+    at G:\_kkutupriv\Server\lib\Game\games\classic.js:453:4
+    at callback (G:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (G:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (G:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:115:13)
+    at Connection.emit (events.js:210:7)
+    at Socket.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2017-12-10 01:02:58] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at G:\_kkutupriv\Server\lib\Game\games\jaqwi.js:62:26
+    at exports.Tail.go (G:\_kkutupriv\Server\lib\sub\lizard.js:43:16)
+    at G:\_kkutupriv\Server\lib\Game\games\jaqwi.js:249:21
+    at callback (G:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (G:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (G:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:115:13)
+    at Connection.emit (events.js:210:7)
+    at Socket.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2017-12-20 14:51:15] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at G:\_kkutupriv\Server\lib\Game\games\jaqwi.js:62:26
+    at exports.Tail.go (G:\_kkutupriv\Server\lib\sub\lizard.js:43:16)
+    at G:\_kkutupriv\Server\lib\Game\games\jaqwi.js:249:21
+    at callback (G:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (G:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (G:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:115:13)
+    at Connection.emit (events.js:210:7)
+    at Socket.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8497 [2017-12-25 14:30:12] ERROR: SyntaxError: Invalid regular expression: /^(?).../: Invalid group
+SyntaxError: Invalid regular expression: /^(?).../: Invalid group
+    at RegExp (<anonymous>)
+    at produce (G:\_kkutupriv\Server\lib\Game\games\classic.js:457:23)
+    at G:\_kkutupriv\Server\lib\Game\games\classic.js:453:4
+    at callback (G:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (G:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (G:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:115:13)
+    at Connection.emit (events.js:210:7)
+    at Socket.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2017-12-28 21:06:01] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at G:\_kkutupriv\Server\lib\Game\games\jaqwi.js:62:26
+    at exports.Tail.go (G:\_kkutupriv\Server\lib\sub\lizard.js:43:16)
+    at G:\_kkutupriv\Server\lib\Game\games\jaqwi.js:249:21
+    at callback (G:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (G:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (G:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:115:13)
+    at Connection.emit (events.js:210:7)
+    at Socket.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2018-1-5 01:53:59] ERROR: TypeError: Cannot read property 'charCodeAt' of undefined
+TypeError: Cannot read property 'charCodeAt' of undefined
+    at exports.Room.getSubChar (G:\_kkutupriv\Server\lib\Game\games\classic.js:534:14)
+    at exports.Room.exports.roundReady (G:\_kkutupriv\Server\lib\Game\games\classic.js:134:32)
+    at exports.Room.my.route.my.routeSync (G:\_kkutupriv\Server\lib\Game\kkutu.js:1333:13)
+    at Timeout.my.roundReady [as _onTimeout] (G:\_kkutupriv\Server\lib\Game\kkutu.js:1139:13)
+    at ontimeout (timers.js:488:11)
+    at tryOnTimeout (timers.js:323:5)
+    at Timer.listOnTimeout (timers.js:283:5)

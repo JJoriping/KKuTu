@@ -1,7 +1,7 @@
 {
-  "name": "kkutu-client",
-  "version": "2.5.1",
-  "description": "Rule the words! KKuTu Online Client",
+  "name": "kkutu-pbclient",
+  "version": "KKuTu 2.5.0 Blue Beta1",
+  "description": "KKuTu Client - Blue edition",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
@@ -10,7 +10,7 @@
   "keywords": [
     "kkutu"
   ],
-  "author": "JJoriping",
+  "author": "JJoriping / Project_Beta",
   "license": "GPL-3.0",
   "devDependencies": {
     "electron": "^1.4.15",

@@ -14,23 +14,23 @@
 	
 	You should have received a copy of the GNU General Public License
 	along with this program. If not, see <http://www.gnu.org/licenses/>.
-//-
-	볕뉘 수정사항:
-	* Login 을 Passport 로 수행하기 위한 수정
 -
 	const MENU = [
-		{ key: 'HOME', href: "http://jjo.kr/" },
-		/*{ key: 'DB', sub: [
-			{ key: 'DB_CHAMP', href: "/db/champion" },
-			{ key: 'DB_ITEM', href: "/db/item" },
-			{ key: 'DB_RUNE', href: "/db/rune" },
-			{ key: 'DB_MASTERY', href: "/db/mastery" }
-		]},*/
-		{ key: 'GAMES', sub: [
-			{ key: 'GAMES_KKUTU', href: "/" },
-			{ key: 'GAMES_FATES', href: "http://jjo.kr/game/fates" }
+		{ key: 'HOME', sub: [
+			{ key: 'PKTMAIN', href: "http://prjkt.zz.am:3141/" },
+			{ key: 'SVLIST', href: "http://jjo.kr/kkutu/" }
 		]},
-		{ key: 'GALLERY', href: "http://jjo.kr/gallery" }
+		{ key: 'TSV', sub: [
+			{ key: 'LITE', href: "http://litekkutu.cf/" }
+		]},
+		{ key: 'EGG', sub: [
+			{ key: '20G', href: "/20000000000.html" },
+			{ key: 'PRN', href: "/projectn.html" },
+			{ key: 'RSH', href: "/red.html" }
+		]},
+		{ key: 'TPG', sub: [
+			{ key: 'NWK', href: "http://nekowiki.zz.am:81/" }
+		]}
 	];
 	const PUBLIC = locals.published;
 	
@@ -66,9 +66,6 @@ mixin Menu()
 					div.menu-sub-separator
 					- for(j in MENU[i].sub)
 						div.menu-sub-btn(onclick='location.href = "'+MENU[i].sub[j].href+'";')!= L(MENU[i].sub[j].key)
-		div#quick-search
-			input#quick-search-tf(placeholder=L('QUICK_HOLDER'))
-			button#quick-search-btn!= L('QUICK_BTN')
 		div#account
 			span#profile= SESSION.profile ? JSON.stringify(SESSION.profile) : '{}'
 			div#account-info
@@ -78,9 +75,7 @@ mixin MMenu()
 		div.menu-btn(id='menu-item-GAMES')
 			+FA('bars')
 			+separator(10)
-			div.menu-sub-btn(onclick='location.href = "http://jjo.kr/";', style='margin: 7px 0px; height: 25px;')!= L('HOME')
-			div.menu-sub-btn(onclick='location.href = "http://kkutu.kr/";', style='margin: 7px 0px; height: 25px;')!= L('GAMES_KKUTU')
-			div.menu-sub-btn(onclick='location.href = "http://jjo.kr/gallery";', style='margin: 7px 0px; height: 25px;')!= L('GALLERY')
+			div.menu-sub-btn(onclick='location.href = "http://prjkt.zz.am:3141/";', style='margin: 7px 0px; height: 25px;')!= L('HOME')
 		div#quick-search
 			input#quick-search-tf(placeholder=L('QUICK_HOLDER'))
 			button#quick-search-btn!= L('QUICK_BTN')
@@ -108,10 +103,10 @@ mixin PageHead(min)
 	script(type='text/javascript', src='/language/'+locals.page.replace("/", "_")+'/'+locals.lang)
 	
 	if PUBLIC && !SESSION.admin
-		//script(type='text/javascript', src='/js/google.js')
+		script(type='text/javascript', src='/js/google.js')
 	script(type='text/javascript', src='/js/global.min.js')
 	if !min
-		//script(type='text/javascript', src='/js/facebook.js')
+		script(type='text/javascript', src='/js/facebook.js')
 	if block
 		block
 	link(rel='stylesheet', href='/css/in_'+locals.page.replace("/", "_")+'.css')

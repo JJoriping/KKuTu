@@ -232,7 +232,7 @@ exports.Client = function(socket, profile, sid){
 	}else{
 		gp = guestProfiles[Math.floor(Math.random() * guestProfiles.length)];
 		
-		my.id = "guest__" + sid;
+		my.id = sid;
 		my.guest = true;
 		my.isAjae = false;
 		my.profile = {
@@ -986,7 +986,7 @@ exports.Room = function(room, channel){
 		
 		my.title = room.title;
 		my.password = room.password;
-		my.limit = Math.max(Math.min(8, my.players.length), Math.round(room.limit));
+		my.limit = Math.max(Math.min(16, my.players.length), Math.round(room.limit));
 		my.mode = room.mode;
 		my.rule = Const.getRule(room.mode);
 		my.round = Math.round(room.round);

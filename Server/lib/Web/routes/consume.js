@@ -67,6 +67,9 @@ function useItem($user, $item, gid){
 			R.exp = Math.round(Math.sqrt(1 + 2 * ($user.kkutu.score || 0)));
 			$user.kkutu.score += R.exp;
 			break;
+        case 'dictCpn100':
+            got('dictPage', 100, 0);
+            break;
 		default:
 			JLog.warn(`Unhandled consumption type: ${$item._id}`);
 	}

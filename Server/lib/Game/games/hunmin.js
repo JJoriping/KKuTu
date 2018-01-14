@@ -21,10 +21,10 @@ var Lizard = require('../../sub/lizard');
 var DB;
 var DIC;
 
-const ROBOT_START_DELAY = [ 1200, 800, 400, 200, 0 ];
-const ROBOT_TYPE_COEF = [ 1250, 750, 500, 250, 0 ];
-const ROBOT_THINK_COEF = [ 4, 2, 1, 0, 0 ];
-const ROBOT_HIT_LIMIT = [ 8, 4, 2, 1, 0 ];
+const ROBOT_START_DELAY = [ 0, 0, 0, 0, 0 ];
+const ROBOT_TYPE_COEF = [ 0, 0, 0, 0, 0 ];
+const ROBOT_THINK_COEF = [ 0, 0, 0, 0, 0 ];
+const ROBOT_HIT_LIMIT = [ 0, 0, 0, 0, 0 ];
 // ㄱ, ㄴ, ㄷ, ㅁ, ㅂ, ㅅ, ㅇ, ㅈ, ㅊ, ㅌ, ㅍ, ㅎ
 const HUNMIN_LIST = [ 4352, 4354, 4355, 4358, 4359, 4361, 4363, 4364, 4366, 4368, 4369, 4370 ];
 
@@ -38,7 +38,7 @@ exports.getTitle = function(){
 	
 	my.game.done = [];
 	setTimeout(function(){
-		R.go("①②③④⑤⑥⑦⑧⑨⑩");
+		R.go("①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮ⓐⓑⓒⓓⓔ");
 	}, 500);
 	return R;
 };
@@ -69,7 +69,7 @@ exports.turnStart = function(force){
 	var si;
 	
 	if(!my.game.chain) return;
-	my.game.roundTime = Math.min(my.game.roundTime, Math.max(10000, 150000 - my.game.chain.length * 1500));
+	my.game.roundTime = Math.min(my.game.roundTime, Math.max(10000, 600000 - my.game.chain.length * 1500));
 	speed = my.getTurnSpeed(my.game.roundTime);
 	clearTimeout(my.game.turnTimer);
 	clearTimeout(my.game.robotTimer);

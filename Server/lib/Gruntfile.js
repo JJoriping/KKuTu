@@ -25,8 +25,7 @@ const LIST = [
 	"in_game_kkutu",
 	"in_game_kkutu_help",
 	"in_admin",
-	"in_portal",
-	"in_loginfail"
+	"in_portal"
 ];
 const KKUTU_LIST = [
 	"Web/lib/kkutu/head.js",

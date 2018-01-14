@@ -42,14 +42,13 @@ block Subject
 	
 block JS
 	script(type='text/javascript', src='/js/in_game_kkutu.min.js')
-	script(src='https://www.google.com/recaptcha/api.js')
 	
 block CSS
 	link(rel='stylesheet', href='/css/in_game_kkutu_shop.css')
 	
 block Jungle
 	span#PUBLIC= PUBLIC ? "true" : undefined
-	span#URL= `${locals.PROTOCOL}://${locals.HOST}:${locals.PORT}/${locals._id}`
+	span#URL= `ws://${locals.HOST}:${locals.PORT}/${locals._id}`
 	span#MOREMI_PART= locals.MOREMI_PART.join(',')
 	span#AVAIL_EQUIP= locals.AVAIL_EQUIP.join(',')
 	span#RULE= JSON.stringify(locals.RULE)
@@ -156,7 +155,7 @@ block Middle
 			input#room-pw(type='password', placeholder=L('password'), maxlength=20)
 		div.dialog-bar
 			h4= L('userLimit')
-			input#room-limit(type='number', min=2, max=8, step=1, value=8)
+			input#room-limit(type='number', min=2, max=16, step=1, value=8)
 		div.dialog-bar
 			h4= L('gameMode')
 			select#room-mode
@@ -167,7 +166,7 @@ block Middle
 			h4#game-mode-expl.dialog-bar-value(style='width: 100%; font-size: 11px;')
 		div.dialog-bar
 			h4= L('numRound')
-			input#room-round(type='number', min=1, max=10, step=1, value=5)
+			input#room-round(type='number', min=1, max=20, step=1, value=5)
 		div.dialog-bar
 			h4= L('roundTime')
 			select#room-time
@@ -177,6 +176,8 @@ block Middle
 				option(value=90)
 				option(value=120)
 				option(value=150)
+				option(value=300)
+				option(value=600)
 		div.dialog-bar(style='height: 59px;')
 			h4(style='height: 45px;')= L('misc')
 			- for(var i in locals.OPTIONS)

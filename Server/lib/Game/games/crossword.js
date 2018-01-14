@@ -69,7 +69,7 @@ exports.getTitle = function(){
 			my.game.boards = boards;
 			my.game.means = means;
 			my.game.mdb = mdb;
-			R.go("①②③④⑤⑥⑦⑧⑨⑩");
+			R.go("①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮ⓐⓑⓒⓓⓔ");
 		});
 	});
 	function getMeaning(round, bItem){
