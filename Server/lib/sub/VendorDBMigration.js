@@ -15,11 +15,13 @@ function processVendorMigration(userId, callback) {
     hasUser(oldUserId, function (result) {
         if (result) {
             modifyOldUserId(oldUserId, userId, function () {
-                JLog.info(`${oldUserId} 의 식별 번호가 ${userId} 로 마이그레이션 되었습니다.`);
+                modifyFriendsUserId(oldUserId, userId, function () {
+                    JLog.info(`${oldUserId} 의 식별 번호가 ${userId} 로 마이그레이션 되었습니다.`);
 
-                if (callback !== undefined) {
-                    callback();
-                }
+                    if (callback !== undefined) {
+                        callback();
+                    }
+                });
             });
         } else {
             if (callback !== undefined) {
@@ -49,6 +51,22 @@ function modifyOldUserId(oldUserId, userId, callback) {
     let query = "UPDATE users " +
         "SET _id = '" + userId + "' " +
         "WHERE _id = '" + oldUserId + "';";
+
+    database.query(query, (err) => {
+        if (err) {
+            return JLog.error(`Error executing query ${err.stack}`);
+        }
+
+        if (callback !== undefined) {
+            callback();
+        }
+    })
+}
+
+function modifyFriendsUserId(oldUserId, userId, callback) {
+    let query = "UPDATE users " +
+        "SET friends = cast(REPLACE(friends :: TEXT, '\"" + oldUserId + "\"', '\"" + userId + "\"') AS JSON) " +
+        "WHERE friends :: TEXT ~ '\"" + oldUserId + "\"';";
 
     database.query(query, (err) => {
         if (err) {
