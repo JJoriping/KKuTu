@@ -164,18 +164,26 @@ function GameClient(id, url){
 
 		my.socket.send(JSON.stringify(data));
 	};
-	my.socket.on('open', function(){
+	function onGameOpen () {
 		JLog.info(`Game server #${my.id} connected`);
-	});
-	my.socket.on('error', function(err){
+	}
+	function onGameError(err) {
 		JLog.warn(`Game server #${my.id} has an error: ${err.toString()}`);
-	});
-	my.socket.on('close', function(code){
+	}
+	function onGameClose (code) {
 		JLog.error(`Game server #${my.id} closed: ${code}`);
 		my.socket.removeAllListeners();
 		delete my.socket;
-	});
-	my.socket.on('message', function(data){
+		JLog.info('Retry connect to 10 seconds');
+		setTimeout(() => {
+			my.socket = new WS(url, {perMessageDeflate: false, rejectUnauthorized: override});
+			my.socket.on('open', onGameOpen);
+			my.socket.on('error', onGameError);
+			my.socket.on('close', onGameClose);
+			my.socket.on('message', onGameMessage);
+		}, 10000);
+	}
+	function onGameMessage (data) {
 		var _data = data;
 		var i;
 
@@ -192,7 +200,11 @@ function GameClient(id, url){
 				break;
 			default:
 		}
-	});
+	}
+	my.socket.on('open', onGameOpen);
+	my.socket.on('error', onGameError);
+	my.socket.on('close', onGameClose);
+	my.socket.on('message', onGameMessage);
 }
 ROUTES.forEach(function(v){
 	require(`./routes/${v}`).run(Server, WebInit.page);
