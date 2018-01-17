@@ -122,7 +122,7 @@ DB.ready = function(){
 	}, 600000);
 	setInterval(function(){
 		gameServers.forEach(function(v){
-			if(v.socket) v.socket.send(`{"type":"seek"}`);
+			if(v.socket && v.connected) v.socket.send(`{"type":"seek"}`);
 			else v.seek = undefined;
 		});
 	}, 4000);
@@ -156,7 +156,12 @@ function GameClient(id, url){
 	var my = this;
 
 	my.id = id;
-	my.socket = new WS(url, { perMessageDeflate: false, rejectUnauthorized: false});
+	my.tryConnet = 0;
+	my.connected = false;
+	my.socket = new WS(url, {
+		perMessageDeflate: false,
+		rejectUnauthorized: override
+	});
 	
 	my.send = function(type, data){
 		if(!data) data = {};
@@ -166,22 +171,37 @@ function GameClient(id, url){
 	};
 	function onGameOpen () {
 		JLog.info(`Game server #${my.id} connected`);
+		my.connected = true;
 	}
-	function onGameError(err) {
+	function onGameError (err) {
+		my.connected = true;
+		my.tryConnet++
+
 		JLog.warn(`Game server #${my.id} has an error: ${err.toString()}`);
 	}
 	function onGameClose (code) {
+		my.connected = false;
+
 		JLog.error(`Game server #${my.id} closed: ${code}`);
 		my.socket.removeAllListeners();
 		delete my.socket;
-		JLog.info('Retry connect to 10 seconds');
-		setTimeout(() => {
-			my.socket = new WS(url, {perMessageDeflate: false, rejectUnauthorized: override});
-			my.socket.on('open', onGameOpen);
-			my.socket.on('error', onGameError);
-			my.socket.on('close', onGameClose);
-			my.socket.on('message', onGameMessage);
-		}, 10000);
+
+		if (my.tryConnet < 5) {
+			JLog.info(`Retry connect to 5 seconds, try: ${my.tryConnet}`);
+			setTimeout(() => {
+				my.socket = new WS(url, {
+					perMessageDeflate: false,
+					rejectUnauthorized: override,
+					handshakeTimeout: 2000
+				});
+				my.socket.on('open', onGameOpen);
+				my.socket.on('error', onGameError);
+				my.socket.on('close', onGameClose);
+				my.socket.on('message', onGameMessage);
+			}, 5000);
+		} else {
+			JLog.info('connect fail.');
+		}
 	}
 	function onGameMessage (data) {
 		var _data = data;
