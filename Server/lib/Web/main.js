@@ -188,7 +188,7 @@ function GameClient(id, url){
 		my.socket.removeAllListeners();
 		delete my.socket;
 
-		if (my.tryConnet < GLOBAL.GAME_FAIL_RETRY) {
+		if (my.tryConnet <= GLOBAL.GAME_FAIL_RETRY) {
 			JLog.info(`Retry connect to 5 seconds` + (GLOBAL.GAME_FAIL_RETRY > 0 ? `, try: ${my.tryConnet}` : ''));
 			setTimeout(() => {
 				my.socket = new WS(url, {
