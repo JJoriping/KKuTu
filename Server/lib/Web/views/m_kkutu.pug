@@ -18,7 +18,7 @@ extends m_layout
 
 mixin Dialog(id, w, h, t, nocls)
 	div.dialog(id=id, style=`width: ${w}px; height: ${h}px;`)
-		div(class=nocls ? 'no-close dialog-head' : 'dialog-head')
+		div(class=nocls ? 'no-close dialog-head' ㅁ: 'dialog-head')
 			div.dialog-title(style=`width: ${w - 20}px;`)!= t || ''
 		div.dialog-body(style='font-size: 13px;')
 			block
@@ -387,7 +387,6 @@ block Bottom
 		div.fb-like(data-href='http://jjo.kr/kkutu', data-width='300', data-layout='button_count', data-action='like', data-show-faces='true', data-share='true')
 	div.bottom-legal!= L('dictionarySupport')
 	div.bottom-legal!= L('etcSupport')
-	block Bottom
 	script.
 		function setParam(name, value) {
 		var l = window.location;
