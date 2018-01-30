@@ -160,9 +160,9 @@ function GameClient(id, url){
 	my.connected = false;
 	let override;
 	if(!url.match(/127\.0\.0\.[0-255]/)) {
-		override = false;
-	} else {
 		override = true;
+	} else {
+		override = false;
 	}
 	
 	my.socket = new WS(url, {
