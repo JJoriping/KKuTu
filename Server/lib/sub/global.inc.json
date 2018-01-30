@@ -15,7 +15,7 @@
 	"GOOGLE_RECAPTCHA_SITE_KEY": "Your Google Recaptcha site key Here",
 	"GOOGLE_RECAPTCHA_SECRET_KEY": "Your Google Recaptcha secret key Here",
 	"IS_SECURED": false,
-	"GAME_FAIL_RETRY": 0,
+	"GAME_SERVER_RETRY": 0,
 	"SSL_OPTIONS": {
 		"PRIVKEY": "Your SSL Private Key Here",
 		"CERT": "Your SSL Certificate Here",
