@@ -158,9 +158,16 @@ function GameClient(id, url){
 	my.id = id;
 	my.tryConnect = 0;
 	my.connected = false;
+	let override;
+	if(url.match(/127\.0\.0\.[0-255]/) != null) {
+		override = false;
+	} else {
+		override = true;
+	}
+	
 	my.socket = new WS(url, {
 		perMessageDeflate: false,
-		rejectUnauthorized: false
+		rejectUnauthorized: override
 	});
 	
 	my.send = function(type, data){
@@ -193,7 +200,7 @@ function GameClient(id, url){
 			setTimeout(() => {
 				my.socket = new WS(url, {
 					perMessageDeflate: false,
-					rejectUnauthorized: false,
+					rejectUnauthorized: override,
 					handshakeTimeout: 2000
 				});
 				my.socket.on('open', onGameOpen);
