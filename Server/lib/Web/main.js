@@ -159,7 +159,7 @@ function GameClient(id, url){
 	my.tryConnect = 0;
 	my.connected = false;
 	let override;
-	if(url.match(/127\.0\.0\.[0-255]/) != null) {
+	if(!url.match(/127\.0\.0\.[0-255]/)) {
 		override = false;
 	} else {
 		override = true;
