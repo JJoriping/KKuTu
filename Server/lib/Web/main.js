@@ -156,11 +156,11 @@ function GameClient(id, url){
 	var my = this;
 
 	my.id = id;
-	my.tryConnet = 0;
+	my.tryConnect = 0;
 	my.connected = false;
 	my.socket = new WS(url, {
 		perMessageDeflate: false,
-		rejectUnauthorized: override
+		rejectUnauthorized: false
 	});
 	
 	my.send = function(type, data){
@@ -176,7 +176,7 @@ function GameClient(id, url){
 	function onGameError (err) {
 		my.connected = true;
 		if (GLOBAL.GAME_SERVER_RETRY > 0 ) { 
-			my.tryConnet++
+			my.tryConnect++
 		}
 
 		JLog.warn(`Game server #${my.id} has an error: ${err.toString()}`);
@@ -188,12 +188,12 @@ function GameClient(id, url){
 		my.socket.removeAllListeners();
 		delete my.socket;
 
-		if (my.tryConnet <= GLOBAL.GAME_SERVER_RETRY) {
-			JLog.info(`Retry connect to 5 seconds` + (GLOBAL.GAME_SERVER_RETRY > 0 ? `, try: ${my.tryConnet}` : ''));
+		if (my.tryConnect <= GLOBAL.GAME_SERVER_RETRY) {
+			JLog.info(`Retry connect to 5 seconds` + (GLOBAL.GAME_SERVER_RETRY > 0 ? `, try: ${my.tryConnect}` : ''));
 			setTimeout(() => {
 				my.socket = new WS(url, {
 					perMessageDeflate: false,
-					rejectUnauthorized: override,
+					rejectUnauthorized: false,
 					handshakeTimeout: 2000
 				});
 				my.socket.on('open', onGameOpen);
