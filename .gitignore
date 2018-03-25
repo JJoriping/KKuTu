@@ -2,3 +2,5 @@ Client/node_modules
 Server/run.bat
 Server/node_modules
 Server/lib/node_modules
+Server/lib/sub/auth.json
+Server/lib/sub/global.json
