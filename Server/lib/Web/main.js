@@ -1,19 +1,24 @@
 /**
  * Rule the words! KKuTu Online
  * Copyright (C) 2017 JJoriping(op@jjo.kr)
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * 볕뉘 수정사항:
+ * Login 을 Passport 로 수행하기 위한 수정
  */
 
 var WS		 = require("ws");
@@ -25,19 +30,27 @@ var Parser	 = require("body-parser");
 var DDDoS	 = require("dddos");
 var Server	 = Express();
 var DB		 = require("./db");
-var JAuth	 = require("../sub/jauth");
+//볕뉘 수정 구문삭제 (28)
 var JLog	 = require("../sub/jjlog");
 var WebInit	 = require("../sub/webinit");
 var GLOBAL	 = require("../sub/global.json");
+var Secure = require('../sub/secure');
+//볕뉘 수정
+var passport = require('passport');
+//볕뉘 수정 끝
 var Const	 = require("../const");
+var https	 = require('https');
+var fs		 = require('fs');
 
 var Language = {
 	'ko_KR': require("./lang/ko_KR.json"),
 	'en_US': require("./lang/en_US.json")
 };
+//볕뉘 수정
 var ROUTES = [
-	"major", "consume", "admin"
+	"major", "consume", "admin", "login"
 ];
+//볕뉘 수정 끝
 var page = WebInit.page;
 var gameServers = [];
 
@@ -53,16 +66,40 @@ Server.set('view engine', "pug");
 Server.use(Express.static(__dirname + "/public"));
 Server.use(Parser.urlencoded({ extended: true }));
 Server.use(Exession({
-	/* use only for redis-installed*/
-	
+	/* use only for redis-installed
+
 	store: new Redission({
 		client: Redis.createClient(),
 		ttl: 3600 * 12
-	}),
+	}),*/
 	secret: 'kkutu',
 	resave: false,
 	saveUninitialized: true
 }));
+//볕뉘 수정
+Server.use(passport.initialize());
+Server.use(passport.session());
+Server.use((req, res, next) => {
+	if(req.session.passport) {
+		delete req.session.passport;
+	}
+	next();
+});
+Server.use((req, res, next) => {
+	if(Const.REDIRECT_HTTPS) {
+ 		if(req.protocol == 'http') {
+ 			let url = 'https://'+req.get('host')+req.path;
+ 			res.status(302).redirect(url);
+		} else {
+			next();
+		}
+	} else {
+		next();
+	}
+});
+if(GLOBAL.TRUST_PROXY) {
+	Server.set('trust proxy', GLOBAL.TRUST_PROXY)
+}
 /* use this if you want
 
 DDDoS = new DDDoS({
@@ -86,7 +123,7 @@ WebInit.init(Server, true);
 DB.ready = function(){
 	setInterval(function(){
 		var q = [ 'createdAt', { $lte: Date.now() - 3600000 * 12 } ];
-		
+
 		DB.session.remove(q).on();
 	}, 600000);
 	setInterval(function(){
@@ -96,14 +133,14 @@ DB.ready = function(){
 		});
 	}, 4000);
 	JLog.success("DB is ready.");
-	
+
 	DB.kkutu_shop_desc.find().on(function($docs){
 		var i, j;
-		
+
 		for(i in Language) flush(i);
 		function flush(lang){
 			var db;
-			
+
 			Language[lang].SHOP = db = {};
 			for(j in $docs){
 				db[$docs[j]._id] = [ $docs[j][`name_${lang}`], $docs[j][`desc_${lang}`] ];
@@ -111,22 +148,31 @@ DB.ready = function(){
 		}
 	});
 	Server.listen(3141);
+	if(Const.IS_SECURED) {
+		const options = Secure();
+		https.createServer(options, Server).listen(443);
+	}
 };
 Const.MAIN_PORTS.forEach(function(v, i){
 	var KEY = process.env['WS_KEY'];
-	
-	gameServers[i] = new GameClient(KEY, `ws://127.0.0.2:${v}/${KEY}`);
+	var protocol;
+	if(Const.IS_SECURED) {
+		protocol = 'wss';
+	} else {
+		protocol = 'ws';
+	}
+	gameServers[i] = new GameClient(KEY, `${protocol}://127.0.0.2:${v}/${KEY}`);
 });
 function GameClient(id, url){
 	var my = this;
-	
+
 	my.id = id;
-	my.socket = new WS(url, { perMessageDeflate: false });
+	my.socket = new WS(url, { perMessageDeflate: false, rejectUnauthorized: false});
 	
 	my.send = function(type, data){
 		if(!data) data = {};
 		data.type = type;
-		
+
 		my.socket.send(JSON.stringify(data));
 	};
 	my.socket.on('open', function(){
@@ -143,9 +189,9 @@ function GameClient(id, url){
 	my.socket.on('message', function(data){
 		var _data = data;
 		var i;
-		
+
 		data = JSON.parse(data);
-		
+
 		switch(data.type){
 			case "seek":
 				my.seek = data.value;
@@ -165,29 +211,20 @@ ROUTES.forEach(function(v){
 Server.get("/", function(req, res){
 	var server = req.query.server;
 	
-	if(req.query.code){ // 네이버 토큰
-		req.session.authType = "naver";
-		req.session.token = req.query.code;
-		res.redirect("/register");
-	}else if(req.query.token){ // 페이스북 토큰
-		req.session.authType = "facebook";
-		req.session.token = req.query.token;
-		res.redirect("/register");
-	}else{
-		DB.session.findOne([ '_id', req.session.id ]).on(function($ses){
-			// var sid = (($ses || {}).profile || {}).sid || "NULL";
-			if(global.isPublic){
-				onFinish($ses);
-				// DB.jjo_session.findOne([ '_id', sid ]).limit([ 'profile', true ]).on(onFinish);
-			}else{
-				if($ses) $ses.profile.sid = $ses._id;
-				onFinish($ses);
-			}
-		});
-	}
+	//볕뉘 수정 구문삭제(220~229, 240)
+	DB.session.findOne([ '_id', req.session.id ]).on(function($ses){
+		// var sid = (($ses || {}).profile || {}).sid || "NULL";
+		if(global.isPublic){
+			onFinish($ses);
+			// DB.jjo_session.findOne([ '_id', sid ]).limit([ 'profile', true ]).on(onFinish);
+		}else{
+			if($ses) $ses.profile.sid = $ses._id;
+			onFinish($ses);
+		}
+	});
 	function onFinish($doc){
 		var id = req.session.id;
-		
+
 		if($doc){
 			req.session.profile = $doc.profile;
 			id = $doc.profile.sid;
@@ -199,6 +236,7 @@ Server.get("/", function(req, res){
 			'_id': id,
 			'PORT': Const.MAIN_PORTS[server],
 			'HOST': req.hostname,
+			'PROTOCOL': Const.IS_SECURED ? 'wss' : 'ws',
 			'TEST': req.query.test,
 			'MOREMI_PART': Const.MOREMI_PART,
 			'AVAIL_EQUIP': Const.AVAIL_EQUIP,
@@ -219,93 +257,18 @@ Server.get("/", function(req, res){
 		});
 	}
 });
+
 Server.get("/servers", function(req, res){
 	var list = [];
-	
+
 	gameServers.forEach(function(v, i){
 		list[i] = v.seek;
 	});
 	res.send({ list: list, max: Const.KKUTU_MAX });
 });
 
-Server.get("/login", function(req, res){
-	if(global.isPublic){
-		page(req, res, "login", { '_id': req.session.id, 'text': req.query.desc });
-	}else{
-		var now = Date.now();
-		var id = req.query.id || "ADMIN";
-		var lp = {
-			id: id,
-			title: "LOCAL #" + id,
-			birth: [ 4, 16, 0 ],
-			_age: { min: 20, max: undefined }
-		};
-		DB.session.upsert([ '_id', req.session.id ]).set([ 'profile', JSON.stringify(lp) ], [ 'createdAt', now ]).on(function($res){
-			DB.users.update([ '_id', id ]).set([ 'lastLogin', now ]).on();
-			req.session.admin = true;
-			req.session.profile = lp;
-			res.redirect("/");
-		});
-	}
-});
-Server.get("/logout", function(req, res){
-	if(!req.session.profile){
-		return res.redirect("/");
-	}
-	JAuth.logout(req.session.profile).then(function(){
-		delete req.session.profile;
-		DB.session.remove([ '_id', req.session.id ]).on(function($res){
-			res.redirect("/");
-		});
-	});
-});
-Server.get("/register", function(req, res){
-	if(!req.session.token) return res.sendStatus(400);
-	
-	JAuth.login(req.session.authType, req.session.token, req.session.id, req.session.token2).then(function($profile){
-		var now = Date.now();
-		
-		if($profile.error) return res.sendStatus($profile.error);
-		if(!$profile.id) return res.sendStatus(401);
-		
-		$profile.sid = req.session.id;
-		req.session.admin = GLOBAL.ADMIN.includes($profile.id);
-		DB.session.upsert([ '_id', req.session.id ]).set({
-			'profile': $profile,
-			'createdAt': now
-		}).on();
-		DB.users.findOne([ '_id', $profile.id ]).on(function($body){
-			req.session.profile = $profile;
-			res.redirect("/");
-			DB.users.update([ '_id', $profile.id ]).set([ 'lastLogin', now ]).on();
-		});
-	});
-});
-Server.post("/login/google", function(req, res){
-	req.session.authType = "google";
-	req.session.token = req.body.it;
-	req.session.token2 = req.body.at;
-	res.sendStatus(200);
-});
-Server.post("/session", function(req, res){
-	var o;
-	
-	if(req.session.profile) o = {
-		authType: req.session.authType,
-		createdAt: req.session.createdAt,
-		profile: {
-			id: req.session.profile.id,
-			image: req.session.profile.image,
-			name: req.session.profile.title || req.session.profile.name,
-			sex: req.session.profile.sex
-		}
-	};
-	else o = { error: 404 };
-	res.json(o);
-});
-Server.post("/session/set", function(req, res){
-	res.sendStatus(200);
-});
+//볕뉘 수정 구문 삭제(274~353)
+
 Server.get("/legal/:page", function(req, res){
 	page(req, res, "legal/"+req.params.page);
 });

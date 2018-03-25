@@ -31,6 +31,8 @@ exports.TESTER = GLOBAL.ADMIN.concat([
 	"96346946",
 	"103339276222262423156"
 ]);
+exports.IS_SECURED = GLOBAL.IS_SECURED;
+exports.SSL_OPTIONS = GLOBAL.SSL_OPTIONS;
 exports.OPTIONS = {
 	'man': { name: "Manner" },
 	'ext': { name: "Injeong" },
@@ -79,7 +81,7 @@ exports.RULE = {
 	},
 	'ESH': { lang: "en",
 		rule: "Classic",
-		opts: [ "man","ext", "mis" ],
+		opts: [ "ext", "mis" ],
 		time: 1,
 		ai: true,
 		big: false,
@@ -240,31 +242,32 @@ exports.KO_INJEONG = [
 	"HDC"/*함대 컬렉션*/,
 	"HOS"/*히어로즈 오브 더 스톰*/,
 	/*신규주제*/
-	"WMV",
-	"WOW",
-	"TRR",
-	"STG",
-	"WST",
+	"WMV"/*외국 영화*/,
+	"WOW"/*월드 오브 워크래프트*/,
+	"TRR"/*테라리아*/,
+	"STG"/*스팀게임*/,
+	"WST"/*웹사이트*/,
 	"THP"/*동방프로젝트*/,
-	"MNM",
-	"PRN",
-	"CRZ",
-	"PKT",
-	"UTT",
-	"NYA",
-	"YTB"
+	"MNM"/*곡명*/,
+	"PRN"/*Project_N*/,
+	"CRZ"/*CrowZ*/,
+	"PKT"/*Prj_KT*/,
+	"UTT"/*우타이테*/,
+	"NYA"/*냐체*/,
+	"YTB"/*유튜버*/
 ];
 exports.EN_INJEONG = [
 	"LOL"/*리그 오브 레전드*/,
 	/*신규주제*/
-	"EAC"/*EZ2AC*/,
-	"MNM",
-	"DMX",
-	"RAK",
-	"ZHD",
-	"BMN",
-	"ACA",
-	"BMS"
+	"EAC"/*EZ2AC,3S*/,
+	"MNM"/*곡명*/,
+	"DMX"/*DJMAX*/,
+	"RAK"/*RAYARK (Cytus,Deemo,VOEZ)*/,
+	"ZHD"/*Projct ZHD (Zyon,HachiHachi,Dynamix)*/,
+	"BMN"/*BEMANI (beatmania,pop'n music,DanceDanceRevolution,Gitadora,pop'n stage,beatmania IIDX,DanceDanceRevolution Solo,Keyboardmania,beatmania III,DanceManiaX,ParaPara Paradise,MAMBO A GO GO,Toy'sMarch,DANCE 86.4,jubeat,REFLEC BEAT,DanceEvolution ARCADE,SOUND VOLTEX,Future TomTom,BeatStream,MÚSECA,NOSTALGIA)*/,
+	"ACA"/*Arcaea*/,
+	"BMS"/*BMS*/,
+	"TRR"/*테라리아*/
 ];
 exports.KO_THEME = [
 	"30"/*경제*/,

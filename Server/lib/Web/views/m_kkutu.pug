@@ -42,13 +42,14 @@ block Subject
 	
 block JS
 	script(type='text/javascript', src='/js/in_game_kkutu.min.js')
+	script(src='https://www.google.com/recaptcha/api.js')
 	
 block CSS
 	link(rel='stylesheet', href='/css/in_game_kkutu_shop.css')
 	
 block Jungle
 	span#PUBLIC= PUBLIC ? "true" : undefined
-	span#URL= `ws://${locals.HOST}:${locals.PORT}/${locals._id}`
+	span#URL= `${locals.PROTOCOL}://${locals.HOST}:${locals.PORT}/${locals._id}`
 	span#MOREMI_PART= locals.MOREMI_PART.join(',')
 	span#AVAIL_EQUIP= locals.AVAIL_EQUIP.join(',')
 	span#RULE= JSON.stringify(locals.RULE)
@@ -176,8 +177,8 @@ block Middle
 				option(value=90)
 				option(value=120)
 				option(value=150)
-				option(value=300)
-				option(value=600)
+				option(value=300, style='color: #4444FF')
+				option(value=600, style='color: #4444FF')
 		div.dialog-bar(style='height: 59px;')
 			h4(style='height: 45px;')= L('misc')
 			- for(var i in locals.OPTIONS)

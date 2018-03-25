@@ -62,7 +62,7 @@ exports.getTitle = function(){
 			data.push(arr);
 		}
 		my.game.lists = data;
-		R.go("①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑬⑭⑮ⓐⓑⓒⓓⓔ");
+		R.go("①②③④⑤⑥⑦⑧⑨⑩");
 	}
 	traverse.call(my, function(o){
 		o.game.spl = 0;

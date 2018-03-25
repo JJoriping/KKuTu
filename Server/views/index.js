@@ -49,8 +49,11 @@ ipcRenderer.on('log', (ev, level, msg) => {
 		logs--;
 		$(".log-item:first").remove();
 	}
-	msg = msg.toString().replace(/(error)/gi, `<label class="lt-error">$1</label>`);
-
+	msg = msg.toString()
+		.replace(/</g, "&lt;")
+		.replace(/&/g, "&amp;")
+		.replace(/(error)/gi, `<label class="lt-error">$1</label>`)
+	;
 	$stage.log.append($(`<div class="log-item log-${level}">${msg}</div>`));
 	$stage.log.scrollTop(99999999);
 });

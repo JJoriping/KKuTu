@@ -332,7 +332,7 @@ function getCFRewards(word, level, blend){
 		}
 		cost = Math.round(cost * 0.2);
 	}else{
-		R.push({ key: "dictPage", value: Math.round(f.len * 1), rate: 1 });
+		R.push({ key: "dictPage", value: Math.round(f.len * 0.6), rate: 1 });
 		R.push({ key: "boxB4", value: 1, rate: Math.min(1, f.lev / 7) });
 		if(f.lev >= 5){
 			R.push({ key: "boxB3", value: 1, rate: Math.min(1, f.lev / 15) });

@@ -14,14 +14,17 @@
 	
 	You should have received a copy of the GNU General Public License
 	along with this program. If not, see <http://www.gnu.org/licenses/>.
+//-
+	볕뉘 수정사항:
+	* Login 을 Passport 로 수행하기 위한 수정
 -
 	const MENU = [
 		{ key: 'HOME', sub: [
-			{ key: 'PKTMAIN', href: "http://prjkt.zz.am:3141/" },
+			{ key: 'PKTMAIN', href: "http://prjkt.zz.am/" },
 			{ key: 'SVLIST', href: "http://jjo.kr/kkutu/" }
 		]},
 		{ key: 'TSV', sub: [
-			{ key: 'LITE', href: "http://litekkutu.cf/" }
+			{ key: 'LITE', href: "http://litekkutu.xyz:90/" }
 		]},
 		{ key: 'EGG', sub: [
 			{ key: '20G', href: "/20000000000.html" },
@@ -29,7 +32,7 @@
 			{ key: 'RSH', href: "/red.html" }
 		]},
 		{ key: 'TPG', sub: [
-			{ key: 'NWK', href: "http://nekowiki.zz.am:81/" }
+			{ key: 'NWK', href: "http://nekowiki.zz.am/" }
 		]}
 	];
 	const PUBLIC = locals.published;
@@ -75,7 +78,9 @@ mixin MMenu()
 		div.menu-btn(id='menu-item-GAMES')
 			+FA('bars')
 			+separator(10)
-			div.menu-sub-btn(onclick='location.href = "http://prjkt.zz.am:3141/";', style='margin: 7px 0px; height: 25px;')!= L('HOME')
+			div.menu-sub-btn(onclick='location.href = "http://jjo.kr/";', style='margin: 7px 0px; height: 25px;')!= L('HOME')
+			div.menu-sub-btn(onclick='location.href = "http://kkutu.kr/";', style='margin: 7px 0px; height: 25px;')!= L('GAMES_KKUTU')
+			div.menu-sub-btn(onclick='location.href = "http://jjo.kr/gallery";', style='margin: 7px 0px; height: 25px;')!= L('GALLERY')
 		div#quick-search
 			input#quick-search-tf(placeholder=L('QUICK_HOLDER'))
 			button#quick-search-btn!= L('QUICK_BTN')
@@ -103,10 +108,10 @@ mixin PageHead(min)
 	script(type='text/javascript', src='/language/'+locals.page.replace("/", "_")+'/'+locals.lang)
 	
 	if PUBLIC && !SESSION.admin
-		script(type='text/javascript', src='/js/google.js')
+		//script(type='text/javascript', src='/js/google.js')
 	script(type='text/javascript', src='/js/global.min.js')
 	if !min
-		script(type='text/javascript', src='/js/facebook.js')
+		//script(type='text/javascript', src='/js/facebook.js')
 	if block
 		block
 	link(rel='stylesheet', href='/css/in_'+locals.page.replace("/", "_")+'.css')

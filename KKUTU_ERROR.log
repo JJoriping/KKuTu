@@ -187,4 +187,38 @@ TypeError: Cannot read property 'charCodeAt' of undefined
     at Timeout.my.roundReady [as _onTimeout] (G:\_kkutupriv\Server\lib\Game\kkutu.js:1139:13)
     at ontimeout (timers.js:488:11)
     at tryOnTimeout (timers.js:323:5)
-    at Timer.listOnTimeout (timers.js:283:5)
+    at Timer.listOnTimeout (timers.js:283:5):8496 [2018-1-19 08:57:43] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at G:\_kkutupriv\Server\lib\Game\games\jaqwi.js:62:26
+    at exports.Tail.go (G:\_kkutupriv\Server\lib\sub\lizard.js:43:16)
+    at G:\_kkutupriv\Server\lib\Game\games\jaqwi.js:249:21
+    at callback (G:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (G:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (G:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:115:13)
+    at Connection.emit (events.js:210:7)
+    at Socket.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2018-1-20 22:42:31] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at G:\_kkutupriv\Server\lib\Game\games\jaqwi.js:62:26
+    at exports.Tail.go (G:\_kkutupriv\Server\lib\sub\lizard.js:43:16)
+    at G:\_kkutupriv\Server\lib\Game\games\jaqwi.js:249:21
+    at callback (G:\_kkutupriv\Server\lib\sub\collection.js:316:13)
+    at Result.preCB (G:\_kkutupriv\Server\lib\sub\collection.js:298:6)
+    at Result.Query.handleReadyForQuery (G:\_kkutupriv\Server\lib\node_modules\pg\lib\query.js:144:10)
+    at Connection.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\client.js:180:19)
+    at emitOne (events.js:115:13)
+    at Connection.emit (events.js:210:7)
+    at Socket.<anonymous> (G:\_kkutupriv\Server\lib\node_modules\pg\lib\connection.js:133:12):8496 [2018-3-25 01:47:28] ERROR: Error: read ECONNRESET
+Error: read ECONNRESET
+    at exports._errnoException (util.js:1022:11)
+    at TCP.onread (net.js:610:25):8506 [2018-3-25 01:47:28] ERROR: Error: read ECONNRESET
+Error: read ECONNRESET
+    at exports._errnoException (util.js:1022:11)
+    at TCP.onread (net.js:610:25):8507 [2018-3-25 01:47:28] ERROR: Error: read ECONNRESET
+Error: read ECONNRESET
+    at exports._errnoException (util.js:1022:11)
+    at TCP.onread (net.js:610:25):8497 [2018-3-25 01:47:30] ERROR: Error: read ECONNRESET
+Error: read ECONNRESET
+    at exports._errnoException (util.js:1022:11)
+    at TCP.onread (net.js:610:25)

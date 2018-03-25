@@ -208,8 +208,21 @@ function checkAge(){
 function onMessage(data){
 	var i;
 	var $target;
-	
-	switch(data.type){
+
+    switch (data.type) {
+        case 'recaptcha':
+            var $introText = $("#intro-text");
+            $introText.empty();
+            $introText.html('게스트는 캡챠 인증이 필요합니다.' +
+                '<br/>로그인을 하시면 캡챠 인증을 건너뛰실 수 있습니다.' +
+                '<br/><br/>');
+            $introText.append($('<div class="g-recaptcha" id="recaptcha" style="display: table; margin: 0 auto;"></div>'));
+
+            grecaptcha.render('recaptcha', {
+                'sitekey': data.siteKey,
+                'callback': recaptchaCallback
+            });
+            break;
 		case 'welcome':
 			$data.id = data.id;
 			$data.guest = data.guest;
@@ -482,6 +495,9 @@ function onMessage(data){
 					alert("생년월일이 올바르게 입력되지 않아 게임 이용이 제한되었습니다. 잠시 후 다시 시도해 주세요.");
 					break;
 				}
+			} else if (data.code === 447) {
+				alert("자동화 봇 방지를 위한 캡챠 인증에 실패했습니다. 메인 화면에서 다시 시도해 주세요.");
+				break;
 			}
 			alert("[#" + data.code + "] " + L['error_'+data.code] + i);
 			break;
@@ -489,6 +505,10 @@ function onMessage(data){
 			break;
 	}
 	if($data._record) recordEvent(data);
+
+    function recaptchaCallback(response) {
+        ws.send(JSON.stringify({type: 'recaptcha', token: response}));
+    }
 }
 function welcome(){
 	playBGM('lobby');
@@ -518,7 +538,8 @@ function runCommand(cmd){
 		'/ㄷㄷ': L['cmd_ee'],
 		'/무시': L['cmd_wb'],
 		'/차단': L['cmd_shut'],
-		'/id': L['cmd_id']
+		'/id': L['cmd_id'],
+		'/exp': L['cmd_exp']
 	};
 	
 	switch(cmd[0].toLowerCase()){
@@ -576,6 +597,16 @@ function runCommand(cmd){
 			break;
 		default:
 			for(i in CMD) notice(CMD[i], i);
+		case "/경험치":
+		case "/exp":
+			if(cmd[1]){
+			lv = cmd[1]
+			notice(cmd[1] + '레벨의 필요 경험치 : ' + Math.round(
+				(!(lv%5)*0.3 + 1) * (!(lv%15)*0.4 + 1) * (!(lv%45)*0.5 + 1) * (
+				120 + Math.floor(lv/5)*60 + Math.floor(lv*lv/225)*120 + Math.floor(lv*lv/2025)*180
+				)
+			))
+			}
 			break;
 	}
 }
@@ -944,7 +975,6 @@ function userListBar(o, forInvite){
 function addonNickname($R, o){
 	if(o.equip['NIK']) $R.addClass("x-" + o.equip['NIK']);
 	if(o.equip['BDG'] == "b1_gm") $R.addClass("x-gm");
-	if(o.equip['BDG'] == "b1_pt") $R.addClass("x-pt");
 }
 function updateRoomList(refresh){
 	var i;
@@ -1336,7 +1366,7 @@ function drawCharFactory(){
 		var bd = $data.box[id];
 		var i, c = 0;
 		
-		if($data._tray.length >= 10) return fail(435);
+		if($data._tray.length >= 6) return fail(435);
 		for(i in $data._tray) if($data._tray[i] == id) c++;
 		if(bd - c > 0){
 			$data._tray.push(id);

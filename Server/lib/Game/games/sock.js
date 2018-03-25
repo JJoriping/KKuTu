@@ -41,7 +41,7 @@ exports.getTitle = function(){
 	var my = this;
 	
 	setTimeout(function(){
-		R.go("①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑬⑭⑮ⓐⓑⓒⓓⓔ");
+		R.go("①②③④⑤⑥⑦⑧⑨⑩");
 	}, 500);
 	return R;
 };

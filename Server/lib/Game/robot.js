@@ -22,9 +22,8 @@ var len = Number(process.argv[2] || 10);
 DB.ready = function(){
 	var rank = 0;
 	var phit = 0;
-	var l = my.rule;
 	
-	DB.kkutu[l.lang].find([ 'hit', { $gt: 0 } ]).sort([ 'hit', -1 ]).limit(len).on(function($res){
+	DB.kkutu['ko'].find([ 'hit', { $gt: 0 } ]).sort([ 'hit', -1 ]).limit(len).on(function($res){
 		var i, $o, c;
 		var res = [];
 		

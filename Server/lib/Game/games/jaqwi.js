@@ -21,8 +21,8 @@ var Lizard = require('../../sub/lizard');
 var DB;
 var DIC;
 
-var ROBOT_CATCH_RATE = [ 0.99, 0.99, 0.99, 0.99, 0.99 ];
-var ROBOT_TYPE_COEF = [ 0, 0, 0, 0, 0 ];
+var ROBOT_CATCH_RATE = [ 0.1, 0.3, 0.5, 0.7, 0.99 ];
+var ROBOT_TYPE_COEF = [ 2000, 1200, 800, 300, 0 ];
 var robotTimers = {};
 
 exports.init = function(_DB, _DIC){
@@ -35,7 +35,7 @@ exports.getTitle = function(){
 	
 	my.game.done = [];
 	setTimeout(function(){
-		R.go("①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮ⓐⓑⓒⓓⓔ");
+		R.go("①②③④⑤⑥⑦⑧⑨⑩");
 	}, 500);
 	return R;
 };
