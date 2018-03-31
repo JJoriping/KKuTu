@@ -25,7 +25,7 @@ var Server;
 var HTTPS_Server
 
 if(Const.IS_SECURED) {
-	const options = secure();
+	const options = Secure();
 	HTTPS_Server = https.createServer(options)
 		.listen(global.test ? (Const.TEST_PORT + 416) : process.env['KKUTU_PORT']);
 	Server = new WebSocket.Server({server: HTTPS_Server});
@@ -242,14 +242,14 @@ KKuTu.onClientMessage = function($c, msg){
 			if(isNaN(msg.time)) stable = false;
 			
 			if(stable){
-				if(msg.title.length > 50) stable = false;
-				if(msg.password.length > 50) stable = false;
-				if(msg.limit < 2 || msg.limit > 16){
+				if(msg.title.length > 20) stable = false;
+				if(msg.password.length > 20) stable = false;
+				if(msg.limit < 2 || msg.limit > 8){
 					msg.code = 432;
 					stable = false;
 				}
 				if(msg.mode < 0 || msg.mode >= MODE_LENGTH) stable = false;
-				if(msg.round < 1 || msg.round > 20){
+				if(msg.round < 1 || msg.round > 10){
 					msg.code = 433;
 					stable = false;
 				}

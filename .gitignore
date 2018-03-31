@@ -1,12 +1,9 @@
 Client/node_modules
-Client/__pycache__
 Server/run.bat
 Server/node_modules
 Server/lib/node_modules
-Server/lib/sub_old
-Server/lib/Game_old
-Server/lib/Web/lib_old
-Server/lib/Web/views_old
-Server/lib/Web/public/js_old
+Server/lib/Web/public/js/**
+!Server/lib/Web/public/js/jquery.js
 Server/lib/sub/auth.json
 Server/lib/sub/global.json
+.vscode

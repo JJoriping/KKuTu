@@ -16,13 +16,5 @@
     "electron": "^1.4.15",
     "electron-packager": "^8.5.1",
     "electron-pug": "^1.5.1"
-  },
-  "dependencies": {
-    "passport": "^0.4.0",
-    "passport-facebook": "^2.1.1",
-    "passport-google": "^0.3.0",
-    "passport-kakao": "0.0.5",
-    "passport-naver": "^1.0.6",
-    "passport-twitter": "^1.0.4"
   }
 }

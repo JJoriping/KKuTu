@@ -22,7 +22,6 @@
  */
 
 const Const = require('../const')
-const File = require('fs')
 
 module.exports = () => {
     const options = {};

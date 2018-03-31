@@ -538,8 +538,7 @@ function runCommand(cmd){
 		'/ㄷㄷ': L['cmd_ee'],
 		'/무시': L['cmd_wb'],
 		'/차단': L['cmd_shut'],
-		'/id': L['cmd_id'],
-		'/exp': L['cmd_exp']
+		'/id': L['cmd_id']
 	};
 	
 	switch(cmd[0].toLowerCase()){
@@ -597,16 +596,6 @@ function runCommand(cmd){
 			break;
 		default:
 			for(i in CMD) notice(CMD[i], i);
-		case "/경험치":
-		case "/exp":
-			if(cmd[1]){
-			lv = cmd[1]
-			notice(cmd[1] + '레벨의 필요 경험치 : ' + Math.round(
-				(!(lv%5)*0.3 + 1) * (!(lv%15)*0.4 + 1) * (!(lv%45)*0.5 + 1) * (
-				120 + Math.floor(lv/5)*60 + Math.floor(lv*lv/225)*120 + Math.floor(lv*lv/2025)*180
-				)
-			))
-			}
 			break;
 	}
 }

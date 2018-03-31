@@ -86,10 +86,10 @@ Server.use((req, res, next) => {
 	next();
 });
 Server.use((req, res, next) => {
-	if(Const.REDIRECT_HTTPS) {
- 		if(req.protocol == 'http') {
- 			let url = 'https://'+req.get('host')+req.path;
- 			res.status(302).redirect(url);
+	if(Const.IS_SECURED) {
+		if(req.protocol == 'http') {
+			let url = 'https://'+req.get('host')+req.path;
+			res.status(302).redirect(url);
 		} else {
 			next();
 		}
@@ -97,9 +97,7 @@ Server.use((req, res, next) => {
 		next();
 	}
 });
-if(GLOBAL.TRUST_PROXY) {
-	Server.set('trust proxy', GLOBAL.TRUST_PROXY)
-}
+//볕뉘 수정 끝
 /* use this if you want
 
 DDDoS = new DDDoS({
@@ -147,7 +145,7 @@ DB.ready = function(){
 			}
 		}
 	});
-	Server.listen(3141);
+	Server.listen(80);
 	if(Const.IS_SECURED) {
 		const options = Secure();
 		https.createServer(options, Server).listen(443);

@@ -1,6 +1,6 @@
 {
 	"GLOBAL": {
-		"GPL": "<div style='color: #666;'>글자로 놀자! 끄투 온라인 Copyright (C) 2017-2018 CrowZ(preta@crowz.r-e.kr)<br>이 프로그램은 제품에 대한 어떠한 형태의 보증도 제공되지 않습니다.<br>이 프로그램은 자유 소프트웨어이며 배포 규정을 만족시키는 조건 아래 자유롭게 재배포할 수 있습니다.<br>이에 대한 자세한 사항은 본 프로그램의 구현을 담은 다음 레포지토리에서 확인하십시오: <a target='_blank' href='https://github.com/Preta-Crowz/Prj_KT'>https://github.com/Preta-Crowz/Prj_KT</a></div>",
+		"GPL": "<div style='color: #666;'>글자로 놀자! 끄투 온라인 Copyright (C) {년도} {배포자}({이메일 등})<br>이 프로그램은 제품에 대한 어떠한 형태의 보증도 제공되지 않습니다.<br>이 프로그램은 자유 소프트웨어이며 배포 규정을 만족시키는 조건 아래 자유롭게 재배포할 수 있습니다.<br>이에 대한 자세한 사항은 본 프로그램의 구현을 담은 다음 레포지토리에서 확인하십시오: <a target='_blank' href='{이 서버의 소스 코드 위치}'>{이 서버의 소스 코드 위치}</a></div>",
 
 		"CREATOR":	"개발자 블로그",
 		"HOME":		"FA{home}",
@@ -12,24 +12,7 @@
 		"ETC":		"???",
 		"ETC_ABOUT":	"쪼롤이 뭐지",
 		"SETTING":	"설정",
-	
-		"HOME":		"FA{home}",
-		"PKTMAIN":	"Prj_KT 메인",
-		"SVLIST":	"프리서버 리스트",
 		
-		"TSV":	"제휴 서버",
-		"LITE":	"라이트끄투",
-
-		"EGG":	"　",
-		"20G":	"이백억",
-		"PRN":	"Project_N",
-		"RSH":	"RED SHD",
-
-		"TPG":	"제휴 사이트",
-		"NWK":	"네코위키",
-
-		"NCAFE":	"네이버 카페",		
-
 		"GLOBAL_NOTICE": "클릭하여 닫기",
 	
 		"VERSION":	"버전",
@@ -123,15 +106,14 @@
 		"500_e": "예기치 못한 원인으로 내부 서버가 작동을 중지했습니다."
 	},
 	"login": {
-		"title": "Prj_KT에 로그인",
+		"title": "로그인",
 		"loginWith": "로그인 방법을 선택하세요.",
 		"withNaver": "네이버 아이디로 로그인",
 		"withFacebook": "페이스북 아이디로 로그인",
 		"withGoogle": "구글 아이디로 로그인",
 		"withTwitter": "트위터 아이디로 로그인",
 		"withKakao": "카카오 아이디로 로그인",
-		"login_kkutu": "글자로 놀자! 끄투 온라인을 이용하시려면 로그인을 해 주세요.",
-		"loginLegal": "로그인이 이루어지면 prjkt.zz.am에서 공지하는 <a href='/legal/agreement' target='_blank'>서비스 이용 약관</a> 및 <a href='/legal/privacy' target='_blank'>개인정보 취급 방침</a>에 동의하게 됩니다."
+		"login_kkutu": "글자로 놀자! 끄투 온라인을 이용하시려면 로그인을 해 주세요."
 	},
 	"loginfail": {
 		"title": "로그인 실패",
@@ -139,8 +121,8 @@
 		"login": "로그인"
 	},
 	"kkutu": {
-		"title": "글자로 놀자! 프로젝트 끄투",
-		"version": "P 0.0.5 Alpha Build 1 / K 2.5.1",
+		"title": "글자로 놀자! 끄투 온라인",
+		"version": "2.5.1",
 		
 		"meta_desc": "온라인 끝말잇기, 앞말잇기, 자음퀴즈, 십자말풀이, 타자 대결까지! 끄투에서 어휘력의 제왕이 되어 보세요.",
 		"meta_keys": "끄투,kkutu,끝말잇기,온라인,웹,쿵쿵따,영어끝말잇기,영어쿵쿵따,시리토리,끝말잇기사이트,자음퀴즈,초성퀴즈,자퀴,십자말풀이,가로세로,타자,타자연습,앞말잇기",
@@ -149,26 +131,26 @@
 		"serverList": "서버 목록",
 		"serverRefresh": "서버 목록을 다시 불러옵니다.",
 		"serverWait": "잠시 기다려 주세요.",
-		"server_0": "알파",
-		"server_1": "베타",
-		"server_2": "감마",
-		"server_3": "델타",
-		"server_4": "엡실론",
-		"server_5": "제타",
-		"server_6": "에타",
-		"server_7": "세타",
-		"server_8": "요타",
-		"server_9": "카파",
-		"server_10": "람다",
-		"server_11": "뮤",
-		"server_12": "뉴",
-		"server_13": "크시",
-		"server_14": "오미크론",
-		"server_15": "파이",
-		"server_16": "로",
-		"server_17": "시그마",
-		"server_18": "타우",
-		"server_19": "입실론",
+		"server_0": "감자",
+		"server_1": "냉이",
+		"server_2": "다래",
+		"server_3": "레몬",
+		"server_4": "망고",
+		"server_5": "보리",
+		"server_6": "상추",
+		"server_7": "아욱",
+		"server_8": "자두",
+		"server_9": "참외",
+		"server_10": "커피",
+		"server_11": "토란",
+		"server_12": "포도",
+		"server_13": "호박",
+		"server_14": "꽈리",
+		"server_15": "딸기",
+		"server_16": "뽕잎",
+		"server_17": "쑥갓",
+		"server_18": "찔레",
+		"server_19": "고구마",
 		"serverEnter": "접속",
 		
 		"websocketUnsupport": "본 게임은 Internet Explorer(10), 크롬(16), 파이어폭스(11), 오페라(12.1), 사파리(6) 이상의 버전에서 지원합니다!<br>브라우저를 업데이트해 주세요.",
@@ -183,7 +165,7 @@
 		"error_full": "서버 제한 인원을 초과했습니다... 잠시 후 접속해 주세요!!!",
 		"error_400": "잘못된 접근입니다.",
 		"error_401": "손님 계정은 게임 관전만 가능합니다.\n우측 상단의 로그인 단추를 눌러 로그인해 보세요!",
-		"error_402": "손님 계정은 알파 서버에만 접속이 가능합니다.\n우측 상단의 로그인 단추를 눌러 로그인해 보세요!",
+		"error_402": "손님 계정은 감자 서버에만 접속이 가능합니다.\n우측 상단의 로그인 단추를 눌러 로그인해 보세요!",
 		"error_403": "비밀번호가 틀렸습니다.",
 		"error_404": "입장 가능한 방을 찾을 수 없습니다. 새 방을 생성합니까?",
 		"error_405": "해당 사용자를 찾을 수 없습니다.",
@@ -215,7 +197,7 @@
 		"error_432": "방 구성이 잘못되었습니다. 플레이어 수를 다시 설정해 주세요.",
 		"error_433": "방 구성이 잘못되었습니다. 라운드 수를 다시 설정해 주세요.",
 		"error_434": "더 이상 사용할 수 없습니다.",
-		"error_435": "글자 조각은 한번에 최대 10개까지 조합할 수 있습니다.",
+		"error_435": "글자 조각은 한번에 최대 6개까지 조합할 수 있습니다.",
 		"error_436": "사전에 등재된 단어로만 조합할 수 있습니다.",
 		"error_437": "3 라운드 연속으로 턴을 넘기지 않아 방에서 퇴장되었습니다.",
 		"error_438": "게임 중에는 이용할 수 없습니다.",
@@ -404,28 +386,6 @@
 		"theme_KMV": "한국 영화",
 		"theme_HDC": "함대 컬렉션",
 		"theme_HOS": "히어로즈 오브 더 스톰",
-
-		"theme_WMV": "WIP_ThemeCode_WMV",
-		"theme_WOW": "WIP_ThemeCode_WOW",
-		"theme_TRR": "WIP_ThemeCode_TRR",
-		"theme_STG": "WIP_ThemeCode_STG",
-		"theme_WST": "WIP_ThemeCode_WST",
-		"theme_THP": "동방프로젝트",
-		"theme_MNM": "WIP_ThemeCode_MNM",
-		"theme_PRN": "WIP_ThemeCode_PRN",
-		"theme_CRZ": "WIP_ThemeCode_CRZ",
-		"theme_PKT": "WIP_ThemeCode_PKT",
-		"theme_UTT": "WIP_ThemeCode_UTT",
-		"theme_NYA": "WIP_ThemeCode_NYA",
-		"theme_YTB": "WIP_ThemeCode_YTB",
-
-		"theme_EAC": "EZ2AC",
-		"theme_DMX": "WIP_ThemeCode_DMX",
-		"theme_RAK": "WIP_ThemeCode_RAK",
-		"theme_ZHD": "WIP_ThemeCode_ZHD",
-		"theme_BMN": "WIP_ThemeCode_BMN",
-		"theme_ACA": "WIP_ThemeCode_ACA",
-		"theme_BMS": "WIP_ThemeCode_BMS",
 		
 		"class_1": "명",
 		"class_2": "대명",
@@ -605,7 +565,6 @@
 		"cmd_wb": "(/wb <i>대상</i>) 대상의 귓속말을 무시합니다. 무시된 상태에서 이 명령어를 다시 사용하면 무시가 해제됩니다.",
 		"cmd_shut": "(/shut <i>대상</i>) 대상의 모든 대화를 차단합니다. 차단된 상태에서 이 명령어를 다시 사용하면 차단이 해제됩니다.",
 		"cmd_id": "(/id <i>대상</i>) 대상의 식별 번호를 얻습니다.",
-		"cmd_exp": "(/exp, /경험치 <i>레벨</i>) 해당 레벨로 올라가기 위한 경험치를 출력합니다. 기준은 해당 레벨의 바로 아래 레벨입니다.",
 		
 		"myId": "내 식별 번호: ",
 		"send": "전송",

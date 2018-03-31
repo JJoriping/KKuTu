@@ -159,7 +159,7 @@ block Middle
 			input#room-pw(type='password', placeholder=L('password'), maxlength=20)
 		div.dialog-bar
 			h4= L('userLimit')
-			input#room-limit(type='number', min=2, max=16, step=1, value=8)
+			input#room-limit(type='number', min=2, max=8, step=1, value=8)
 		div.dialog-bar
 			h4= L('gameMode')
 			select#room-mode
@@ -184,7 +184,7 @@ block Middle
 			h4#game-mode-expl.dialog-bar-value(style='width: 100%; font-size: 11px;')
 		div.dialog-bar
 			h4= L('numRound')
-			input#room-round(type='number', min=1, max=20, step=1, value=5)
+			input#room-round(type='number', min=1, max=10, step=1, value=5)
 		div.dialog-bar
 			h4= L('roundTime')
 			select#room-time
@@ -194,8 +194,6 @@ block Middle
 				option(value=90)
 				option(value=120)
 				option(value=150)
-				option(value=300, style='color: #4444FF')
-				option(value=600, style='color: #4444FF')
 		div.dialog-bar(style='height: 59px;')
 			h4(style='height: 45px;')= L('misc')
 			- for(var i in locals.OPTIONS)
