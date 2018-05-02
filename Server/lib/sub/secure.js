@@ -27,6 +27,7 @@ module.exports = () => {
     const options = {};
     if(Const.SSL_OPTIONS.isPFX == true) {
         options.pfx = File.readFileSync(Const.SSL_OPTIONS.PFX);
+        options.passphrase = Const.SSL_OPTIONS.PFXPass
     } else {
         options.key = File.readFileSync(Const.SSL_OPTIONS.PRIVKEY);
         options.cert = File.readFileSync(Const.SSL_OPTIONS.CERT);

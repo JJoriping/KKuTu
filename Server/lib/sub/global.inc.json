@@ -21,6 +21,7 @@
 		"CERT": "Your SSL Certificate Here",
 		"CA": "Your SSL CA-Bundle Here",
 		"PFX": "Your PFX Bundle Here",
+		"PFXPass": "Your PFX Passphrase here",
 		"isPFX": false,
 		"isCA": false
 	}
