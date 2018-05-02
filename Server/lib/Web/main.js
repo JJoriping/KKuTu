@@ -80,7 +80,7 @@ Server.use((req, res, next) => {
 	next();
 });
 Server.use((req, res, next) => {
-	if(Const.IS_SECURED) {
+	if(Const.REDIRECT_HTTPS) {
 		if(req.protocol == 'http') {
 			let url = 'https://'+req.get('host')+req.path;
 			res.status(302).redirect(url);
