@@ -370,6 +370,95 @@ iframe{
 			overflow: hidden;
 			background-color: #111111;
 		}
+		.tools{
+			margin: 00px 10px 0px 10px;
+			width: 225px;
+			display: none;
+			background-color: #eeeeee;
+			border: 1px solid #000;
+			border-radius: 10px;
+			padding: 20px;
+			box-shadow: 0px 1px 1px #141414;
+		}
+	#drawing {
+		font-size: 14px;
+		margin-bottom: 10px;
+		display: block;
+	}
+	#drawing-title {
+		font-size: 14px;
+		margin-bottom: 10px;
+		display: block;
+		overflow-x: scroll;
+		height: 34px;
+		white-space: nowrap;
+	}
+	#themeis {
+		font-size: 14px;
+		margin-bottom: 10px;
+		display: block;
+	}
+	#themeis-title {
+		font-size: 14px;
+		margin-bottom: 10px;
+		display: block;
+	}
+	.button-color {
+		border: none;
+		width: 50px;
+		height: 30px;
+	}
+	.palette {
+		background-color: #DEB887;
+		border: 1px solid #000;
+		border-radius: 10px;
+		box-shadow: 0px 1px 1px #141414;
+		padding: 5px 5px 5px 5px;
+		margin-top: 0px;
+		margin-bottom: 10px;
+	}
+	.palette div {
+		float: left;
+		width: 60px;
+		margin: 5px 5px 5px 5px;
+	}
+	.button-color#color-red {
+		background: #DEB887 url('/img/kkutu/paint_red.png') no-repeat center;
+	}
+	.button-color#color-orange {
+		background: #DEB887 url('/img/kkutu/paint_orange.png') no-repeat center;
+	}
+	.button-color#color-yellow {
+		background: #DEB887 url('/img/kkutu/paint_yellow.png') no-repeat center;
+	}
+	.button-color#color-green {
+		background: #DEB887 url('/img/kkutu/paint_green.png') no-repeat center;
+	}
+	.button-color#color-blue {
+		background: #DEB887 url('/img/kkutu/paint_blue.png') no-repeat center;
+	}
+	.button-color#color-indigo {
+		background: #DEB887 url('/img/kkutu/paint_indigo.png') no-repeat center;
+	}
+	.button-color#color-violet {
+		background: #DEB887 url('/img/kkutu/paint_violet.png') no-repeat center;
+	}
+	.button-color#color-black {
+		background: #DEB887 url('/img/kkutu/paint_black.png') no-repeat center;
+	}
+	.button-color#color-white {
+		background: #DEB887 url('/img/kkutu/paint_white.png') no-repeat center;
+	}
+	.hint-item{
+		padding: 5px;
+		border-radius: 5px;
+		margin: 1px 0px;
+		color: #EEEEEE;
+		font-size: 13px;
+		max-height: 63px;
+		overflow: hidden;
+		background-color: #111111;
+	}
 	.b-left{
 		padding: 5px;
 		margin-top: 25px;
@@ -417,6 +506,7 @@ iframe{
 	}
 	.jjoriping{ width: 500px; }
 	.cw.jjoriping{ margin-top: -10px; width: 322px; }
+	.dg.jjoriping{ margin-left: -25.8em }
 		.jjoObj{ position: relative; }
 		.jjoEyeL{ top: 11px; left: 0px; }
 		.jjoNose{ top: 9px; left: 181px; }
@@ -507,13 +597,21 @@ iframe{
 	.rounds{
 		margin-top: -130px;
 		width: 990px;
+		margin: auto;
 		color: #FFFFFF;
 		text-align: center;
 		text-shadow: 0px 1px 1px #141414;
 	}
 	.cw.rounds{ margin-top: -380px; }
+	.dg.rounds{
+		margin-left: -5.0em;
+		width: 100% !important;
+		margin: auto;
+	}
+	.painter.rounds{ margin-left: -1.5em !important;}
 		.rounds label{ margin: 0px 3px; }
 		.cw.rounds label{ cursor: pointer; }
+		.dg.rounds label{ cursor: default !important; }
 		.rounds-current{ color: #FFFF3B; font-size: 16px; }
 		.round-effect{ animation: RoundEffect 0.8s ease 1; }
 	.history-holder{
@@ -611,6 +709,12 @@ iframe{
 			margin-top: 0px;
 			height: 177px;
 			background-color: #DDFFDD;
+		}
+		.game-user-drawing{
+			animation: CurrentBlink 2s linear infinite;
+			margin-top: 0px;
+			height: 177px;
+			background-color: #9fd1f1;
 		}
 		.game-user-bomb{ border-color: #FF6666; }
 			.game-user-image{ margin: 3px 5px; width: 100px; height: 100px; }
@@ -909,4 +1013,8 @@ iframe{
 	0%		{ margin-top: -80px; font-size: 24px; opacity: 1; }
 	10%		{ margin-top: -90px; font-size: 30px; opacity: 0.9; }
 	100%	{ margin-top: -25px; font-size: 20px; opacity: 0.1; }
+}
+
+#canvas {
+	background-color: #fff;
 }

@@ -321,7 +321,7 @@ exports.Agent = function(type, origin){
 						_my.findLimit = 1;
 					case "find":
 						sql = Escape("SELECT %s FROM %I", sqlSelect(_my.second), col);
-						if(q) sql += Escape(" WHERE %s", sqlWhere(q));
+						if(q) sql += Escape(" WHERE %s", sqlWhere(q).replace(/"([a-zA-Z]+)\(([a-zA-Z0-9_]+)\)"/g, '$1($2)'));
 						if(_my.sorts) sql += Escape(" ORDER BY %s", _my.sorts.map(function(item){
 							return item[0] + ((item[1] == 1) ? ' ASC' : ' DESC');
 						}).join(','));
