@@ -20,7 +20,7 @@ var WebSocket = require('ws');
 var File = require('fs');
 var Const = require("../const");
 var https = require('https');
-var secure = require('../sub/secure');
+var Secure = require('../sub/secure');
 var Server;
 var HTTPS_Server
 
