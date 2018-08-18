@@ -46,9 +46,9 @@ function process(req, accessToken, MainDB, $p, done) {
     MainDB.users.findOne([ '_id', $p.id ]).on(function($body){
         req.session.profile = $p;
         MainDB.users.update([ '_id', $p.id ]).set([ 'lastLogin', now ]).on();
-    });
 
-    done(null, $p);
+        done(null, $p);
+    });
 }
 
 exports.run = (Server, page) => {
