@@ -20,5 +20,10 @@
 		"isPFX": false,
 		"isCA": false
 	},
-	"MAX_USERS": 400
+	"MAX_USERS": 400,
+	"CUSTOM_OG": false,
+	"OG_IMAGE": "OpenGraph Image URL Here",
+	"OG_URL": "OpenGraph URL Here",
+	"OG_TITLE": "OpenGraph Title Here",
+	"OG_DESC": "OpenGraph Description Here"
 }
