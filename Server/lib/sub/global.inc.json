@@ -19,5 +19,6 @@
 		"PFX": "Your PFX Bundle Here",
 		"isPFX": false,
 		"isCA": false
-	}
+	},
+	"MAX_USERS": 400
 }
