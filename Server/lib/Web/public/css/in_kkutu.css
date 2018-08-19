@@ -1014,3 +1014,6 @@ iframe{
 	10%		{ margin-top: -95px; font-size: 36px; opacity: 0.95; }
 	100%	{ margin-top: -25px; font-size: 20px; opacity: 0.1; }
 }
+#canvas {
+	background-color: #fff;
+}
