@@ -71,7 +71,7 @@ exports.roundReady = function(){
 			my.game.done.push($ans._id);
 			$ans.mean = ($ans.mean.length > 20) ? $ans.mean : getConsonants($ans._id, Math.round($ans._id.length / 2));
 			my.game.hint = getHint($ans, my.game.theme);
-			my.game.painter = (my.game.firstWinner ? my.game.firstWinner  : my.players[getRandomIntInclusive(0, my.players.length - 1)]);
+			my.game.painter = (my.game.firstWinner ? my.game.firstWinner  : my.game.seq[getRandomIntInclusive(0, my.game.seq.length - 1)]);
 			my.game.firstWinner = null;
 			my.byMaster('roundReady', {
 				round: my.game.round,
