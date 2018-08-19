@@ -22,9 +22,9 @@
  * kkutu-lib 모듈에 호환되도록 수정
  */
 
-const Const = require('../const');
-const lib = require('kkutu-lib');
-const Lizard = lib.lizard;
+const Const = require('../../const');
+const Lizard = require('../../sub/lizard');
+
 let DB;
 let DIC;
 
