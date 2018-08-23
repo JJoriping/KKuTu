@@ -1,6 +1,9 @@
 {
-	"ADMIN": [ "Input admin id here" ],
+	"SERVER_NAME": "My KKuTu Server",
+	"WEB_CPU": 1,
+	"GAME_CPU": 1,
 	"MAIN_PORTS": [ 8080 ],
+	"ADMIN": [ "Input admin id here" ],
 	"KKUTUHOT_PATH": "/kkutu/data/kkutuhot.json",
 	"PASS":"Your password for management Here",
 	"PG_USER": "postgres",
@@ -19,5 +22,11 @@
 		"PFX": "Your PFX Bundle Here",
 		"isPFX": false,
 		"isCA": false
-	}
+	},
+	"MAX_USERS": 400,
+	"CUSTOM_OG": false,
+	"OG_IMAGE": "OpenGraph Image URL Here",
+	"OG_URL": "OpenGraph URL Here",
+	"OG_TITLE": "OpenGraph Title Here",
+	"OG_DESC": "OpenGraph Description Here"
 }

@@ -16,9 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+const GLOBAL = require("../../sub/global.json");
+
 (function(){
 	var $stage;
-	var LIMIT = 400;
+	var LIMIT = GLOBAL.MAX_USERS;
 	var LIST;
 
 	$(document).ready(function(){
