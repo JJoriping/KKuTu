@@ -34,5 +34,17 @@
 		"TO_USER": false,
 		"SITE_KEY": "Your Google Recaptcha site key Here",
 		"SECRET_KEY": "Your Google Recaptcha secret key Here"
+	},
+	"SERVER_OPTIONS": {
+		"SERVER_NAME": "My KKuTu Server",
+		"WEB_CPU": 1,
+		"GAME_CPU": 1,
+		"MAX_USERS": 400
+	},
+	"OG_OPTIONS": {
+		"OG_IMAGE": "OpenGraph Image URL Here",
+		"OG_URL": "OpenGraph URL Here",
+		"OG_TITLE": "OpenGraph Title Here",
+		"OG_DESC": "OpenGraph Description Here"
 	}
 }

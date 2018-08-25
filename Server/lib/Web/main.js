@@ -260,10 +260,15 @@ Server.get("/", function(req, res){
 			'KO_THEME': Const.KO_THEME,
 			'EN_THEME': Const.EN_THEME,
 			'IJP_EXCEPT': Const.IJP_EXCEPT,
-			'ogImage': "http://kkutu.kr/img/kkutu/logo.png",
-			'ogURL': "http://kkutu.kr/",
-			'ogTitle': "글자로 놀자! 끄투 온라인",
-			'ogDescription': "끝말잇기가 이렇게 박진감 넘치는 게임이었다니!"
+			'ogImage': Const.OG_OPTIONS.CUSTOM_OG ?
+				Const.OG_OPTIONS.OG_IMAGE : "http://kkutu.kr/img/kkutu/logo.png",
+			'ogURL': Const.OG_OPTIONS.CUSTON_OG ?
+				Const.OG_OPTIONS.OG_URL : "http://kkutu.kr/",
+			'ogTitle': Const.OG_OPTIONS.CUSTON_OG ?
+				OG_OPTIONS.Const.OG_TITLE : "글자로 놀자! 끄투 온라인",
+			'ogDescription': Const.OG_OPTIONS.CUSTON_OG ?
+				Const.OG_OPTIONS.OG_DESC : "끝말잇기가 이렇게 박진감 넘치는 게임이었다니!",
+			'MAX_USERS': Const.SERVER_OPTIONS.MAX_USERS
 		});
 	}
 });
