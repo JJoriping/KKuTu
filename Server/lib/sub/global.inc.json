@@ -33,6 +33,6 @@
 		"TO_GUEST": false,
 		"TO_USER": false,
 		"SITE_KEY": "Your Google Recaptcha site key Here",
-		"SECRET_KEY": "Your Google Recaptcha secret key Here",
+		"SECRET_KEY": "Your Google Recaptcha secret key Here"
 	}
 }
