@@ -18,7 +18,7 @@
 
 (function(){
 	var $stage;
-	var LIMIT = 400;
+	var LIMIT = $("#max-users").text();
 	var LIST;
 
 	$(document).ready(function(){

@@ -20,7 +20,7 @@ const Spawn = require("child_process").spawn;
 const JLog = require("./lib/sub/jjlog");
 const PKG = require("./package.json");
 const LANG = require("../language.json");
-const SETTINGS = require("../settings.json");
+const GLOBAL = require("../lib/sub/global.json")
 const SCRIPTS = {
 	'server-on': startServer,
 	'server-off': stopServer,
@@ -118,13 +118,13 @@ let webServer, gameServers;
 
 function startServer(){
 	stopServer();
-	if(SETTINGS['server-name']) process.env['KKT_SV_NAME'] = SETTINGS['server-name'];
+	if(GLOBAL.SERVER_OPTIONS.SERVER_NAME) process.env['KKT_SV_NAME'] = GLOBAL.SERVER_OPTIONS.SERVER_NAME;
 	
-	webServer = new ChildProcess('W', "node", `${__dirname}/lib/Web/cluster.js`, SETTINGS['web-num-cpu']);
+	webServer = new ChildProcess('W', "node", `${__dirname}/lib/Web/cluster.js`, GLOBAL.SERVER_OPTIONS.WEB_CPU);
 	gameServers = [];
 	
-	for(let i=0; i<SETTINGS['game-num-inst']; i++){
-		gameServers.push(new ChildProcess('G', "node", `${__dirname}/lib/Game/cluster.js`, i, SETTINGS['game-num-cpu']));
+	for(let i=0; i<GLOBAL.SERVER_OPTIONS.MAIN_PORTS.length; i++){
+		gameServers.push(new ChildProcess('G', "node", `${__dirname}/lib/Game/cluster.js`, i, GLOBAL.SERVER_OPTIONS.GAME_CPU));
 	}
 	exports.send('server-status', getServerStatus());
 }

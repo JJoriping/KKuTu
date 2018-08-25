@@ -39,21 +39,37 @@ const FAKE_REDIS = {
 };
 
 Pub.ready = function(isPub){
-	var Redis	 = require("redis").createClient();
+	var redisConfig = {
+		host: GLOBAL.REDIS_OPTIONS.ADDR,
+		port: GLOBAL.REDIS_OPTIONS.PORT,
+		password: GLOBAL.REDIS_OPTIONS.PASS,
+		db: GLOBAL.REDIS_OPTIONS.GAME_DB
+	}
+	if (redisConfig.password === '') {
+		delete redisConfig.password
+	}
+	var Redis = require('redis').createClient(
+		GLOBAL.REDIS_OPTIONS.USE_REDIS_GAME ? redisConfig : FAKE_REDIS)
     var Pg = new PgPool({
-        user: GLOBAL.PG_USER,
-        password: GLOBAL.PG_PASSWORD,
-        port: GLOBAL.PG_PORT,
-        database: GLOBAL.PG_DATABASE
+        user: GLOBAL.PGSQL_OPTIONS.USER,
+        password: GLOBAL.PGSQL_OPTIONS.PASSWORD,
+        port: GLOBAL.PGSQL_OPTIONS.PORT,
+		database: GLOBAL.PGSQL_OPTIONS.DATABASE,
+		host: GLOBAL.PG_ADDR
     });
 	Redis.on('connect', function(){
 		connectPg();
 	});
 	Redis.on('error', function(err){
 		JLog.error("Error from Redis: " + err);
-		JLog.alert("Run with no-redis mode.");
-		Redis.quit();
-		connectPg(true);
+		if (!USE_REDIS_GAME) {
+			JLog.alert("Run with no-redis mode.");
+			Redis.quit();
+			connectPg(true);
+		} else {
+			JLog.alert("Server Close")
+			process.exit(1)
+		}
 	});
 	function connectPg(noRedis){
 		Pg.connect(function(err, pgMain){
