@@ -60,23 +60,35 @@ WebInit.MOBILE_AVAILABLE = [
 
 require("../sub/checkpub");
 
+const redisConfig = {
+	host: GLOBAL.REDIS_OPTIONS.ADDR,
+	port: GLOBAL.REDIS_OPTIONS.PORT,
+	password: GLOBAL.REDIS_OPTIONS.PASS,
+	db: GLOBAL.REDIS_OPTIONS.SESSION_DB
+};
+if (redisConfig.password === '') {
+	delete redisConfig.password;
+}
+  
+const sessionConfigure = {
+	store: new Redission({
+		client: Redis.createClient(redisConfig),
+		ttl: 3600 * 12
+	}),
+	secret: GLOBAL.SESSION_SECRET,
+	resave: false,
+	saveUninitialized: true
+};
+if (!GLOBAL.REDIS_OPTIONS.USE_REDIS_WEB) {
+	delete sessionConfigure.store;
+}
+
 JLog.info("<< KKuTu Web >>");
 Server.set('views', __dirname + "/views");
 Server.set('view engine', "pug");
 Server.use(Express.static(__dirname + "/public"));
 Server.use(Parser.urlencoded({ extended: true }));
-Server.use(Exession({
-	/* use only for redis-installed
-
-	store: new Redission({
-		client: Redis.createClient(),
-		ttl: 3600 * 12
-	}),*/
-	secret: 'kkutu',
-	resave: false,
-	saveUninitialized: true
-}));
-//볕뉘 수정
+Server.use(Exession(sessionConfigure));
 Server.use(passport.initialize());
 Server.use(passport.session());
 Server.use((req, res, next) => {

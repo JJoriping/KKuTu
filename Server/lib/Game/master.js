@@ -344,10 +344,10 @@ exports.init = function(_SID, CHAN){
 						DNAME[($c.profile.title || $c.profile.name).replace(/\s/g, "")] = $c.id;
 						MainDB.users.update([ '_id', $c.id ]).set([ 'server', SID ]).on();
 
-						if (($c.guest && GLOBAL.GOOGLE_RECAPTCHA_TO_GUEST) || GLOBAL.GOOGLE_RECAPTCHA_TO_USER) {
+						if (($c.guest && GLOBAL.RECAPTCHA.TO_GUEST) || GLOBAL.RECAPTCHA.TO_USER) {
 							$c.socket.send(JSON.stringify({
 								type: 'recaptcha',
-								siteKey: GLOBAL.GOOGLE_RECAPTCHA_SITE_KEY
+								siteKey: GLOBAL.RECAPTCHA.SITE_KEY
 							}));
 						} else {
 							$c.passRecaptcha = true;

@@ -3,14 +3,7 @@
 	"MAIN_PORTS": [ 8080 ],
 	"KKUTUHOT_PATH": "/kkutu/data/kkutuhot.json",
 	"PASS":"Your password for management Here",
-	"PG_USER": "postgres",
-	"PG_PASSWORD": "Your PostgreSQL Password Here",
-	"PG_PORT": 5432,
-	"PG_DATABASE": "main",
-	"GOOGLE_RECAPTCHA_TO_GUEST": false,
-	"GOOGLE_RECAPTCHA_TO_USER": false,
-	"GOOGLE_RECAPTCHA_SITE_KEY": "Your Google Recaptcha site key Here",
-	"GOOGLE_RECAPTCHA_SECRET_KEY": "Your Google Recaptcha secret key Here",
+	"SESSION_SECRET": "kkutu",
 	"IS_SECURED": false,
 	"SSL_OPTIONS": {
 		"PRIVKEY": "Your SSL Private Key Here",
@@ -19,5 +12,27 @@
 		"PFX": "Your PFX Bundle Here",
 		"isPFX": false,
 		"isCA": false
+	},
+	"REDIS_OPTIONS": {
+		"USE_REDIS_WEB": false,
+		"USE_REDIS_GAME": true,
+		"ADDR": "Your Redis server Address Here",
+		"PASS": "Your Redis Password Here",
+		"PORT": 6379,
+		"GAME_DB": 0,
+		"SESSION_DB": 1
+	},
+	"PGSQL_OPTIONS": {
+		"ADDR": "Your PostgreSQL server Address Here",
+		"USER": "postgres",
+		"PASSWORD": "Your PostgreSQL Password Here",
+		"PORT": 5432,
+		"DB": "main"
+	},
+	"RECAPTCHA": {
+		"TO_GUEST": false,
+		"TO_USER": false,
+		"SITE_KEY": "Your Google Recaptcha site key Here",
+		"SECRET_KEY": "Your Google Recaptcha secret key Here",
 	}
 }
