@@ -37,7 +37,7 @@ function process(req, accessToken, MainDB, $p, done) {
         'profile': $p,
         'createdAt': now
     }).on();
-    MainDB.users.findOne([ '_id', $p.id ]).on(function($body){
+    MainDB.users.findOne([ '_id', $p.id ]).on(($body) => {
         req.session.profile = $p;
         MainDB.users.update([ '_id', $p.id ]).set([ 'lastLogin', now ]).on();
     });
@@ -58,22 +58,29 @@ exports.run = (Server, page) => {
     const strategyList = {};
     
 	for (let i in config) {
-		let auth = require(path.resolve('..', 'auth', 'auth_' + i + '.json'))
-		Server.get('/login/' + auth.config.vendor, passport.authenticate(auth.config.vendor))
-		Server.get('/login/' + auth.config.vendor + '/callback', passport.authenticate(auth.config.vendor, {
-			successRedirect: '/',
-			failureRedirect: '/loginfail'
-		}))
-		passport.use(new auth.config.strategy(auth.strategyConfig, auth.strategy(process, MainDB /*, Ajae */)));
-		strategyList[auth.config.vendor] = {
-			vendor: auth.config.vendor,
-			displayName: auth.config.displayName,
-			color: auth.config.color,
-			fontColor: auth.config.fontColor
-		};
+		try {
+			let auth = require(path.resolve(__dirname, '..', 'auth', 'auth_' + i + '.json'))
+			Server.get('/login/' + auth.config.vendor, passport.authenticate(auth.config.vendor))
+			Server.get('/login/' + auth.config.vendor + '/callback', passport.authenticate(auth.config.vendor, {
+				successRedirect: '/',
+				failureRedirect: '/loginfail'
+			}))
+			passport.use(new auth.config.strategy(auth.strategyConfig, auth.strategy(process, MainDB /*, Ajae */)));
+			strategyList[auth.config.vendor] = {
+				vendor: auth.config.vendor,
+				displayName: auth.config.displayName,
+				color: auth.config.color,
+				fontColor: auth.config.fontColor
+			};
+
+			JLog.info(`OAuth Strategy ${i} loaded successfully.`)
+		} catch (e) {
+			JLog.error(`OAuth Strategy ${i} is not loaded`)
+			JLog.error(e)
+		}
 	}
 	
-	Server.get("/login", function(req, res){
+	Server.get("/login", (req, res) => {
 		if(global.isPublic){
 			page(req, res, "login", { '_id': req.session.id, 'text': req.query.desc, 'loginList': strategyList});
 		}else{
