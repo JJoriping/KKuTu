@@ -59,7 +59,7 @@ exports.run = (Server, page) => {
     
 	for (let i in config) {
 		try {
-			let auth = require(path.resolve(__dirname, '..', 'auth', 'auth_' + i + '.json'))
+			let auth = require(path.resolve(__dirname, '..', 'auth', 'auth_' + i + '.js'))
 			Server.get('/login/' + auth.config.vendor, passport.authenticate(auth.config.vendor))
 			Server.get('/login/' + auth.config.vendor + '/callback', passport.authenticate(auth.config.vendor, {
 				successRedirect: '/',
