@@ -74,9 +74,9 @@ exports.run = (Server, page) => {
 			};
 
 			JLog.info(`OAuth Strategy ${i} loaded successfully.`)
-		} catch (e) {
+		} catch (error) {
 			JLog.error(`OAuth Strategy ${i} is not loaded`)
-			JLog.error(e)
+			JLog.error(error.message)
 		}
 	}
 	
