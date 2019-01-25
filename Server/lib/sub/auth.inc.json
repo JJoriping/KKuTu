@@ -18,5 +18,13 @@
     }, "kakao": {
         "clientID": "",
         "callbackURL": "/login/kakao/callback"
+    }, "discord": {
+        "clientID": "",
+		"clientSecret": "",
+        "callbackURL": "/login/discord/callback"
+    }, "twitch": {
+        "clientID": "",
+		"clientSecret": "",
+        "callbackURL": "/login/twitch/callback"
     }
 }
