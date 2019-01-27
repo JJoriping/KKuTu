@@ -34,5 +34,9 @@
         "clientID": "",
 	"clientSecret": "",
         "callbackURL": "/login/line/callback"
+    }, "instagram": {
+        "clientID": "",
+	"clientSecret": "",
+        "callbackURL": "/login/instagram/callback"
     }
 }
