@@ -119,6 +119,7 @@
 		"withTwitch": "트위치 아이디로 로그인",
 		"withGithub": "깃허브 아이디로 로그인",
 		"withLine": "라인 아이디로 로그인",
+		"withInstagram": "인스타그램 아이디로 로그인",
 		"login_kkutu": "글자로 놀자! 끄투 온라인을 이용하시려면 로그인을 해 주세요."
 	},
 	"loginfail": {
