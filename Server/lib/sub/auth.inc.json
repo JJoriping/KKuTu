@@ -38,5 +38,9 @@
         "clientID": "",
 	"clientSecret": "",
         "callbackURL": "/login/instagram/callback"
+    }, "spotify": {
+        "clientID": "",
+	"clientSecret": "",
+        "callbackURL": "/login/spotify/callback"
     }
 }
