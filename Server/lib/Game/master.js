@@ -108,12 +108,12 @@ function processAdmin(id, value){
 			return null;
 		case "mute":
 			if(temp = DIC[value]){
-				temp.socket.send(`{"value":"<script>$('.ChatBox input').last().hide(); $('.ChatBox button').last().hide(); $('.ChatBox #mute').show(); setTimeout(function(){ $('#Yell').hide(); }, 5);</script>", "type":"yell"}`);
+				temp.socket.send(`{"value":"<script>$('.ChatBox input').last().hide(); $('.ChatBox button').last().hide(); $('.ChatBox #mute').show(); setTimeout(function(){ $('#Yell').hide(); });</script>", "type":"yell"}`);
 			}
 			return null;
 		case "unmute":
 			if(temp = DIC[value]){
-				temp.socket.send(`{"value":"<script>$('.ChatBox input').last().show(); $('.ChatBox button').last().show(); $('.ChatBox #mute').hide(); setTimeout(function(){ $('#Yell').hide(); }, 5);</script>", "type":"yell"}`);
+				temp.socket.send(`{"value":"<script>$('.ChatBox input').last().show(); $('.ChatBox button').last().show(); $('.ChatBox #mute').hide(); setTimeout(function(){ $('#Yell').hide(); });</script>", "type":"yell"}`);
 			}
 			return null;
 		case "dump":
