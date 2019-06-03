@@ -84,6 +84,7 @@ This repository provides you what you have to prepare to play **KKuTu**.
 	* 자세한 과정은 [개발자 블로그][dev-blog]를 참고하세요.
 1. 배치 파일(`./server-setup.bat`)을 실행시킵니다.
 1. 배치 파일(`./Server/run.bat`)을 실행시킵니다.
+1. 배치파일('./server-flush.bat')은 필요한 경우 외엔 건드리지 마세요
 	* 되도록 이 배치 파일을 직접 종료하지 말고 이를 실행시켜 나타나는 창을 종료하세요.
 
 #### Linux 전용
