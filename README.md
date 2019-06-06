@@ -63,7 +63,7 @@ This repository provides you what you have to prepare to play **KKuTu**.
 
 ## 한국어
 
-**이 끄투는 쪼리핑님이 만드셨지만 프리서버(사설서버)는 호울데이가 만든 것임을 알립니다.
+**이 끄투는 쪼리핑님이 만드셨지만 프리서버(사설서버)는 호울데이가 만든 것임을 알립니다.**
 
 > 글자로 놀자! 끄투 온라인
 
