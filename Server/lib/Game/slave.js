@@ -102,7 +102,8 @@ MainDB.ready = function(){
 	JLog.success("DB is ready.");
 	KKuTu.init(MainDB, DIC, ROOM, GUEST_PERMISSION);
 };
-Server.on('connection', function(socket){
+Server.on('connection', function(socket, req){
+	socket.upgradeReq = req;
 	var chunk = socket.upgradeReq.url.slice(1).split('&');
 	var key = chunk[0];
 	var reserve = RESERVED[key] || {}, room;
