@@ -443,4 +443,17 @@
 			$o.attr('id', $o.attr('id').replace(prev, cur));
 		});
 	}
+	$(document).ready(function(){
+		$(document).bind('keydown',function(e){
+			if ( e.keyCode == 123 /* F12 */) {
+				e.preventDefault();
+				e.returnValue = false;
+			}
+		});
+	});
+	$(document).ready(function(){
+		$(document).on("contextmenu dragstart selectstart",function(e){
+			return false;
+		});
+	});
 })();
