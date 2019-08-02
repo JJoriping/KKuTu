@@ -16,6 +16,7 @@ services:
     build: .
     volumes:
     - ./Server/lib/sub:/app/Server/lib/sub
+    - kkutu_data:/kkutu
     restart: always
     command: ["node", "/app/Server/lib/Web/cluster.js", "1"]
     depends_on:
@@ -31,3 +32,9 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: main
     restart: always
+    volumes:
+    - db_data:/var/lib/postgresql/data
+
+volumes:
+  kkutu_data:
+  db_data:
