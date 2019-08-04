@@ -6,7 +6,7 @@ module.exports.config = {
     fontColor: '#3C1E1E',
     vendor: 'kakao',
     displayName: 'withKakao',
-    'use-oAuth-buttons': false
+    useOAuthButtons: false
 }
 
 module.exports.strategyConfig = {

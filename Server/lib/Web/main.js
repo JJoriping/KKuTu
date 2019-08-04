@@ -92,7 +92,7 @@ Server.use((req, res, next) => {
 	}
 });
 if(GLOBAL.TRUST_PROXY) {
-	Server.set('trust proxy', GLOBAL.TRUST_PROXY)
+	Server.set('trust proxy', GLOBAL.TRUST_PROXY);
 }
 /* use this if you want
 
@@ -154,20 +154,17 @@ Const.MAIN_PORTS.forEach(function(v, i){
 });
 function GameClient(id, url){
 	var my = this;
+	let override;
 
 	my.id = id;
 	my.tryConnect = 0;
 	my.connected = false;
-	let override;
-	if(!url.match(/127\.0\.0\.[0-255]/)) {
-		override = true;
-	} else {
-		override = false;
-	}
+	
+	override = url.match(/127\.0\.0\.\d{1,3}+/) ? true : false
 	
 	my.socket = new WS(url, {
 		perMessageDeflate: false,
-		rejectUnauthorized: override
+		rejectUnauthorized: !override
 	});
 	
 	my.send = function(type, data){
@@ -209,7 +206,7 @@ function GameClient(id, url){
 				my.socket.on('message', onGameMessage);
 			}, 5000);
 		} else {
-			JLog.info('connect fail.');
+			JLog.info('Connect fail.');
 		}
 	}
 	function onGameMessage (data) {

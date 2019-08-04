@@ -6,7 +6,7 @@ module.exports.config = {
     fontColor: '#FFFFFF',
     vendor: 'naver',
     displayName: 'withNaver',
-    'use-oAuth-buttons': false
+    useOAuthButtons: false
 }
 
 module.exports.strategyConfig = {

@@ -30,7 +30,7 @@ html
 		div.login-with= locals.text ? L(locals.text) : L('loginWith')
 		center
 			each val in loginList
-				if val['use-oAuth-buttons']
+				if val.useOAuthButtons
 					.lbtn(class="lbtn-" + val.vendor)
 						i.logo
 						a.label(href="/login/" + val.vendor)= L(val.displayName)
@@ -38,7 +38,7 @@ html
 					a(href="/login/" + val.vendor)
 						button(style="color: " + val.fontColor + "; background-color: " + val.color + ";")= L(val.displayName)
 		div.login-legal!= L('loginLegal')
-	block CSS
-		link(rel='stylesheet', href='/css/oauth-buttons.min.css')
-	block JS
-		script(src='/js/oauth-buttons.min.js')
+block CSS
+	link(rel='stylesheet', href='/css/oauth-buttons.min.css')
+block JS
+	script(src='/js/oauth-buttons.min.js')

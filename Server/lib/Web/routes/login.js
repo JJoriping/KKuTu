@@ -73,9 +73,9 @@ exports.run = (Server, page) => {
                 failureRedirect: '/loginfail'
             }))
             passport.use(new auth.config.strategy(auth.strategyConfig, auth.strategy(process, MainDB /*, Ajae */)));
-            if(auth.config['useoAuth-buttons']) {
+            if(auth.config.useOAuthButtons) {
                 strategyList[auth.config.vendor] = {
-                    'use-oAuth-buttons': true,
+                    useOAuthButtons: true,
                     vendor: auth.config.vendor,
                     displayName: auth.config.displayName
                 }
@@ -85,7 +85,7 @@ exports.run = (Server, page) => {
                     displayName: auth.config.displayName,
                     color: auth.config.color,
                     fontColor: auth.config.fontColor,
-                    'use-oAuth-buttons': false
+                    useOAuthButtons: false
                 };
             }
         }
