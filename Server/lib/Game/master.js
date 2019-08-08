@@ -311,6 +311,7 @@ exports.init = function(_SID, CHAN){
 			MainDB.session.findOne([ '_id', key ]).limit([ 'profile', true ]).on(function($body){
 				$c = new KKuTu.Client(socket, $body ? $body.profile : null, key);
 				$c.admin = GLOBAL.ADMIN.indexOf($c.id) != -1;
+				$c.remoteAddress = info.connection.remoteAddress;
 				
 				if(DIC[$c.id]){
 					DIC[$c.id].sendError(408);
@@ -399,7 +400,7 @@ KKuTu.onClientMessage = function ($c, msg) {
 		processClientRequest($c, msg);
 	} else {
 		if (msg.type === 'recaptcha') {
-			Recaptcha.verifyRecaptcha(msg.token, $c.socket._socket.remoteAddress, function (success) {
+			Recaptcha.verifyRecaptcha(msg.token, $c.remoteAddress, function (success) {
 				if (success) {
 					$c.passRecaptcha = true;
 
@@ -407,7 +408,7 @@ KKuTu.onClientMessage = function ($c, msg) {
 
 					processClientRequest($c, msg);
 				} else {
-					JLog.warn(`Recaptcha failed from IP ${$c.socket._socket.remoteAddress}`);
+					JLog.warn(`Recaptcha failed from IP ${$c.remoteAddress}`);
 
 					$c.sendError(447);
 					$c.socket.close();
