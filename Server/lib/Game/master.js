@@ -285,15 +285,15 @@ exports.init = function(_SID, CHAN){
 				perMessageDeflate: false
 			});
 		}
-		Server.on('connection', function(socket){
-			var key = socket.upgradeReq.url.slice(1);
+		Server.on('connection', function(socket, info){
+			var key = info.url.slice(1);
 			var $c;
 			
 			socket.on('error', function(err){
 				JLog.warn("Error on #" + key + " on ws: " + err.toString());
 			});
 			// 웹 서버
-			if(socket.upgradeReq.headers.host.match(/^127\.0\.0\.2:/)){
+			if(info.headers.host.match(/^127\.0\.0\.2:/)){
 				if(WDIC[key]) WDIC[key].socket.close();
 				WDIC[key] = new KKuTu.WebServer(socket);
 				JLog.info(`New web server #${key}`);
