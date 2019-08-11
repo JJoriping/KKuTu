@@ -285,7 +285,7 @@ exports.Client = function(socket, profile, sid){
 	socket.on('message', function(msg){
 		var data, room = ROOM[my.place];
 		
-		JLog.log(`Chan @${channel} Msg #${my.id}: ${msg}`);
+		JLog.log(`Chan @${channel} Msg #${my.id}: ${(JSON.parse(msg).type === 'drawingCanvas' ? 'is drawing data' : msg)}`);
 		try{ data = JSON.parse(msg); }catch(e){ data = { error: 400 }; }
 		if(Cluster.isWorker) process.send({ type: "tail-report", id: my.id, chan: channel, place: my.place, msg: data.error ? msg : data });
 		
@@ -304,6 +304,15 @@ exports.Client = function(socket, profile, sid){
 		}
 	};
 	*/
+	my.drawingCanvas = function(msg) {
+		let $room = ROOM[my.place];
+		
+		if(!$room) return;
+		if(!$room.gaming) return;
+		if($room.rule.rule != 'Drawing') return;
+		
+		$room.drawingCanvas(msg);
+	};
 	my.getData = function(gaming){
 		var o = {
 			id: my.id,
@@ -1041,6 +1050,9 @@ exports.Room = function(room, channel){
 		}
 		return false;
 	};
+	my.drawingCanvas = function(msg) {
+		my.byMaster('drawCanvas', { data: msg.data }, true);
+	};
 	my.ready = function(){
 		var i, all = true;
 		var len = 0;
@@ -1429,6 +1441,12 @@ function getRewards(mode, score, bonus, rank, all, ss){
 			break;
 		case 'ESS':
 			rw.score += score * 0.22;
+			break;
+		case 'KDG':
+			rw.score += score * 0.57;
+			break;
+		case 'EDG':
+			rw.score += score * 0.57;
 			break;
 		default:
 			break;
