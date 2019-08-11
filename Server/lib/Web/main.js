@@ -154,13 +154,11 @@ Const.MAIN_PORTS.forEach(function(v, i){
 });
 function GameClient(id, url){
 	var my = this;
-	let override;
+	let override = url.match(/127\.0\.0\.\d{1,3}/) ? true : false;
 
 	my.id = id;
 	my.tryConnect = 0;
 	my.connected = false;
-	
-	override = url.match(/127\.0\.0\.\d{1,3}+/) ? true : false
 	
 	my.socket = new WS(url, {
 		perMessageDeflate: false,
