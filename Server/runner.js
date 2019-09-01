@@ -49,6 +49,7 @@ if (SETTINGS.log.enabled) {
 	};
 	
 	var logger = winston.createLogger({
+		format: winston.format.simple(),
 		transports: [
 			new (winstonDaily)({
 				name: 'info-file',
