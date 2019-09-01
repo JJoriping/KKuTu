@@ -1,6 +1,20 @@
 {
 	"server-name": "My KKuTu Server",
-	"web-num-cpu": 1,
-	"game-num-cpu": 1,
-	"game-num-inst": 1
+	"web": {
+		"enabled": true,
+		"cpu": 1
+	},
+	"game": {
+		"enabled": true,
+		"cpu": 1,
+		"inst": 1
+	},
+	"log": {
+		"enabled": false,
+		"infopath": "/your/kkutu/data/path/%DATE%-info.log",
+		"exceptionpath": "/your/kkutu/data/path/%DATE%-exception.log",
+		"datepattern": "YYYY-MM-DD",
+		"maxsize": 50000000,
+		"maxfile": 1000
+	}
 }
