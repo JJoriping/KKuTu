@@ -379,6 +379,7 @@ function joinNewUser($c) {
 		guest: $c.guest,
 		box: $c.box,
 		playTime: $c.data.playTime,
+		rankPoint: $c.data.rankPoint,
 		okg: $c.okgCount,
 		users: KKuTu.getUserList(),
 		rooms: KKuTu.getRoomList(),
