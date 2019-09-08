@@ -291,8 +291,12 @@ block Middle
 			div#ri-players(style='width: 100%;')
 		div.dialog-bar.tail-button
 			button#room-info-join= L('join')
-	+Dialog('ProfileDiag', 300, 365)
+	+Dialog('ProfileDiag', 300, 395)
 		div.dialog-bar.profile-head
+		div.dialog-bar
+			h4(style='width: 83px;')= L('PRANK')
+			h4#rank
+			h4#rankpoint
 		div.dialog-bar
 			h4(style='width: 83px;')= L('place')
 			h4.dialog-bar-value#profile-place
@@ -439,6 +443,9 @@ block Middle
 			div.my-stat-name.ellipse
 			div.my-stat-record
 			div.my-stat-ping
+			div
+				div.my-rank
+				div.my-rankPoint
 			div
 				+GraphBar('my-okg')
 				div.bar-text.my-okg-text
