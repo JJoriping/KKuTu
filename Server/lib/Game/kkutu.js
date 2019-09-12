@@ -1196,7 +1196,7 @@ exports.Room = function(room, channel){
 				res[i].rank = Number(i);
 			}
 			pv = res[i].score;
-			rw = getRewards(my.mode, o.game.score / res[i].dim, o.game.bonus, res[i].rank, rl, sumScore);
+			rw = getRewards(my.mode, o.game.score / res[i].dim, o.game.bonus, res[i].rank, rl, sumScore, my.opts);
 			rw.playTime = now - o.playAt;
 			o.applyEquipOptions(rw); // 착용 아이템 보너스 적용
 			if(rw.together){
@@ -1383,7 +1383,7 @@ function shuffle(arr){
 	
 	return r;
 }
-function getRewards(mode, score, bonus, rank, all, ss){
+function getRewards(mode, score, bonus, rank, all, ss, opts){
 	var rw = { score: 0, money: 0, rankPoint: 0 };
 	var sr = score / ss;
 	
