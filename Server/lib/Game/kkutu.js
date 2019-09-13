@@ -1196,7 +1196,7 @@ exports.Room = function(room, channel){
 				res[i].rank = Number(i);
 			}
 			pv = res[i].score;
-			rw = getRewards(my.mode, o.game.score / res[i].dim, o.game.bonus, res[i].rank, rl, sumScore, my.opts);
+			rw = getRewards(o.data.rankPoint, my.mode, o.game.score / res[i].dim, o.game.bonus, res[i].rank, rl, sumScore, my.opts);
 			rw.playTime = now - o.playAt;
 			o.applyEquipOptions(rw); // 착용 아이템 보너스 적용
 			if(rw.together){
@@ -1383,7 +1383,7 @@ function shuffle(arr){
 	
 	return r;
 }
-function getRewards(mode, score, bonus, rank, all, ss, opts){
+function getRewards(rankScore, mode, score, bonus, rank, all, ss, opts){
 	var rw = { score: 0, money: 0, rankPoint: 0 };
 	var sr = score / ss;
 	
@@ -1451,8 +1451,12 @@ function getRewards(mode, score, bonus, rank, all, ss, opts){
 	rw.money = rw.money || 0;
 	
 	if (opts.rankgame){ //랭크게임 이라면
-		rw.rankPoint = rw.score * 0.06 //점수에 0.06을 곱하고
+		rw.rankPoint = rw.score * 0.05 //점수에 0.05를 곱하고
 		rw.rankPoint = Math.round(rw.rankPoint); //아이템 효과 없이 바로 반영되므로 여기서 반올림한다.
+	}
+	
+	if (rankScore >= 5000){
+		rw.rankPoint = 0; //마스터 달성 시 추가 랭크 포인트 획득 제한
 	}
 	
 	// applyEquipOptions에서 반올림한다.
