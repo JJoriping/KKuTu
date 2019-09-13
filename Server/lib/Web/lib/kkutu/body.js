@@ -2066,7 +2066,7 @@ function roundEnd(result, data){
 			addp = "<label class='result-me-bonus'>(+" + commify(addp) + ")</label>";
 		}else addp = "";
 		
-		notice(L['scoreGain'] + ": " + commify($data._result.reward.score) + ", " + L['moneyGain'] + ": " + commify($data._result.reward.money));
+		notice(L['scoreGain'] + ": " + commify($data._result.reward.score) + ", " + L['moneyGain'] + ": " + commify($data._result.reward.money) + ", " + L['rankPointGain'] + ": " + commify($data._result.reward.rankPoint));
 		$(".result-me").css('opacity', 1);
 		$(".result-me-score").html(L['scoreGain']+" +"+commify($data._result.reward.score)+addit);
 		$(".result-me-money").html(L['moneyGain']+" +"+commify($data._result.reward.money)+addp);
