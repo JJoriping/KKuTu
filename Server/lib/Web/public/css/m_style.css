@@ -260,7 +260,7 @@ span{
 	z-index: 1;
 }
 .auto-item{ margin: 2px 0px; cursor: pointer; }
-.auto-item:hover{ background-color: #333333; }
+.auto-item:hover{ background-color: #333; }
 .auto-selected{ color: #EEEE44; background-color: #3B3B3B; }
 
 #Top{
