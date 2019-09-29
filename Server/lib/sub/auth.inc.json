@@ -20,27 +20,27 @@
         "callbackURL": "/login/kakao/callback"
     }, "discord": {
         "clientID": "",
-	"clientSecret": "",
+		"clientSecret": "",
         "callbackURL": "/login/discord/callback"
     }, "twitch": {
         "clientID": "",
-	"clientSecret": "",
+		"clientSecret": "",
         "callbackURL": "/login/twitch/callback"
     }, "github": {
         "clientID": "",
-	"clientSecret": "",
+		"clientSecret": "",
         "callbackURL": "/login/github/callback"
     }, "line": {
         "clientID": "",
-	"clientSecret": "",
+		"clientSecret": "",
         "callbackURL": "/login/line/callback"
     }, "instagram": {
         "clientID": "",
-	"clientSecret": "",
+		"clientSecret": "",
         "callbackURL": "/login/instagram/callback"
     }, "spotify": {
         "clientID": "",
-	"clientSecret": "",
+		"clientSecret": "",
         "callbackURL": "/login/spotify/callback"
     }
 }
