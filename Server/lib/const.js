@@ -41,7 +41,8 @@ exports.OPTIONS = {
 	'str': { name: "Strict" },
 	'k32': { name: "Sami" },
 	'no2': { name: "No2" },
-	'ulm': { name: "Unlimited" }
+	'ulm': { name: "Unlimited" },
+	'sht': { name: "Short" }
 };
 exports.MOREMI_PART = [ 'back', 'eye', 'mouth', 'shoes', 'clothes', 'head', 'lhand', 'rhand', 'front' ];
 exports.CATEGORIES = [ "all", "spec", "skin", "badge", "head", "eye", "mouth", "clothes", "hs", "back" ];
@@ -186,7 +187,7 @@ exports.RULE = {
 	},
 	'KDG': { lang: "ko",
 		rule: "Drawing",
-		opts: [ "ijp", "ulm" ],
+		opts: [ "ijp", "sht", "ulm" ],
 		time: 1,
 		ai: false,
 		big: true,
@@ -194,7 +195,7 @@ exports.RULE = {
 	},
 	'EDG': { lang: "en",
 		rule: "Drawing",
-		opts: [ "ijp", "ulm" ],
+		opts: [ "ijp", "sht", "ulm" ],
 		time: 1,
 		ai: false,
 		big: true,

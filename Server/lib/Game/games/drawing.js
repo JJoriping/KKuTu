@@ -95,10 +95,10 @@ exports.turnStart = function(){
 	my.game.meaned = 0;
 	my.game.primary = 0;
 	my.game.qTimer = setTimeout(my.turnEnd, my.game.roundTime);
-	my.game.hintTimer = setTimeout(function(){ turnHint.call(my); }, 3000)
-	my.game.hintTimer2 = setTimeout(function(){ turnHint.call(my); }, 6000)
-	my.game.hintTimer3 = setTimeout(function(){ turnHint.call(my); }, my.game.roundTime * 0.333);
-	my.game.hintTimer4 = setTimeout(function(){ turnHint.call(my); }, my.game.roundTime * 0.667);
+	my.game.hintTimer = setTimeout(function(){ turnHint.call(my); }, my.game.roundTime * 0.2)
+	my.game.hintTimer2 = setTimeout(function(){ turnHint.call(my); }, my.game.roundTime * 0.4)
+	my.game.hintTimer3 = setTimeout(function(){ turnHint.call(my); }, my.game.roundTime * 0.6);
+	my.game.hintTimer4 = setTimeout(function(){ turnHint.call(my); }, my.game.roundTime * 0.8);
 
 	my.byMaster('turnStart', {
 		roundTime: my.game.roundTime,
@@ -108,14 +108,15 @@ exports.turnStart = function(){
 };
 function turnHint(){
 	const my = this;
-	
-	my.byMaster('turnHint', {
-		hint: my.game.hint[my.game.meaned++]
-	}, true);
+	if(my.game.hint){
+		my.byMaster('turnHint', {
+			hint: my.game.hint[my.game.meaned++]
+		}, true);
+	}
 }
 exports.turnEnd = function(){
 	const my = this;
-
+	
 	if(my.game.answer){
 		my.game.late = true;
 		my.byMaster('turnEnd', {
@@ -242,9 +243,14 @@ function getAnswer(theme, nomean){
 		args.push([ 'theme', new RegExp("(,|^)(" + theme + ")(,|$)") ]);
 		args.push([ 'type', Const.KOR_GROUP ]);
 		args.push([ 'flag', { $lte: 7 } ]);
-		if(!my.opts.unlimited) {
-			args.push([ 'length(_id)', { $gte: 2}]);
-			args.push([ 'length(_id)', { $lte: 10}]);
+		if (!my.opts.unlimited) {
+			if (my.opts.short) {
+				args.push([ 'length(_id)', { $gte: 1}]);
+				args.push([ 'length(_id)', { $lte: 4}]);
+			} else {
+				args.push([ 'length(_id)', { $gte: 2}]);
+				args.push([ 'length(_id)', { $lte: 10}]);
+			}
 		}
 		DB.kkutu['ko'].find.apply(my, args).on(function($res){
 			if(!$res) return R.go(null);
@@ -267,9 +273,14 @@ function getAnswer(theme, nomean){
 		let args = [ [ '_id', { $nin: my.game.done } ] ];
 		
 		args.push([ 'theme', new RegExp("(,|^)(" + theme + ")(,|$)") ]);
-		if (!my.opts.character) {
-			args.push([ 'length(_id)', { $gte: 4}]);
-			args.push([ 'length(_id)', { $lte: 16}]);
+		if (!my.opts.unlimited) {
+			if (!my.opts.short) {
+				args.push([ 'length(_id)', { $gte: 4}]);
+				args.push([ 'length(_id)', { $lte: 16}]);
+			} else {
+				args.push([ 'length(_id)', { $gte: 2}]);
+				args.push([ 'length(_id)', { $lte: 8}]);
+			}
 		}
 		DB.kkutu['en'].find.apply(my, args).on(function($res){
 			if(!$res) return R.go(null);
