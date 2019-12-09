@@ -398,6 +398,14 @@ exports.Agent = function(type, origin){
 		};
 
 		my.source = col;
+		my.raw = function() {
+			return new Promise((resolve, reject) => {
+				origin.query(arguments[0], function(err, res){
+					if(err) reject(err)
+					resolve(res)
+				});
+			});
+		}
 		my.findOne = function(){
 			return new pointer("findOne", query(arguments));
 		};
