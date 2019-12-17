@@ -22,5 +22,35 @@
     "kakao": {
         "clientID": "",
         "callbackURL": "{URI}/login/kakao/callback"
+    },
+    "discord": {
+        "clientID": "",
+		    "clientSecret": "",
+        "callbackURL": "/login/discord/callback"
+    },
+    "twitch": {
+        "clientID": "",
+		    "clientSecret": "",
+        "callbackURL": "/login/twitch/callback"
+    },
+    "github": {
+        "clientID": "",
+		    "clientSecret": "",
+        "callbackURL": "/login/github/callback"
+    },
+    "line": {
+        "clientID": "",
+		    "clientSecret": "",
+        "callbackURL": "/login/line/callback"
+    },
+    "instagram": {
+        "clientID": "",
+		    "clientSecret": "",
+        "callbackURL": "/login/instagram/callback"
+    },
+    "spotify": {
+        "clientID": "",
+		    "clientSecret": "",
+        "callbackURL": "/login/spotify/callback"
     }
 }
