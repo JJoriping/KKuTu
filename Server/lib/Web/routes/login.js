@@ -40,9 +40,9 @@ function process(req, accessToken, MainDB, $p, done) {
     MainDB.users.findOne([ '_id', $p.id ]).on(($body) => {
         req.session.profile = $p;
         MainDB.users.update([ '_id', $p.id ]).set([ 'lastLogin', now ]).on();
-    });
 
-    done(null, $p);
+        done(null, $p);
+    });
 }
 
 exports.run = (Server, page) => {
@@ -72,14 +72,12 @@ exports.run = (Server, page) => {
 				color: auth.config.color,
 				fontColor: auth.config.fontColor
 			};
-
 			JLog.info(`OAuth Strategy ${i} loaded successfully.`)
 		} catch (error) {
 			JLog.error(`OAuth Strategy ${i} is not loaded`)
 			JLog.error(error.message)
 		}
-	}
-	
+  }
 	Server.get("/login", (req, res) => {
 		if(global.isPublic){
 			page(req, res, "login", { '_id': req.session.id, 'text': req.query.desc, 'loginList': strategyList});
@@ -100,7 +98,6 @@ exports.run = (Server, page) => {
 			});
 		}
 	});
-
 	Server.get("/logout", (req, res) => {
 		if(!req.session.profile){
 			return res.redirect("/");

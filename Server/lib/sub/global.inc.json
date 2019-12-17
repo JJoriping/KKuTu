@@ -1,6 +1,9 @@
 {
 	"ADMIN": [ "Input admin id here" ],
 	"MAIN_PORTS": [ 8080 ],
+	"WEB_PORT": 80,
+	"SSL_PORT": 443,
+	"TRUST_PROXY": "",
 	"KKUTUHOT_PATH": "/kkutu/data/kkutuhot.json",
 	"PASS":"Your password for management Here",
 	"PG_USER": "postgres",
@@ -12,11 +15,14 @@
 	"GOOGLE_RECAPTCHA_SITE_KEY": "Your Google Recaptcha site key Here",
 	"GOOGLE_RECAPTCHA_SECRET_KEY": "Your Google Recaptcha secret key Here",
 	"IS_SECURED": false,
+	"REDIRECT_HTTPS": false,
+	"GAME_SERVER_RETRY": 0,
 	"SSL_OPTIONS": {
 		"PRIVKEY": "Your SSL Private Key Here",
 		"CERT": "Your SSL Certificate Here",
 		"CA": "Your SSL CA-Bundle Here",
 		"PFX": "Your PFX Bundle Here",
+		"PFXPass": "Your PFX Passphrase here",
 		"isPFX": false,
 		"isCA": false
 	}

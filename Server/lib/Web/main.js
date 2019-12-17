@@ -30,14 +30,11 @@ var Parser	 = require("body-parser");
 var DDDoS	 = require("dddos");
 var Server	 = Express();
 var DB		 = require("./db");
-//볕뉘 수정 구문삭제 (28)
 var JLog	 = require("../sub/jjlog");
 var WebInit	 = require("../sub/webinit");
 var GLOBAL	 = require("../sub/global.json");
 var Secure = require('../sub/secure');
-//볕뉘 수정
 var passport = require('passport');
-//볕뉘 수정 끝
 var Const	 = require("../const");
 var https	 = require('https');
 var fs		 = require('fs');
@@ -46,11 +43,9 @@ var Language = {
 	'ko_KR': require("./lang/ko_KR.json"),
 	'en_US': require("./lang/en_US.json")
 };
-//볕뉘 수정
 var ROUTES = [
 	"major", "consume", "admin", "login"
 ];
-//볕뉘 수정 끝
 var page = WebInit.page;
 var gameServers = [];
 
@@ -76,7 +71,6 @@ Server.use(Exession({
 	resave: false,
 	saveUninitialized: true
 }));
-//볕뉘 수정
 Server.use(passport.initialize());
 Server.use(passport.session());
 Server.use((req, res, next) => {
@@ -86,7 +80,7 @@ Server.use((req, res, next) => {
 	next();
 });
 Server.use((req, res, next) => {
-	if(Const.IS_SECURED) {
+	if(Const.REDIRECT_HTTPS) {
 		if(req.protocol == 'http') {
 			let url = 'https://'+req.get('host')+req.path;
 			res.status(302).redirect(url);
@@ -97,7 +91,9 @@ Server.use((req, res, next) => {
 		next();
 	}
 });
-//볕뉘 수정 끝
+if(GLOBAL.TRUST_PROXY) {
+	Server.set('trust proxy', GLOBAL.TRUST_PROXY);
+}
 /* use this if you want
 
 DDDoS = new DDDoS({
@@ -126,7 +122,7 @@ DB.ready = function(){
 	}, 600000);
 	setInterval(function(){
 		gameServers.forEach(function(v){
-			if(v.socket) v.socket.send(`{"type":"seek"}`);
+			if(v.socket && v.connected) v.socket.send(`{"type":"seek"}`);
 			else v.seek = undefined;
 		});
 	}, 4000);
@@ -145,27 +141,29 @@ DB.ready = function(){
 			}
 		}
 	});
-	Server.listen(80);
+	Server.listen(GLOBAL.WEB_PORT);
 	if(Const.IS_SECURED) {
 		const options = Secure();
-		https.createServer(options, Server).listen(443);
+		https.createServer(options, Server).listen(GLOBAL.SSL_PORT);
 	}
 };
 Const.MAIN_PORTS.forEach(function(v, i){
 	var KEY = process.env['WS_KEY'];
-	var protocol;
-	if(Const.IS_SECURED) {
-		protocol = 'wss';
-	} else {
-		protocol = 'ws';
-	}
+	var protocol = (Const.IS_SECURED ? 'wss' : 'ws');
 	gameServers[i] = new GameClient(KEY, `${protocol}://127.0.0.2:${v}/${KEY}`);
 });
 function GameClient(id, url){
 	var my = this;
+	let override = url.match(/127\.0\.0\.\d{1,3}/) ? true : false;
 
 	my.id = id;
-	my.socket = new WS(url, { perMessageDeflate: false, rejectUnauthorized: false});
+	my.tryConnect = 0;
+	my.connected = false;
+	
+	my.socket = new WS(url, {
+		perMessageDeflate: false,
+		rejectUnauthorized: !override
+	});
 	
 	my.send = function(type, data){
 		if(!data) data = {};
@@ -173,18 +171,43 @@ function GameClient(id, url){
 
 		my.socket.send(JSON.stringify(data));
 	};
-	my.socket.on('open', function(){
+	function onGameOpen () {
 		JLog.info(`Game server #${my.id} connected`);
-	});
-	my.socket.on('error', function(err){
+		my.connected = true;
+	}
+	function onGameError (err) {
+		my.connected = true;
+		if (GLOBAL.GAME_SERVER_RETRY > 0 ) { 
+			my.tryConnect++
+		}
+
 		JLog.warn(`Game server #${my.id} has an error: ${err.toString()}`);
-	});
-	my.socket.on('close', function(code){
+	}
+	function onGameClose (code) {
+		my.connected = false;
+
 		JLog.error(`Game server #${my.id} closed: ${code}`);
 		my.socket.removeAllListeners();
 		delete my.socket;
-	});
-	my.socket.on('message', function(data){
+
+		if (my.tryConnect <= GLOBAL.GAME_SERVER_RETRY) {
+			JLog.info(`Retry connect to 5 seconds` + (GLOBAL.GAME_SERVER_RETRY > 0 ? `, try: ${my.tryConnect}` : ''));
+			setTimeout(() => {
+				my.socket = new WS(url, {
+					perMessageDeflate: false,
+					rejectUnauthorized: override,
+					handshakeTimeout: 2000
+				});
+				my.socket.on('open', onGameOpen);
+				my.socket.on('error', onGameError);
+				my.socket.on('close', onGameClose);
+				my.socket.on('message', onGameMessage);
+			}, 5000);
+		} else {
+			JLog.info('Connect fail.');
+		}
+	}
+	function onGameMessage (data) {
 		var _data = data;
 		var i;
 
@@ -201,15 +224,18 @@ function GameClient(id, url){
 				break;
 			default:
 		}
-	});
+	}
+	my.socket.on('open', onGameOpen);
+	my.socket.on('error', onGameError);
+	my.socket.on('close', onGameClose);
+	my.socket.on('message', onGameMessage);
 }
 ROUTES.forEach(function(v){
 	require(`./routes/${v}`).run(Server, WebInit.page);
 });
 Server.get("/", function(req, res){
 	var server = req.query.server;
-	
-	//볕뉘 수정 구문삭제(220~229, 240)
+
 	DB.session.findOne([ '_id', req.session.id ]).on(function($ses){
 		// var sid = (($ses || {}).profile || {}).sid || "NULL";
 		if(global.isPublic){
@@ -264,8 +290,6 @@ Server.get("/servers", function(req, res){
 	});
 	res.send({ list: list, max: Const.KKUTU_MAX });
 });
-
-//볕뉘 수정 구문 삭제(274~353)
 
 Server.get("/legal/:page", function(req, res){
 	page(req, res, "legal/"+req.params.page);

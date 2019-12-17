@@ -2,45 +2,55 @@
     "naver": {
         "clientID": "",
         "clientSecret": "",
-        "callbackURL": "/login/naver/callback"
-    }, "facebook": {
+        "callbackURL": "{URI}/login/naver/callback"
+    },
+    "facebook": {
         "clientID": "",
         "clientSecret": "",
-        "callbackURL": "/login/facebook/callback"
-    }, "google": {
+        "callbackURL": "{URI}/login/facebook/callback"
+    },
+    "google": {
         "clientID": "",
         "clientSecret": "",
-        "callbackURL": "/login/google/callback"
-    }, "twitter": {
+        "callbackURL": "{URI}/login/google/callback"
+    },
+    "twitter": {
         "consumerKey": "",
         "consumerSecret": "",
-        "callbackURL": "/login/twitter/callback"
-    }, "kakao": {
+        "callbackURL": "{URI}/login/twitter/callback"
+    },
+    "kakao": {
         "clientID": "",
-        "callbackURL": "/login/kakao/callback"
-    }, "discord": {
+        "callbackURL": "{URI}/login/kakao/callback"
+    },
+    "discord": {
         "clientID": "",
-		"clientSecret": "",
+		    "clientSecret": "",
         "callbackURL": "/login/discord/callback"
-    }, "twitch": {
+    },
+    "twitch": {
         "clientID": "",
-		"clientSecret": "",
+		    "clientSecret": "",
         "callbackURL": "/login/twitch/callback"
-    }, "github": {
+    },
+    "github": {
         "clientID": "",
-		"clientSecret": "",
+		    "clientSecret": "",
         "callbackURL": "/login/github/callback"
-    }, "line": {
+    },
+    "line": {
         "clientID": "",
-		"clientSecret": "",
+		    "clientSecret": "",
         "callbackURL": "/login/line/callback"
-    }, "instagram": {
+    },
+    "instagram": {
         "clientID": "",
-		"clientSecret": "",
+		    "clientSecret": "",
         "callbackURL": "/login/instagram/callback"
-    }, "spotify": {
+    },
+    "spotify": {
         "clientID": "",
-		"clientSecret": "",
+		    "clientSecret": "",
         "callbackURL": "/login/spotify/callback"
     }
 }

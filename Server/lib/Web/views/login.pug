@@ -27,11 +27,18 @@ html
 		+PageHead()
 	body
 		span#locale= JSON.stringify(LANG)
-		//볕뉘 수정 구문삭제(30)
 		div.login-with= locals.text ? L(locals.text) : L('loginWith')
-		//볕뉘 수정
-		each val in loginList
-			a(href="/login/" + val.vendor)
-				button(style="color: " + val.fontColor + "; background-color: " + val.color + ";")= L(val.displayName)
-		//볕뉘 수정 끝
+		center
+			each val in loginList
+				if val.useOAuthButtons
+					.lbtn(class="lbtn-" + val.vendor)
+						i.logo
+						a.label(href="/login/" + val.vendor)= L(val.displayName)
+				else
+					a(href="/login/" + val.vendor)
+						button(style="color: " + val.fontColor + "; background-color: " + val.color + ";")= L(val.displayName)
 		div.login-legal!= L('loginLegal')
+block CSS
+	link(rel='stylesheet', href='/css/oauth-buttons.min.css')
+block JS
+	script(src='/js/oauth-buttons.min.js')

@@ -40,3 +40,14 @@ button{
 	text-align: center;
 }
 .login-legal a{ color: #DDDDDD; }
+
+.lbtn {
+	height: 48px !important;
+}
+.lbtn .label {
+	font-size: 18px !important;
+}
+
+.lbtn .logo {
+	width: 48px !important;
+}

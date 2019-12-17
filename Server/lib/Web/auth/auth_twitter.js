@@ -5,7 +5,8 @@ module.exports.config = {
     color: '#55ACEE',
     fontColor: '#FFFFFF',
     vendor: 'twitter',
-    displayName: 'withTwitter'
+    displayName: 'withTwitter',
+    useOAuthButtons: false
 }
 
 module.exports.strategyConfig = {

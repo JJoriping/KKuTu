@@ -5,7 +5,8 @@ module.exports.config = {
     color: '#FFFFFF',
     fontColor: '#000000',
     vendor: 'google',
-    displayName: 'withGoogle'
+    displayName: 'withGoogle',
+    useOAuthButtons: false
 }
 
 module.exports.strategyConfig = {
