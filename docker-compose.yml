@@ -4,26 +4,26 @@ services:
   game:
     build: .
     volumes:
-    - ./Server/lib/sub:/app/Server/lib/sub
-    restart: always
+      - ./Server/lib/sub:/app/Server/lib/sub
     depends_on:
-    - db
-    command: ["node", "/app/Server/lib/Game/cluster.js", "0", "1"]
+      - db
+    command: [ "node", "/app/Server/lib/Game/cluster.js", "0", "1" ]
+    restart: always
     ports:
-    - 8496:8496
-    - 8080:8080
+      - 8496:8496
+      - 8080:8080
   web:
     build: .
     volumes:
-    - ./Server/lib/sub:/app/Server/lib/sub
-    - kkutu_data:/kkutu
+      - ./Server/lib/sub:/app/Server/lib/sub
+      - kkutu_data:/kkutu
+    command: [ "node", "/app/Server/lib/Web/cluster.js", "1" ]
     restart: always
-    command: ["node", "/app/Server/lib/Web/cluster.js", "1"]
     depends_on:
-    - db
-    - game
+      - db
+      - game
     ports:
-    - 9000:80
+      - 80:80
   db:
     build:
       context: .
@@ -31,9 +31,10 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: main
-    restart: always
     volumes:
-    - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
 
 volumes:
   kkutu_data:
