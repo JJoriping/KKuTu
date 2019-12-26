@@ -1,0 +1,46 @@
+//-
+  Rule the words! KKuTu Online
+  Copyright (C) 2020  JJoriping(op@jjo.kr)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+include components/Separator
+include components/Tooltip
+include utils/L
+
+html
+  head
+    meta(charset='utf-8')
+    link(rel='stylesheet', href=`/media/scripts/${locals.page}.css`)
+    script(type='text/javascript', src=`/media/scripts/${locals.page}.js`)
+  body
+    div#top
+      div#global-notice
+        include ../media/global-notice.html
+      +Tooltip(L('GLOBAL_NOTICE'))
+      block Top
+    div#jungle
+      block Jungle
+    div#middle
+      block Middle
+    div#bottom
+      block Bottom
+      div.bottom-legal
+        if locals.onPC
+          a(href='?')= L('AS_MOBILE')
+        br
+        a.bottom-contact(href='http://blog.jjo.kr/', target='_blank')= L('CREATOR')
+        a.bottom-contact(href='mailto:op@jjo.kr', target='_blank') Contact op@jjo.kr
+      div.bottom-legal!= L('LICENSE')
+      +Separator(10)

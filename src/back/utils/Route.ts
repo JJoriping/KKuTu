@@ -16,9 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import Express = require("express");
+
 /**
- * HTTP 상태 코드 열거형.
+ * 익스프레스 인스턴스에 추가할 수 있는 라우팅 객체를 만들어 반환한다.
  */
-export enum StatusCode{
-  MOVED = 302
+export function route():Express.Router{
+  const R = Express.Router();
+
+  R.get("/", (req, res) => {
+    page(req, res, "Index");
+  });
+
+  return R;
+}
+function page(req:Express.Request, res:Express.Response, name:string):void{
+  res.render(name, {
+    page: name,
+    L: {}
+  });
 }

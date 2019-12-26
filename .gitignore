@@ -5,3 +5,4 @@ data/settings.json
 
 dist/*
 !dist/media/
+!dist/views/

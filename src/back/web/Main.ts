@@ -1,14 +1,17 @@
 /*!
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -17,10 +20,12 @@ import Express = require("express");
 import ExpressSession = require("express-session");
 import HTTPS = require("https");
 import Passport = require("passport");
+import Path = require("path");
 
 import Database = require("back/utils/Database");
 import { StatusCode } from "back/utils/enums/StatusCode";
 import { Logger, LogStyle } from "back/utils/Logger";
+import { route } from "back/utils/Route";
 import { SSL_OPTIONS } from "back/utils/SSL";
 import { SETTINGS } from "back/utils/System";
 
@@ -31,7 +36,7 @@ const PORT_HTTPS = 443;
 
 Logger.initialize("web").then(async () => {
   await Database.initialize();
-  app.set('views', `${__dirname}/views`);
+  app.set('views', Path.resolve(__dirname, "views"));
   app.set('view engine', "pug");
   app.use("/media", Express.static(`${__dirname}/media`));
   app.use(ExpressSession({
@@ -62,6 +67,7 @@ Logger.initialize("web").then(async () => {
       next();
     }
   });
+  app.use("/", route());
   app.listen(PORT_HTTP);
   if(SETTINGS.https){
     HTTPS.createServer(SSL_OPTIONS, app).listen(PORT_HTTPS);
