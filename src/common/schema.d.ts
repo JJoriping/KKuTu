@@ -63,7 +63,7 @@ declare namespace Schema{
       /**
        * 접속할 서버의 포트 번호.
        */
-      'port': string,
+      'port': number,
       /**
        * 사용할 계정 이름.
        */
@@ -79,6 +79,8 @@ declare namespace Schema{
     },
     /**
      * HTTPS 통신에 필요한 정보를 담은 객체.
+     * 
+     * 인증서 파일이 상대 경로로 입력된 경우 `data` 디렉토리 안을 기준으로 탐색한다.
      */
     'https'?: {
       /**

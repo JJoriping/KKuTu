@@ -9,15 +9,32 @@
   "keywords": [
     "kkutu"
   ],
+  "scripts": {
+    "watch-back": "webpack -d -w"
+  },
   "dependencies": {
+    "body-parser": "^1.19.0",
+    "connect-redis": "^4.0.3",
     "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "mysql": "^2.17.1",
+    "passport": "^0.4.1",
+    "redis": "^2.8.0",
     "ws": "^7.2.1"
   },
   "devDependencies": {
+    "@types/connect-redis": "^0.0.13",
     "@types/express": "^4.17.2",
+    "@types/express-session": "^1.15.16",
+    "@types/mysql": "^2.15.8",
     "@types/node": "^13.1.0",
+    "@types/passport": "^1.0.2",
     "@types/ws": "^6.0.4",
     "ts-json-schema-generator": "^0.58.1",
-    "typescript": "^3.7.4"
+    "ts-loader": "^6.2.1",
+    "tslint": "^5.20.1",
+    "tslint-loader": "^3.5.4",
+    "typescript": "^3.7.4",
+    "webpack-node-externals": "^1.7.2"
   }
 }

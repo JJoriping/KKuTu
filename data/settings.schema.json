@@ -54,7 +54,7 @@
           "description": "접속할 서버의 주소."
         },
         "port": {
-          "type": "string",
+          "type": "number",
           "description": "접속할 서버의 포트 번호."
         },
         "user": {
