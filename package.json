@@ -11,7 +11,8 @@
   "scripts": {
     "start": "node dist/Web",
     "start-dev": "node dist/Web --dev",
-    "watch-back": "webpack -d -w"
+    "watch-back": "webpack -d -w",
+    "watch-front": "webpack -d -w --config ./webpack.front.config.js"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -28,6 +29,7 @@
     "@types/connect-redis": "^0.0.13",
     "@types/express": "^4.17.2",
     "@types/express-session": "^1.15.16",
+    "@types/jquery": "^1.10.35",
     "@types/mysql": "^2.15.8",
     "@types/node": "^13.1.0",
     "@types/passport": "^1.0.2",

@@ -125,7 +125,8 @@
     "no-implicit-dependencies": [
       true,
       [
-        "back"
+        "back",
+        "jquery"
       ]
     ],
     "no-import-side-effect": true,
