@@ -4,8 +4,7 @@ const NodeExternals = require("webpack-node-externals");
 module.exports = {
   target: "node",
   entry: {
-    'Web': Path.resolve(__dirname, "src/back/web/Main.ts"),
-    'Index': Path.resolve(__dirname, "dist/views/Index.scss")
+    'Web': Path.resolve(__dirname, "src/back/web/Main.ts")
   },
   output: {
     path: Path.resolve(__dirname, "dist")

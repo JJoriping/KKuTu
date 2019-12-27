@@ -18,8 +18,10 @@
 
 import Express = require("express");
 
+import { getLanguageTable } from "./Language";
+
 /**
- * 익스프레스 인스턴스에 추가할 수 있는 라우팅 객체를 만들어 반환한다.
+ * Express 인스턴스에 추가할 수 있는 라우팅 객체를 만들어 반환한다.
  */
 export function route():Express.Router{
   const R = Express.Router();
@@ -33,6 +35,6 @@ export function route():Express.Router{
 function page(req:Express.Request, res:Express.Response, name:string):void{
   res.render(name, {
     page: name,
-    L: {}
+    L: getLanguageTable(req.locale, name)
   });
 }

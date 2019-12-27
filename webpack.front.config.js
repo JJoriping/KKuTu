@@ -5,8 +5,10 @@ const MiniCSSExtractPlugin = require("mini-css-extract-plugin");
 const entry = FS.readdirSync(Path.resolve(__dirname, "src/front")).reduce((pv, v) => {
   const name = v.slice(0, v.length - 3);
 
-  pv[`scripts/${name}`] = Path.resolve(__dirname, "src/front", v);
-
+  pv[`scripts/${name}`] = [
+    Path.resolve(__dirname, "src/front", `${name}.ts`),
+    Path.resolve(__dirname, "dist/views", `${name}.scss`)
+  ];
   return pv;
 }, {});
 

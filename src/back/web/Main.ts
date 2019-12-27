@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import CookieParser = require("cookie-parser");
 import Express = require("express");
 import ExpressSession = require("express-session");
 import HTTPS = require("https");
@@ -24,24 +25,29 @@ import Path = require("path");
 
 import Database = require("back/utils/Database");
 import { StatusCode } from "back/utils/enums/StatusCode";
+import { getLocale, loadLanguages } from "back/utils/Language";
 import { Logger, LogStyle } from "back/utils/Logger";
 import { route } from "back/utils/Route";
 import { SSL_OPTIONS } from "back/utils/SSL";
 import { SETTINGS } from "back/utils/System";
 
-const app = Express();
-
+const SECRET = "kkutu";
 const PORT_HTTP = 80;
 const PORT_HTTPS = 443;
 
+const app = Express();
+
 Logger.initialize("web").then(async () => {
+  loadLanguages();
   await Database.initialize();
+
   app.set('views', Path.resolve(__dirname, "views"));
   app.set('view engine', "pug");
   app.use("/media", Express.static(`${__dirname}/media`));
   app.use("/scripts", Express.static(`${__dirname}/scripts`));
+  app.use(CookieParser(SECRET));
   app.use(ExpressSession({
-    secret: "kkutu",
+    secret: SECRET,
     resave: false,
     saveUninitialized: true
   }));
@@ -49,6 +55,7 @@ Logger.initialize("web").then(async () => {
   app.use(Passport.session());
   app.use((req, res, next) => {
     req.address = req.ip || req.ips.join();
+    req.locale = getLocale(req);
     if(req.xhr){
       Logger.log().putS(LogStyle.METHOD, req.method).putS(LogStyle.XHR, " XHR")
         .next("URL").put(req.originalUrl)

@@ -37,6 +37,27 @@ declare namespace Schema{
       'web': number
     },
     /**
+     * 저작권 안내문 표시에 필요한 정보를 담은 객체.
+     */
+    'copyright': {
+      /**
+       * 최근 업데이트 연도.
+       */
+      'year': number,
+      /**
+       * 배포하는 사람의 이름.
+       */
+      'publisher': string,
+      /**
+       * 배포하는 사람의 연락처(이메일 등).
+       */
+      'address': string,
+      /**
+       * 프로그램의 소스 코드를 확인할 수 있는 페이지 URL(GitHub 등).
+       */
+      'repository': string
+    },
+    /**
      * 데이터베이스 연결에 필요한 정보를 담은 객체.
      */
     'database': {
@@ -84,6 +105,14 @@ declare namespace Schema{
        * SSL 인증 기관 인증서 파일의 위치.
        */
       'ca'?: string
+    },
+    /**
+     * 지원하는 언어 객체.
+     * 
+     * 키는 ISO 639 식별자, 값은 해당 언어 이름을 나타낸다.
+     */
+    'locales': {
+      [key in string]: string
     },
     /**
      * 로그 기록에 필요한 정보를 담은 객체.
