@@ -15,15 +15,17 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+include components/Icon
 include components/Separator
 include components/Tooltip
 include utils/L
 
 html
   head
+    title= L('title')
     meta(charset='utf-8')
-    link(rel='stylesheet', href=`/media/scripts/${locals.page}.css`)
-    script(type='text/javascript', src=`/media/scripts/${locals.page}.js`)
+    link(rel='stylesheet', href=`/scripts/${locals.page}.css`)
+    script(type='text/javascript', src=`/scripts/${locals.page}.js`)
   body
     div#top
       div#global-notice
@@ -31,6 +33,7 @@ html
       +Tooltip(L('GLOBAL_NOTICE'))
       block Top
     div#jungle
+      img#background
       block Jungle
     div#middle
       block Middle

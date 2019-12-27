@@ -1,0 +1,194 @@
+/*!
+ * Rule the words! KKuTu Online
+ * Copyright (C) 2020  JJoriping(op@jjo.kr)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+@font-face{
+  font-family: MainFont;
+  src: url("/media/fonts/IropkeBatangM.woff") format('woff');
+}
+a{
+	color: inherit;
+	text-decoration: inherit;
+}
+body{
+	color: #EEEEEE;
+	padding: 0px;
+	margin: 0px;
+	min-width: 480px;
+  font-family: MainFont;
+}
+button{
+	display: block;
+	box-sizing: inherit;
+	font-family: inherit;
+	padding: 5px;
+	border: 1px solid #AAAAAA;
+	border-radius: 10px;
+	background-color: #EEEEEE;
+	transition: all 200ms ease;
+  &:active{
+    color: #EEEEEE;
+    background-color: #444444;
+  }
+  &:focus{
+    outline: none;
+  }
+}
+h1, h2, h3, h4, h5{
+  margin: 0px;
+  font-weight: normal;
+}
+h1{
+  font-size: 24px;
+  font-weight: bold;
+  margin: 4px;
+}
+h2{
+  font-size: 20px;
+  margin: 2px;
+}
+h3{
+  font-size: 15px;
+}
+h4{
+  font-size: 13px;
+}
+h5{
+  font-size: 11px;
+}
+iframe{
+	border: none;
+}
+input, select, textarea{
+	display: block;
+	font-family: inherit;
+	padding: 5px;
+	border: 1px solid #AAAAAA;
+	border-radius: 10px;
+	resize: none;
+  &:focus{
+    outline: none;
+  }
+}
+span{
+	display: none;
+}
+
+#top{
+  position: fixed;
+  width: 100%;
+  height: 30px;
+  box-shadow: 0 2px 2px #111111;
+	background-color: #7CC4F8;
+	background-image: none;
+  z-index: 5;
+}
+#middle{
+	float: left;
+	margin-top: 50px;
+	width: 1010px;
+}
+#bottom{
+	float: left;
+	width: 1000px;
+	color: #444444;
+	font-size: 11px;
+	text-align: center;
+}
+
+#global-notice{
+	padding: 3px 0px;
+	margin-top: 30px;
+	color: #111111;
+	text-align: center;
+	font-weight: bold;
+	background-color: #EEBB33;
+	cursor: pointer;
+	z-index: 5;
+}
+.bottom-legal{
+	margin-top: 10px;
+	color: #CCCCCC;
+  a{
+    padding: 0 5px;
+  }
+}
+.bottom-contact{
+	color: #444444;
+	font-weight: bold;
+}
+.jjoriping{
+  width: 500px;
+  >img{
+    position: relative;
+    &.eye{
+      top: 8px;
+    }
+    &.nose{
+      top: 6px;
+    }
+  }
+  >.display{
+    padding: 20px 5px 5px 5px;
+    border: 2px solid #000000;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    margin-top: -10px;
+    width: 486px;
+    height: 80px;
+    background-color: #DEAF56;
+    >button{
+      padding: 8px 5px;
+      border-radius: 10px;
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+      width: 476px;
+      height: 23px;
+      font-size: 20px;
+      text-align: center;
+      color: #EEEEEE;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+  }
+}
+.tooltip{
+	display: none;
+	float: left;
+	color: #EEEEEE;
+	z-index: 1;
+}
+.tooltip-active{
+	display: block;
+	position: fixed;
+	padding: 5px;
+	border-radius: 5px;
+	pointer-events: none;
+	background-color: #222222;
+	background-color: rgba(0, 0, 0, 0.8);
+}
+
+#background{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background-image: url('/media/images/background-game.png');
+  background-size: 200px 200px;
+  z-index: -1;
+}

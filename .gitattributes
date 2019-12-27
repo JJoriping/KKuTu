@@ -1,1 +1,1 @@
-kkutu.sql filter=lfs diff=lfs merge=lfs -text
+kkutu.sql filter=lfs diff=lfs merge=lfs -text linguist-vendored

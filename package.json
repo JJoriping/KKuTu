@@ -2,7 +2,6 @@
   "name": "kkutu",
   "version": "2.6.0",
   "description": "Rule the words! KKuTu Online",
-  "main": "dist/main.js",
   "repository": "https://github.com/JJoriping/KKuTu",
   "author": "JJoriping <op@jjo.kr>",
   "license": "AGPL-3.0",
@@ -10,6 +9,8 @@
     "kkutu"
   ],
   "scripts": {
+    "start": "node dist/Web",
+    "start-dev": "node dist/Web --dev",
     "watch-back": "webpack -d -w"
   },
   "dependencies": {
@@ -31,11 +32,17 @@
     "@types/node": "^13.1.0",
     "@types/passport": "^1.0.2",
     "@types/ws": "^6.0.4",
+    "css-loader": "^3.4.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "node-sass": "^4.13.0",
+    "sass-loader": "^8.0.0",
     "ts-json-schema-generator": "^0.58.1",
     "ts-loader": "^6.2.1",
     "tslint": "^5.20.1",
     "tslint-loader": "^3.5.4",
     "typescript": "^3.7.4",
+    "webpack": "^4.41.4",
+    "webpack-cli": "^3.3.10",
     "webpack-node-externals": "^1.7.2"
   }
 }

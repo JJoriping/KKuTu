@@ -1,0 +1,7 @@
+{
+  "$schema": "./settings.schema.json",
+
+  "log": {
+    "interval": 0
+  }
+}

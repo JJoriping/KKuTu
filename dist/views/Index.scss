@@ -1,0 +1,139 @@
+/*!
+ * Rule the words! KKuTu Online
+ * Copyright (C) 2020  JJoriping(op@jjo.kr)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+@import "./global.scss";
+
+#holder{
+	width: 200px;
+	text-align: center;
+	text-shadow: 0px 0px 4px #333;
+	font-weight: bold;
+}
+#kkutu-bulletin{
+	border: 0px;
+	margin-bottom: 5px;
+}
+#logo{
+	margin-top: -20px;
+}
+
+#menu-bar>a{
+	display: block;
+	float: left;
+	padding: 10px 5px;
+	border-radius: 5px;
+	margin: 0px 3px;
+	width: 120px;
+	font-size: 15px;
+	text-align: center;
+	box-shadow: 0px 1px 1px #333;
+}
+#game-start{
+	float: left;
+	width: 315px;
+	height: 70px;
+	font-size: 20px;
+	font-weight: bold;
+	border: none;
+	border-bottom-left-radius: inherit;
+	border-bottom-right-radius: inherit;
+  &:hover{
+    font-size: 24px;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+}
+.server-list-box{
+	float: right;
+	width: 320px;
+	background-color: rgba(0, 0, 0, 0.4);
+}
+.server-list-title{
+	padding: 2px 0px;
+	width: 100%;
+	background-color: rgba(0, 0, 0, 0.4);
+}
+#server-refresh{
+	margin: 0px 5px;
+	cursor: pointer;
+}
+.server{
+	float: left;
+	margin: 2px 0px;
+	width: 320px;
+	height: 16px;
+	font-size: 13px;
+	cursor: pointer;
+  &:hover{
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  >div{
+    float: left;
+  }
+	.server-status{
+    border-radius: 6px;
+    margin: 2px;
+    width: 12px;
+    height: 12px;
+  }
+  .ss-o{
+    background-color: #3E3;
+  }
+  .ss-p{
+    background-color: #EE3;
+  }
+  .ss-q{
+    background-color: #F55;
+  }
+  .ss-x{
+    background-color: #777;
+  }
+	.server-name{
+    width: 60px;
+  }
+	.server-people{
+    width: 190px;
+    height: 100%;
+    >label{
+      position: relative;
+      display: block;
+      top: -14px;
+      width: 100%;
+      text-align: center;
+      font-size: 11px;
+    }
+    >.graph-bar{
+      background-image: url('/media/images/gauge-blue.png');
+    }
+  }
+	.server-enter{
+    width: 50px;
+    text-align: center;
+  }
+}
+
+#background{
+	animation: BackgroundScroll 4s linear infinite;
+}
+@keyframes BackgroundScroll{
+	from{
+    background-position: 0 0;
+  }
+	to{
+    background-position: -200px -200px;
+  }
+}

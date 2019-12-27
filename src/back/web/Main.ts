@@ -39,6 +39,7 @@ Logger.initialize("web").then(async () => {
   app.set('views', Path.resolve(__dirname, "views"));
   app.set('view engine', "pug");
   app.use("/media", Express.static(`${__dirname}/media`));
+  app.use("/scripts", Express.static(`${__dirname}/scripts`));
   app.use(ExpressSession({
     secret: "kkutu",
     resave: false,

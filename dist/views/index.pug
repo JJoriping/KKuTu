@@ -16,3 +16,35 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 extend global
+
+block Middle
+  +Separator(5)
+  div(style='float: left; width: 100%;')
+    div(style='float: left; padding-left: 70px;')
+      h3#holder= L('title').replace(/\[.+?\]/g, "")
+      img#logo(src='/media/images/logo-text.png')
+    div#menu-bar(style='float: right; margin-top: 25px;')
+      a(target='_blank', href='//cafe.naver.com/sdbx', style='background-color: #63A95B;')= L('SANDBOX')
+      a(target='_blank', href='//blog.jjo.kr/', style='background-color: #4078DC;')= L('CREATOR')
+    div.jjoriping(style='margin-top: 50px;')
+      img.left.eye(src='/media/images/jjoriping-left-eye.png', style='left: -270px;')
+      img.nose(src='/media/images/jjoriping-nose.png', style='left: -170px;')
+      img.right.eye(src='/media/images/jjoriping-right-eye.png', style='left: -70px;')
+      div.display(style='width: 325px; height: 87px;')
+        button#game-start= L('game-start')
+  div(style='float: right; margin-top: -120px; width: 50%;')
+    div.server-list-box
+      h3.server-list-title
+        a#server-refresh
+          +Icon('refresh')
+          +Tooltip(L('server-refresh'))
+        label= L('server-list')
+        label#server-total(style='color: #AAA; font-size: 13px;')
+      div#server-list
+  div(style='float: left; width: calc(100% - 4px); border: 2px solid #CCC; margin-top: 10px; background-color: #EEE;')
+    iframe#kkutu-bulletin(width='100%', height='400px', src='/media/bulletin.html')
+  +Separator(10)
+
+block Bottom
+  div.bottom-legal!= L('support-dictionary')
+  div.bottom-legal!= L('support-etc')
