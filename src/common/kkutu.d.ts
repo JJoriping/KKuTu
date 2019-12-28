@@ -13,13 +13,29 @@ declare namespace KKuTu{
     type ResponseData<T extends KKuTu.Packet.Type> = {
       'type'?: T
     }&KKuTu.Packet.ResponseTable[T];
+    /**
+     * 요청(외부 → 게임 서버) 메시지를 유형별로 처리하는 핸들러 객체.
+     */
+    type RequestHandlerTable = {
+      [key in KKuTu.Packet.Type]?: (data:KKuTu.Packet.RequestData<key>) => void
+    };
+    /**
+     * 응답(게임 서버 → 외부) 메시지를 유형별로 처리하는 핸들러 객체.
+     */
+    type ResponseHandlerTable = {
+      [key in KKuTu.Packet.Type]?: (data:KKuTu.Packet.ResponseData<key>) => void
+    };
 
     type RequestTable = {
-      'seek': {}
+      'seek': {},
+      'welcome': never
     };
     type ResponseTable = {
       'seek': {
         'value': number
+      },
+      'welcome': {
+        'administrator': boolean
       }
     };
   }

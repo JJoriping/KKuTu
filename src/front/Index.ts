@@ -99,7 +99,7 @@ $(document).ready(() => {
           $baby.children(".server-enter").html("-");
         }else{
           $baby.on('click', () => {
-            location.href = `/?server=${i}`;
+            location.href = `/server/${i}`;
           });
         }
       });

@@ -17,7 +17,7 @@
  */
 
 import { DateUnit } from "./enums/DateUnit";
-import { cut, FRONT, TIMEZONE_OFFSET, toSignedString } from "./Utility";
+import { cut, isFront, TIMEZONE_OFFSET, toSignedString } from "./Utility";
 
 let fs:typeof import("fs");
 let system:typeof import("back/utils/System");
@@ -336,7 +336,7 @@ export class Logger{
     let text = this.getText();
     let args:string[] = [];
 
-    if(FRONT){
+    if(isFront()){
       text = text.replace(Logger.REGEXP_ANSI_ESCAPE, (v, p1) => {
         args.push(Logger.WEBKIT_STYLE_TABLE[p1 as LogColor]);
 

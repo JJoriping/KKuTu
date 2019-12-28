@@ -16,21 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import WS = require("ws");
+
+import { SETTINGS } from "back/utils/System";
 import { WSClient } from "back/utils/WSClient";
-import { clients } from "../Lobby";
 
 /**
- * 웹 서버의 클라이언트 클래스.
- *
- * 게임 서버가 웹 서버로부터의 연결을 처리하기 위해 쓰인다.
+ * 일반 사용자의 클라이언트 클래스.
  */
-export class WebServer extends WSClient{
-  protected requestHandlerTable:KKuTu.Packet.RequestHandlerTable = {
-    seek: () => {
-      this.response('seek', {
-        value: Object.keys(clients).length
-      });
-    }
-  };
+export class Client extends WSClient{
+  protected requestHandlerTable:KKuTu.Packet.RequestHandlerTable = null;
   protected responseHandlerTable:KKuTu.Packet.ResponseHandlerTable = null;
+
+  constructor(id:string, socket:WS){
+    super(id, socket);
+    this.response('welcome', {
+      administrator: Boolean(SETTINGS.administrators.find(v => v.id === id))
+    });
+  }
 }

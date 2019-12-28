@@ -19,8 +19,11 @@
 import Express = require("express");
 
 import { GameClient } from "back/web/GameClient";
+import { StatusCode } from "./enums/StatusCode";
 import { getLanguageTable } from "./Language";
-import { SETTINGS } from "./System";
+import { PACKAGE, SETTINGS } from "./System";
+
+const PROTOCOL = SETTINGS.https ? "wss" : "ws";
 
 /**
  * Express 인스턴스에 추가할 수 있는 라우팅 객체를 만들어 반환한다.
@@ -31,6 +34,18 @@ export function route():Express.Router{
   R.get("/", (req, res) => {
     page(req, res, "Index");
   });
+  R.get("/server/:index", (req, res) => {
+    const index = Number(req.params['index']);
+
+    if(!SETTINGS.ports[index]){
+      res.sendStatus(StatusCode.NOT_FOUND);
+
+      return;
+    }
+    page(req, res, "Play", {
+      url: `${PROTOCOL}://${req.hostname}:${SETTINGS.ports[index]}/${req.sessionID}`
+    });
+  });
   R.get("/servers", (req, res) => {
     res.send({
       list: GameClient.list.map(v => v.seek),
@@ -40,10 +55,12 @@ export function route():Express.Router{
 
   return R;
 }
-function page(req:Express.Request, res:Express.Response, name:string):void{
+function page(req:Express.Request, res:Express.Response, name:string, data:Table<any> = {}):void{
   res.render(name, {
+    ...data,
     copyright: SETTINGS.copyright,
     page: name,
+    version: PACKAGE.version,
     L: getLanguageTable(req.locale, name)
   });
 }

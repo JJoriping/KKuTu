@@ -206,11 +206,11 @@
       "properties": {
         "to-guest": {
           "type": "boolean",
-          "description": "손님 계정에게 표시할 지 여부."
+          "description": "손님 계정에게 표시할지 여부."
         },
         "to-user": {
           "type": "boolean",
-          "description": "회원에게 표시할 지 여부."
+          "description": "회원에게 표시할지 여부."
         },
         "site": {
           "type": "string",

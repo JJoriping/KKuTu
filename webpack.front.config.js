@@ -71,6 +71,8 @@ module.exports = {
     })
   ],
   externals: {
+    'cluster': {},
+    'fs': {},
     'jquery': "$"
   }
 };

@@ -16,11 +16,13 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 -
-  function L(id, ...args){
-    let R = locals.L[id] || `(L#${id})`;
+  function L(key, ...args){
+    let R = locals.L[key];
     
     return R
-      .replace(/\{#(\d+?)\}/g, (_, g1) => args[Number(g1)])
-      .replace(/FA\{([^\}]+)}/g, (_, p1) => `<i class="fa fa-${p1}"></i>`)
+      ? R
+        .replace(/\{#(\d+?)\}/g, (_, g1) => args[Number(g1)])
+        .replace(/FA\{([^\}]+)}/g, (_, p1) => `<i class="fa fa-${p1}"></i>`)
+      : `(L#${key})`
     ;
   }

@@ -52,6 +52,13 @@ export class GameClient extends WSClient{
     });
   }
 
+  protected requestHandlerTable:KKuTu.Packet.RequestHandlerTable = null;
+  protected responseHandlerTable:KKuTu.Packet.ResponseHandlerTable = {
+    seek: ({ value }) => {
+      this.seek = value;
+      Logger.log("Seek").put(this.seek).out();
+    }
+  };
   public seek:number;
 
   constructor(id:string, url:string){
@@ -72,17 +79,6 @@ export class GameClient extends WSClient{
       this.request('seek');
     }else{
       this.seek = null;
-    }
-  }
-  protected onMessage<T extends KKuTu.Packet.Type>(data:KKuTu.Packet.ResponseData<T>){
-    switch(data.type){
-      case "seek":
-        this.seek = data.value;
-        Logger.log("Seek").put(this.seek).out();
-        break;
-      default:
-        Logger.error("Message").put(`Unhandled type: ${data.type}`).out();
-        break;
     }
   }
 }

@@ -19,10 +19,6 @@
 import { DateUnit } from "./enums/DateUnit";
 
 /**
- * 프론트엔드 여부.
- */
-export const FRONT:boolean = !Boolean("/*{APP['false-if-front']}*/");
-/**
  * 유효한 단일 샤프 인자의 집합.
  */
 export const REGEXP_LANGUAGE_ARGS = /\{#(\d+?)\}/g;
@@ -30,6 +26,15 @@ export const REGEXP_LANGUAGE_ARGS = /\{#(\d+?)\}/g;
  * 시간대 오프셋 값(㎳).
  */
 export const TIMEZONE_OFFSET = new Date().getTimezoneOffset() * DateUnit.MINUTE;
+/**
+ * 배열을 생성해 반환한다.
+ *
+ * @param length 배열의 길이.
+ * @param fill 배열의 내용.
+ */
+export function Iterator<T = undefined>(length:number, fill?:T):T[]{
+  return Array(length).fill(fill);
+}
 /**
  * 제한 길이를 초과하는 내용이 생략된 문자열을 반환한다.
  *
@@ -43,13 +48,14 @@ export function cut(text:string, limit:number):string{
   ;
 }
 /**
- * 배열을 생성해 반환한다.
- *
- * @param length 배열의 길이.
- * @param fill 배열의 내용.
+ * 프론트엔드 여부를 반환한다.
  */
-export function Iterator<T = undefined>(length:number, fill?:T):T[]{
-  return Array(length).fill(fill);
+export function isFront():boolean{
+  try{
+    return window.FRONT;
+  }catch(e){}
+
+  return false;
 }
 /**
  * 배열을 주어진 함수에 따라 딕셔너리로 바꾸어 반환한다.

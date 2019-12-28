@@ -25,6 +25,7 @@ import { Logger } from "back/utils/Logger";
 import { SSL_OPTIONS } from "back/utils/SSL";
 import { SETTINGS } from "back/utils/System";
 import { WSClient } from "back/utils/WSClient";
+import { Client } from "./clients/Client";
 import { WebServer } from "./clients/WebServer";
 
 const CAPACITY = SETTINGS.application['server-capacity'];
@@ -62,6 +63,7 @@ export async function main(cluster:number, channels:Cluster.Worker[]):Promise<vo
   }
   server.on('connection', (socket, req) => {
     const key = req.url.slice(1);
+    let client:Client;
 
     socket.on('error', err => {
       Logger.warning("Client").put(key).next("Error").put(err.stack).out();
@@ -83,6 +85,8 @@ export async function main(cluster:number, channels:Cluster.Worker[]):Promise<vo
 
       return;
     }
+    client = new Client(`GUEST-${key}`, socket);
+    clients[client.id] = client;
   });
   server.on('error', err => {
     Logger.error("Server").next("Error").put(err.stack).out();

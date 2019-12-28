@@ -2,6 +2,7 @@
   "$global": {
     "LICENSE": "<blockquote>글자로 놀자! 끄투 온라인 Copyright (C) {#0} {#1}({#2})<br>이 프로그램은 제품에 대한 어떠한 형태의 보증도 제공되지 않습니다.<br>이 프로그램은 자유 소프트웨어이며 배포 규정을 만족시키는 조건 아래 자유롭게 재배포할 수 있습니다.<br>이에 대한 자세한 사항은 본 프로그램의 구현을 담은 다음 레포지토리에서 확인하십시오: <a target='_blank' href='{#3}'>{#3}</a></blockquote>",
 
+    "GLOBAL_NOTICE": "클릭해서 닫기",
     "CREATOR":	"원작자 블로그",
     "SANDBOX": "샌드박스 :: SDBX",
 
@@ -40,5 +41,15 @@
     "server-19": "고구마",
 
     "refreshing": "잠시 기다려 주세요."
+  },
+  "Play": {
+    "title": "글자로 놀자! 끄투 온라인",
+
+    "loading": "불러오는 중",
+    "loading-remain": "불러오는 중 ({#0} 남음)",
+    "welcome": "환영합니다.",
+
+    "closed": "서버와의 연결이 끊어졌습니다. (오류 #{#0})",
+    "compatibility-error": "이 브라우저로는 끄투를 실행할 수 없어요!"
   }
 }

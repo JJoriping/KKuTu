@@ -16,21 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { WSClient } from "back/utils/WSClient";
-import { clients } from "../Lobby";
-
 /**
- * 웹 서버의 클라이언트 클래스.
- *
- * 게임 서버가 웹 서버로부터의 연결을 처리하기 위해 쓰인다.
+ * 끄투를 즐기기 위해 필요한 조건을 브라우저가 충족했는지 여부를 반환한다.
  */
-export class WebServer extends WSClient{
-  protected requestHandlerTable:KKuTu.Packet.RequestHandlerTable = {
-    seek: () => {
-      this.response('seek', {
-        value: Object.keys(clients).length
-      });
-    }
-  };
-  protected responseHandlerTable:KKuTu.Packet.ResponseHandlerTable = null;
+export function checkCompatibility():boolean{
+  if(!window.hasOwnProperty('WebSocket')){
+    return false;
+  }
+  if(!window.hasOwnProperty('AudioContext')){
+    return false;
+  }
+
+  return true;
 }

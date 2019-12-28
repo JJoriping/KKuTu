@@ -1,0 +1,11 @@
+extend global
+
+block Jungle
+  span#url= locals.url
+
+block Middle
+  div#intro
+    img(src='/media/images/intro.png')
+    div#version= locals.version
+    div#intro-text= L('loading')
+  div#loading

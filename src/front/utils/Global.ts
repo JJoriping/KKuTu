@@ -29,6 +29,7 @@ export const G:{
   '$bottom'?:JQuery,
   '$middle'?:JQuery,
   '$notice'?:JQuery,
+  '$noticeBody'?:JQuery,
   '$window'?:JQuery,
   'windowSize'?:[number, number],
   'tooltipSize'?:[number, number]
@@ -47,17 +48,18 @@ export function initialize():void{
   G.$bottom = $("#bottom");
   G.$middle = $("#middle");
   G.$notice = $("#global-notice").hide();
+  G.$noticeBody = G.$notice.children(".body");
   G.$window = $(window);
 
   // 쿠키
   if(testCookie()){
     $.cookie('test', "");
   }else{
-    G.$notice.html(L('cookie-unavailable'));
+    G.$noticeBody.html(L('cookie-unavailable'));
   }
 
   // 공지
-  if(G.$notice.html().length > 1){
+  if(G.$noticeBody.html().length > 1){
     G.$notice.show();
   }
   G.$notice.on('click', () => {
@@ -93,9 +95,12 @@ export function initialize():void{
  * @param args 추가 정보.
  */
 export function L(key:string, ...args:any[]):string{
-  return window.L[key].replace(REGEXP_LANGUAGE_ARGS, (_, g1) => {
-    return args[Number(g1)];
-  });
+  const R = window.L[key];
+
+  return R
+    ? R.replace(REGEXP_LANGUAGE_ARGS, (_, g1) => args[Number(g1)])
+    : `(L#${key})`
+  ;
 }
 /**
  * 주어진 탐색 위치에서 툴팁 객체가 동작하도록 설정한다.

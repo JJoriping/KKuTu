@@ -27,6 +27,8 @@ import { Logger } from "./Logger";
  * 요청의 추가 정보에는 반드시 `type` 속성이 들어가야 한다.
  */
 export abstract class WSClient{
+  protected abstract requestHandlerTable:KKuTu.Packet.RequestHandlerTable;
+  protected abstract responseHandlerTable:KKuTu.Packet.ResponseHandlerTable;
   public id:string;
   public socket:WS;
 
@@ -42,16 +44,23 @@ export abstract class WSClient{
     this.socket.on('error', err => {
       Logger.warning("WSClient").put(id).next("Error").put(err.stack).out();
     });
-    this.socket.on('message', data => {
-      this.onMessage(JSON.parse(data.toString()));
+    this.socket.on('message', chunk => {
+      const { type, ...data } = JSON.parse(chunk.toString());
+      const handler = (this.requestHandlerTable as any)?.[type] || (this.responseHandlerTable as any)?.[type];
+
+      if(!handler){
+        Logger.error("WSClient").put(`Unhandled type: ${type}`).out();
+
+        return;
+      }
+      handler(data);
     });
     this.socket.on('close', code => {
-      Logger.error("WSClient").put(id).next("Code").put(code).out();
+      Logger.info("WSClient").put(id).next("Code").put(code).out();
       this.socket.removeAllListeners();
       this.socket = null;
     });
   }
-  protected abstract onMessage(data:unknown):void;
   /**
    * 웹소켓 통신을 종료한다.
    */

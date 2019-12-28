@@ -20,5 +20,6 @@
  * HTTP 상태 코드 열거형.
  */
 export enum StatusCode{
-  MOVED = 302
+  MOVED = 302,
+  NOT_FOUND = 404
 }

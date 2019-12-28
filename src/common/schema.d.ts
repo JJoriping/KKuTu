@@ -171,11 +171,11 @@ declare namespace Schema{
      */
     'recaptcha'?: {
       /**
-       * 손님 계정에게 표시할 지 여부.
+       * 손님 계정에게 표시할지 여부.
        */
       'to-guest': boolean,
       /**
-       * 회원에게 표시할 지 여부.
+       * 회원에게 표시할지 여부.
        */
       'to-user': boolean,
       /**
