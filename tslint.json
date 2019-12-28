@@ -110,12 +110,6 @@
     "newline-before-return": true,
     "new-parens": true,
     "no-angle-bracket-type-assertion": true,
-    "no-any": [
-      true,
-      {
-        "ignore-rest-args": true
-      }
-    ],
     "no-arg": true,
     "no-consecutive-blank-lines": [
       true,
@@ -126,6 +120,7 @@
       true,
       [
         "back",
+        "front",
         "jquery"
       ]
     ],

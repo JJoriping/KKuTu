@@ -3,6 +3,9 @@ const Path = require("path");
 const MiniCSSExtractPlugin = require("mini-css-extract-plugin");
 
 const entry = FS.readdirSync(Path.resolve(__dirname, "src/front")).reduce((pv, v) => {
+  if(FS.statSync(Path.resolve(__dirname, "src/front", v)).isDirectory()){
+    return pv;
+  }
   const name = v.slice(0, v.length - 3);
 
   pv[`scripts/${name}`] = [
@@ -54,6 +57,13 @@ module.exports = {
         ]
       }
     ]
+  },
+  resolve: {
+    extensions: [ ".ts" ],
+    alias: {
+      'back': Path.resolve(__dirname, "src/back"),
+      'front': Path.resolve(__dirname, "src/front")
+    }
   },
   plugins: [
     new MiniCSSExtractPlugin({

@@ -18,7 +18,9 @@
 
 import Express = require("express");
 
+import { GameClient } from "back/web/GameClient";
 import { getLanguageTable } from "./Language";
+import { SETTINGS } from "./System";
 
 /**
  * Express 인스턴스에 추가할 수 있는 라우팅 객체를 만들어 반환한다.
@@ -29,11 +31,18 @@ export function route():Express.Router{
   R.get("/", (req, res) => {
     page(req, res, "Index");
   });
+  R.get("/servers", (req, res) => {
+    res.send({
+      list: GameClient.list.map(v => v.seek),
+      max: SETTINGS.application['server-capacity']
+    } as KKuTu.ServerList);
+  });
 
   return R;
 }
 function page(req:Express.Request, res:Express.Response, name:string):void{
   res.render(name, {
+    copyright: SETTINGS.copyright,
     page: name,
     L: getLanguageTable(req.locale, name)
   });

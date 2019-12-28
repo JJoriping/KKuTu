@@ -18,6 +18,15 @@ declare namespace Schema{
       'password': string
     }>,
     /**
+     * 끄투 게임 자체에 관한 설정 객체.
+     */
+    'application': {
+      /**
+       * 한 서버에 접속할 수 있는 최대 인원.
+       */
+      'server-capacity': number
+    },
+    /**
      * 멀티프로세스 서버 구축에 필요한 정보를 담은 객체.
      * 
      * 멀티프로세싱된 경우 프로세스가 마스터 하나와 슬레이브 하나 이상으로 나뉘며
@@ -25,9 +34,9 @@ declare namespace Schema{
      */
     'cluster': {
       /**
-       * 게임 서버의 프로세스 수.
+       * 한 게임 서버당 갖는 슬레이브(게임 방 서버)의 수.
        */
-      'game': number,
+      'game-slave': number,
       /**
        * 웹 서버의 프로세스 수.
        * 

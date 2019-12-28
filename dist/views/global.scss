@@ -122,13 +122,13 @@ span{
 }
 .bottom-legal{
 	margin-top: 10px;
-	color: #666666;
+	color: #444444;
   a{
     padding: 0 5px;
   }
 }
 .bottom-contact{
-	color: #444444;
+	color: #222222;
 	font-weight: bold;
 }
 .jjoriping{
@@ -192,3 +192,5 @@ span{
   background-size: 200px 200px;
   z-index: -1;
 }
+
+@import "./components/Graph.scss";

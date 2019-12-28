@@ -9,8 +9,10 @@
     "kkutu"
   ],
   "scripts": {
-    "start": "node dist/Web",
-    "start-dev": "node dist/Web --dev",
+    "start-web": "node dist/Web",
+    "start-web-dev": "node dist/Web --dev",
+    "start-game": "node dist/Game",
+    "start-game-dev": "node dist/Game --dev",
     "watch-back": "webpack -d -w",
     "watch-front": "webpack -d -w --config ./webpack.front.config.js"
   },

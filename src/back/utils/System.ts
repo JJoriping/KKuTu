@@ -30,7 +30,6 @@ export const DEVELOPMENT = process.argv.includes("--dev");
  * `data/settings.json` 파일 객체.
  */
 export const SETTINGS:Schema.Settings = Object.assign(
-  {},
   JSON.parse(getProjectData("settings.json").toString()),
   DEVELOPMENT ? JSON.parse(getProjectData("settings.dev.json").toString()) : {}
 );

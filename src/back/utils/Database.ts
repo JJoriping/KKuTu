@@ -30,7 +30,7 @@ let redis:RedisClient;
  *
  * MySQL과 Redis 서버에 연결을 시도한다.
  */
-export function initialize():Promise<void>{
+export function connectDatabase():Promise<void>{
   return new Promise((res, rej) => {
     db = MySQL.createConnection({
       host: SETTINGS.database.host,
@@ -41,7 +41,7 @@ export function initialize():Promise<void>{
     });
     db.connect(err => {
       if(err){
-        Logger.error("DB").put(err).out();
+        Logger.error("DB").put(err.stack).out();
         rej(err);
 
         return;
@@ -59,6 +59,27 @@ export function initialize():Promise<void>{
       redis.on('error', _err => {
         Logger.error("Redis").put(_err).out();
       });
+    });
+  });
+}
+/**
+ * 데이터베이스에 SQL 질의를 하고 그 결과를 반환한다.
+ *
+ * 주어진 구문의 `:key` 꼴은 추가 정보 객체의 `key`에 대응하는 값으로 대체된다.
+ *
+ * @param sql SQL 구문.
+ * @param parameters 추가 정보 객체.
+ */
+export function query(sql:string, parameters?:Table<unknown>):Promise<unknown>{
+  return new Promise((res, rej) => {
+    db.query(sql, parameters, (err, data) => {
+      if(err){
+        Logger.error("Query").next("SQL").put(sql).next("Error").put(err.stack).out();
+        rej(err);
+
+        return;
+      }
+      res(data);
     });
   });
 }

@@ -27,12 +27,26 @@
       },
       "description": "관리자 권한을 가질 수 있는 계정 목록."
     },
+    "application": {
+      "type": "object",
+      "properties": {
+        "server-capacity": {
+          "type": "number",
+          "description": "한 서버에 접속할 수 있는 최대 인원."
+        }
+      },
+      "required": [
+        "server-capacity"
+      ],
+      "additionalProperties": false,
+      "description": "끄투 게임 자체에 관한 설정 객체."
+    },
     "cluster": {
       "type": "object",
       "properties": {
-        "game": {
+        "game-slave": {
           "type": "number",
-          "description": "게임 서버의 프로세스 수."
+          "description": "한 게임 서버당 갖는 슬레이브(게임 방 서버)의 수."
         },
         "web": {
           "type": "number",
@@ -40,7 +54,7 @@
         }
       },
       "required": [
-        "game",
+        "game-slave",
         "web"
       ],
       "additionalProperties": false,
@@ -224,6 +238,7 @@
   "required": [
     "$schema",
     "administrators",
+    "application",
     "cluster",
     "copyright",
     "database",

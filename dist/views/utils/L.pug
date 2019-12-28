@@ -19,8 +19,8 @@
   function L(id, ...args){
     let R = locals.L[id] || `(L#${id})`;
     
-    for(let i = 0; i < args.length; i++){
-      R = R.replace(new RegExp(`\{V${i + 1}\}`, 'g'), args[i]);
-    }
-    return R.replace(/FA\{([^\}]+)}/g, (v, p1) => `<i class="fa fa-${p1}"></i>`);
+    return R
+      .replace(/\{#(\d+?)\}/g, (_, g1) => args[Number(g1)])
+      .replace(/FA\{([^\}]+)}/g, (_, p1) => `<i class="fa fa-${p1}"></i>`)
+    ;
   }

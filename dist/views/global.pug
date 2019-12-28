@@ -24,9 +24,11 @@ html
   head
     title= L('title')
     meta(charset='utf-8')
+    link(rel='stylesheet', href='/media/fa.css')
     link(rel='stylesheet', href=`/scripts/${locals.page}.css`)
-    script(type='text/javascript', src='/scripts/jquery.js')
+    script(type='text/javascript', src='/media/jquery.js')
     script(type='text/javascript', src=`/scripts/${locals.page}.js`)
+    script(type='text/javascript')!= `window.L=${JSON.stringify(locals.L)}`
   body
     div#top
       div#global-notice
@@ -46,5 +48,5 @@ html
         br
         a.bottom-contact(href='http://blog.jjo.kr/', target='_blank')= L('CREATOR')
         a.bottom-contact(href='mailto:op@jjo.kr', target='_blank') Contact op@jjo.kr
-      div.bottom-legal!= L('LICENSE')
+      div.bottom-legal!= L('LICENSE', locals.copyright.year, locals.copyright.publisher, locals.copyright.address, locals.copyright.repository)
       +Separator(10)

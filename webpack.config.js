@@ -4,6 +4,7 @@ const NodeExternals = require("webpack-node-externals");
 module.exports = {
   target: "node",
   entry: {
+    'Game': Path.resolve(__dirname, "src/back/game/Main.ts"),
     'Web': Path.resolve(__dirname, "src/back/web/Main.ts")
   },
   output: {
@@ -36,10 +37,9 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: [ ".ts", ".js" ],
+    extensions: [ ".ts" ],
     alias: {
-      'back': Path.resolve(__dirname, "src/back"),
-      'front': Path.resolve(__dirname, "src/front")
+      'back': Path.resolve(__dirname, "src/back")
     }
   },
   node: {
