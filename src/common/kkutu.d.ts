@@ -108,13 +108,32 @@ declare namespace KKuTu{
        */
       'id': number,
       /**
+       * 방 제목.
+       */
+      'title': string,
+      /**
        * 게임 유형.
        */
       'rule': string,
       /**
        * 특수 규칙 객체.
        */
-      'options': Table<true>,
+      'options': {
+        [key:string]: boolean
+      }&{
+        /**
+         * 어인정 주제 목록.
+         */
+        'extensions': string[]
+      },
+      /**
+       * 총 라운드 수.
+       */
+      'round': number,
+      /**
+       * 한 라운드당 시간(초).
+       */
+      'time': number,
       /**
        * 게임 진행 중 여부.
        */

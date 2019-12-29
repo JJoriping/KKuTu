@@ -64,41 +64,97 @@ export const $stage:Partial<{
  * 자주 쓰이는 전역 정보를 담은 객체.
  */
 export const $data:Partial<{
+  /**
+   * DOM API 없이 소리 처리를 하기 위한 오디오 콘텍스트.
+   */
   'audioContext':AudioContext,
+  /**
+   * 현재 재생 중인 배경 음악의 오디오 버퍼.
+   */
   'bgm':AudioBuffer,
+  /**
+   * 최근 설정된 어인정 주제 목록.
+   */
   'extensions':string[],
+  /**
+   * 어인정 주제 선택 중, 어떤 언어의 목록에서 골랐는지를 구분하기 위해 쓰는
+   * CSS 선택자의 접두어.
+   */
   'extensionPrefix':string,
+  /**
+   * 최근 설정된 배경 음악 음소거 여부.
+   */
   'mutedBGM':boolean,
+  /**
+   * 최근 설정된 효과음 음소거 여부.
+   */
   'mutedSE':boolean,
+  /**
+   * 설정할 수 있는 특수 규칙 목록.
+   */
   'options':RuleOption[],
+  /**
+   * 현재 UI에서 보여줘야 할 화면.
+   */
   'phase':UIPhase,
+  /**
+   * 빠른 입장 처리를 위해 필요한 정보 객체.
+   */
   'quick':{
+    /**
+     * 빠른 입장 경과 시간(㎳).
+     */
     'tick':number,
+    /**
+     * 경과 시간을 계산하고 입장 시도를 하기 위해 사용하는
+     * `setInterval()` 함수의 반환값.
+     */
     'timer':number,
+    /**
+     * 입장할 수 있는 방이 나와 입장을 시도하는 중인지 여부.
+     */
     'prepared':boolean
   },
-  'room':{
-    'title':string,
-    'limit':number,
-    'mode':Rule,
-    'round':number,
-    'time':number,
-    'options':{
-      [key in RuleOption]: boolean
-    }&{
-      'extensions':string[]
-    }
-  },
+  /**
+   * 이 클라이언트가 입장한 방 정보 객체.
+   */
+  'room':KKuTu.Game.Room,
+  /**
+   * 이 서버의 방 목록.
+   */
   'rooms':KKuTu.Game.Room[],
+  /**
+   * 최근 설정된 설정 객체.
+   */
   'settings':KKuTu.ClientSettings,
+  /**
+   * 최근 연 방 설정 대화상자의 목적.
+   * 
+   * 방을 만드려는 경우 `new`, 방장으로서 수정하려는 경우 `set`을 갖는다.
+   */
   'roomAction':"new"|"set",
+  /**
+   * 접속할 게임 로비 서버의 주소.
+   */
   'url':string
 }> = {};
 
 enum UIPhase{
+  /**
+   * 로비 화면.
+   */
   LOBBY = "lobby",
+  /**
+   * 방장의 대기실 화면.
+   */
   MASTER = "master",
+  /**
+   * 방장이 아닌 방 인원의 대기실 화면.
+   */
   NORMAL = "normal",
+  /**
+   * 게임 화면.
+   */
   GAMING = "gaming"
 }
 
@@ -160,12 +216,12 @@ $(document).ready(async () => {
     $stage.dialog.room.find(".dialog-title").html(L('dialog-room-new-title'));
   });
   $stage.menu['room-set'].on('click', () => {
-    const rule = RULE_TABLE[$data.room.mode];
+    const rule = RULE_TABLE[$data.room.rule as Rule];
 
     $data.roomAction = "set";
     $("#room-title").val($data.room.title);
     $("#room-limit").val($data.room.limit);
-    $("#room-mode").val($data.room.mode).trigger('change');
+    $("#room-mode").val($data.room.rule).trigger('change');
     $("#room-round").val($data.room.round);
     $("#room-time").val($data.room.time / rule.time);
     for(const v of $data.options){
