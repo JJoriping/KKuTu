@@ -1,0 +1,37 @@
+//-
+  Rule the words! KKuTu Online
+  Copyright (C) 2020  JJoriping(op@jjo.kr)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+include ../Dialog
+include ../GameOption
+
++Dialog('dialog-quick', 300, 230, L('dialog-quick-title'))
+  div.dialog-bar
+    h4= L('game-mode')
+    select#quick-mode
+      - for(const v of locals.rules)
+        option(value=v)= L(`mode-${v}`)
+  div.dialog-bar(style='height: 59px;')
+    h4(style='height: 45px;')= L('misc')
+    - for(const v of locals.ruleOptions)
+      - if(v === "ijp") continue;
+      +GameOption(v, 'quick')
+  div.dialog-bar
+    h4(style='width: 100%; height: 20px;')#quick-status
+  div.dialog-bar
+    h4(style='width: 100%; height: 20px;')#quick-queue
+  div.dialog-bar.tail-button
+    button#quick-ok= L('OK')

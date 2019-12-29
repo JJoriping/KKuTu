@@ -1,0 +1,41 @@
+//-
+  Rule the words! KKuTu Online
+  Copyright (C) 2020  JJoriping(op@jjo.kr)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+include ../Dialog
+
++Dialog('dialog-extended-theme', 200, 400, L('dialog-extended-theme-title'))
+  h4= L('x-pick-extensions')
+  div.dialog-bar
+    button#pick-all= L('pick-all')
+    button#pick-none= L('pick-none')
+  div.dialog-bar#extension-list(style='height: 280px; overflow-y: scroll;')
+    div.dialog-option#ko-pick-list(style='width: 100%;')
+      - locals.availableThemes['ko'].forEach(function(item){
+        - let name = "ko-pick-" + item;
+        div(style='float: left; width: 100%;')
+          input(id=name, type='checkbox', style='width: auto;')
+          label(for=name)= L('theme-' + item)
+      - });
+    div.dialog-option#en-pick-list(style='width: 100%;')
+      - locals.availableThemes['en'].forEach(function(item){
+        - let name = "en-pick-" + item;
+        div(style='float: left; width: 100%;')
+          input(id=name, type='checkbox', style='width: auto;')
+          label(for=name)= L('theme-' + item)
+      - });
+  div.dialog-bar.tail-button
+    button#injpick-ok= L('OK')

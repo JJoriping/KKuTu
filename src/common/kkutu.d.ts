@@ -1,3 +1,21 @@
+/*!
+ * Rule the words! KKuTu Online
+ * Copyright (C) 2020  JJoriping(op@jjo.kr)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 declare namespace KKuTu{
   /**
    * 사용자가 설정 대화상자에서 설정하는 정보 객체.
@@ -40,10 +58,81 @@ declare namespace KKuTu{
      */
     'ou': boolean
   };
+  /**
+   * 게임 유형의 특징을 설명하는 객체.
+   */
+  type RuleCharacteristics = {
+    /**
+     * 다루는 언어.
+     */
+    'locale': 'ko'|'en',
+    /**
+     * 유형 식별자.
+     */
+    'name': string,
+    /**
+     * 지원하는 특수 규칙 목록.
+     */
+    'options': string[],
+    /**
+     * 시간 상수.
+     * 
+     * 이 값이 1인 경우 사용자는 한 라운드의 총 시간을
+     * 10초, 30초, 60초, 90초, 120초, 150초 중 하나로 설정할 수 있다.
+     * 2인 경우 그 두 배의 목록 중 하나로 설정할 수 있다.
+     */
+    'time': number,
+    /**
+     * 끄투 봇 초대 가능 여부.
+     */
+    'ai': boolean,
+    /**
+     * 큰 화면 여부.
+     * 
+     * 단어를 입력하는 형식이 아닌 경우에 사용할 수 있다.
+     */
+    'big': boolean,
+    /**
+     * 현재 턴 사용자 퇴장 시 라운드 종료 여부.
+     */
+    'newRoundOnQuit': boolean
+  };
   type ServerList = {
     'list': number[],
     'max': number
   };
+  namespace Game{
+    type Room = {
+      /**
+       * 방 번호.
+       */
+      'id': number,
+      /**
+       * 게임 유형.
+       */
+      'rule': string,
+      /**
+       * 특수 규칙 객체.
+       */
+      'options': Table<true>,
+      /**
+       * 게임 진행 중 여부.
+       */
+      'gaming': boolean,
+      /**
+       * 비밀번호 설정 여부.
+       */
+      'password': boolean,
+      /**
+       * 참여자 목록.
+       */
+      'players': any[],
+      /**
+       * 최대 인원.
+       */
+      'limit': number
+    };
+  }
   namespace Packet{
     type Type = keyof KKuTu.Packet.RequestTable
       | keyof KKuTu.Packet.ResponseTable

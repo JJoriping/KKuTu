@@ -21,7 +21,9 @@ import Express = require("express");
 import { GameClient } from "back/web/GameClient";
 import { StatusCode } from "./enums/StatusCode";
 import { getLanguageTable } from "./Language";
+import { RULE_TABLE, RuleOption } from "./Rule";
 import { PACKAGE, SETTINGS } from "./System";
+import { AVAILABLE_THEMES, EXTENDED_THEMES } from "./Theme";
 
 const PROTOCOL = SETTINGS.https ? "wss" : "ws";
 
@@ -46,6 +48,10 @@ export function route():Express.Router{
       return;
     }
     page(req, res, "Play", {
+      availableThemes: AVAILABLE_THEMES,
+      extensions: EXTENDED_THEMES,
+      rules: Object.keys(RULE_TABLE),
+      ruleOptions: Object.values(RuleOption).filter(v => v.length === 3),
       url: `${PROTOCOL}://${req.hostname}:${SETTINGS.ports[index]}/${req.sessionID}`
     });
   });

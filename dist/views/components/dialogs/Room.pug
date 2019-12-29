@@ -1,0 +1,81 @@
+//-
+  Rule the words! KKuTu Online
+  Copyright (C) 2020  JJoriping(op@jjo.kr)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+include ../Dialog
+include ../GameOption
+
+-
+  locals.L['x-ext'] = `<h5>${L('x-ext-head')}</h5>\
+    <h5 style='margin-top: 2px; border-top: 1px dashed #444444; padding-top: 2px; color: #BBBBBB;'>${L('extension-availables')}</h5>\
+    <h5>${locals.extensions['ko'].map(v => L('theme-' + v))}</h5>\
+    <h5 style='margin-top: 2px; border-top: 1px dashed #444444; padding-top: 2px; color: #BBBBBB;'>${L('extension-availables')} (${L('mode-EKT')}, ${L('mode-ESH')})</h5>\
+    <h5>${locals.extensions['en'].map(v => L('theme-' + v))}</h5>
+  `;
+
++Dialog('dialog-room', 300, 375)
+  div.dialog-bar
+    h4= L('room-title')
+    input#room-title(placeholder=(nick || L('guest')) + L('room-default'), maxlength=20)
+  div.dialog-bar
+    h4= L('password')
+    input#room-pw(type='password', placeholder=L('password'), maxlength=20)
+  div.dialog-bar
+    h4= L('user-limit')
+    input#room-limit(type='number', min=2, max=8, step=1, value=8)
+  div.dialog-bar
+    h4= L('game-mode')
+    select#room-mode
+      optgroup(label=L('group-korean'))
+        option(value='KSH')= L('mode-KSH')
+        option(value='KKT')= L('mode-KKT')
+        option(value='KAP')= L('mode-KAP')
+        option(value='KTY')= L('mode-KTY')
+        option(value='KDA')= L('mode-KDA')
+        option(value='KCW')= L('mode-KCW')
+        option(value='KSS')= L('mode-KSS')
+        option(value='CSQ')= L('mode-CSQ')
+        option(value='HUN')= L('mode-HUN')
+      optgroup(label=L('group-english'))
+        option(value='ESH')= L('mode-ESH')
+        option(value='EKT')= L('mode-EKT')
+        option(value='ETY')= L('mode-ETY')
+        option(value='EDA')= L('mode-EDA')
+        option(value='ESS')= L('mode-ESS')
+  div.dialog-bar(style='margin-top: -5px; height: 50px;')
+    h4
+    h4#game-mode-expl.dialog-bar-value(style='width: 100%; font-size: 11px;')
+  div.dialog-bar
+    h4= L('round')
+    input#room-round(type='number', min=1, max=10, step=1, value=5)
+  div.dialog-bar
+    h4= L('round-time')
+    select#room-time
+      option(value=10, style='color: #FF4444')
+      option(value=30)
+      option(value=60, selected)
+      option(value=90)
+      option(value=120)
+      option(value=150)
+  div.dialog-bar(style='height: 59px;')
+    h4(style='height: 45px;')= L('misc')
+    - for(let v of locals.ruleOptions)
+      - if(v === "ijp") continue;
+      +GameOption(v, 'room')
+    div.dialog-option#room-injpick-panel
+      button#room-extensions(style='font-size: 11px;')= L('pick-extensions')
+  div.dialog-bar.tail-button
+    button#room-ok= L('OK')
