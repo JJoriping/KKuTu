@@ -71,6 +71,23 @@
 
     "dialog-help-title": "도움말",
 
+    "dialog-settings-title": "설정",
+    "mute": "음소거",
+    "bgm": "배경 음악",
+    "effect": "효과음",
+    "deny": "요청 거부",
+    "invite": "방 초대",
+    "whisper": "귓속말",
+    "friend-add": "친구 요청",
+    "in-game": "게임 내",
+    "auto-ready": "자동 준비",
+    "etc": "기타",
+    "sort-user": "접속자 목록 레벨 순 정렬",
+    "only-waiting": "대기 중인 방만 보기",
+    "only-unlock": "열려 있는 방만 보기",
+    "save": "저장",
+    "change-server": "서버 이동",
+
     "closed": "서버와의 연결이 끊어졌습니다. (오류 #{#0})",
     "compatibility-error": "이 브라우저로는 끄투를 실행할 수 없어요!"
   }

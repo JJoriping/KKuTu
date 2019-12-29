@@ -16,8 +16,52 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { Logger } from "back/utils/Logger";
+import { $data } from "front/Play";
+import { playSound, Sound } from "./Audio";
 import { G } from "./Global";
 
+/**
+ * 주어진 객체에 명시된 대로 설정을 적용한다.
+ *
+ * @param settings 설정 객체.
+ */
+export function applySettings(settings:KKuTu.ClientSettings):void{
+  $data.settings = settings;
+  $data.mutedBGM = $data.settings.mb;
+  $data.mutedSE = $data.settings.me;
+
+  $("#mute-bgm").attr('checked', $data.mutedBGM ? "checked" : null);
+  $("#mute-effect").attr('checked', $data.mutedSE ? "checked" : null);
+  $("#deny-invite").attr('checked', $data.settings.di ? "checked" : null);
+  $("#deny-whister").attr('checked', $data.settings.dw ? "checked" : null);
+  $("#deny-friend").attr('checked', $data.settings.df ? "checked" : null);
+  $("#auto-ready").attr('checked', $data.settings.ar ? "checked" : null);
+  $("#sort-user").attr('checked', $data.settings.su ? "checked" : null);
+  $("#only-waiting").attr('checked', $data.settings.ow ? "checked" : null);
+  $("#only-unlock").attr('checked', $data.settings.ou ? "checked" : null);
+
+  if($data.bgm){
+    const node = $data.audioContext.createGain();
+
+    if($data.mutedBGM){
+      node.gain.value = 0;
+      $data.bgm.playingSource.stop();
+    }else{
+      node.gain.value = 1;
+      playSound($data.bgm.playingSource.key as Sound, true);
+    }
+    node.connect($data.audioContext.destination);
+  }
+  {
+    const log = Logger.info("Settings");
+
+    for(const k in $data.settings){
+      log.next(k).put(($data.settings as any)[k]);
+    }
+    log.out();
+  }
+}
 /**
  * 끄투를 즐기기 위해 필요한 조건을 브라우저가 충족했는지 여부를 반환한다.
  */

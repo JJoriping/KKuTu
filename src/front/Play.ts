@@ -21,7 +21,7 @@ import $ = require("jquery");
 import { loadSounds } from "./utils/Audio";
 import { connectLobby } from "./utils/GameClient";
 import { G, initialize, L } from "./utils/Global";
-import { checkCompatibility } from "./utils/Utility";
+import { applySettings, checkCompatibility } from "./utils/Utility";
 
 /**
  * 자주 쓰이는 JQuery 객체를 담은 객체.
@@ -31,7 +31,8 @@ export const $stage:Partial<{
   'introText':JQuery,
   'loading':JQuery,
   'dialog':{
-    'help':JQuery
+    'help':JQuery,
+    'settings':JQuery
   },
   'menu':{
     'help':JQuery,
@@ -57,8 +58,10 @@ export const $stage:Partial<{
  */
 export const $data:{
   'audioContext'?:AudioContext,
+  'bgm'?:AudioBuffer,
   'mutedBGM'?:boolean,
   'mutedSE'?:boolean,
+  'settings'?:KKuTu.ClientSettings,
   'url'?:string
 } = {};
 
@@ -80,7 +83,8 @@ $(document).ready(async () => {
   $stage.introText = $("#intro-text");
   $stage.loading = $("#loading");
   $stage.dialog = {
-    help: $("#dialog-help")
+    help: $("#dialog-help"),
+    settings: $("#dialog-settings")
   };
   $stage.menu = {
     'help': $("#menu-help"),
@@ -108,6 +112,27 @@ $(document).ready(async () => {
   $stage.menu.help.on('click', () => {
     $("#help-board").attr('src', "/help");
     showDialog($stage.dialog.help);
+  });
+  $stage.menu.settings.on('click', () => {
+    showDialog($stage.dialog.settings);
+  });
+  $("#settings-ok").on('click', () => {
+    applySettings({
+      mb: $("#mute-bgm").is(':checked'),
+      me: $("#mute-effect").is(':checked'),
+      di: $("#deny-invite").is(':checked'),
+      dw: $("#deny-whisper").is(':checked'),
+      df: $("#deny-friend").is(':checked'),
+      ar: $("#auto-ready").is(':checked'),
+      su: $("#sort-user").is(':checked'),
+      ow: $("#only-waiting").is(':checked'),
+      ou: $("#only-unlock").is(':checked')
+    });
+    $.cookie('kks', JSON.stringify($data.settings));
+    $stage.dialog.settings.hide();
+  });
+  $("#settings-server").on('click', () => {
+    location.href = "/";
   });
 });
 /**

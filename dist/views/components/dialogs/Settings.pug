@@ -1,0 +1,48 @@
+//-
+  Rule the words! KKuTu Online
+  Copyright (C) 2020  JJoriping(op@jjo.kr)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+include ../Dialog
+
+mixin SettingOption(id, text, style)
+  div.dialog-option(style=style || "")
+    input(id=id, type='checkbox', style='margin-top: 5px; width: auto;')
+    label(for=id)= text
+
++Dialog('dialog-settings', 300, 240, L('dialog-settings-title'))
+  div.dialog-bar
+    h4= L('mute')
+    +SettingOption('mute-bgm', L('bgm'))
+    +SettingOption('mute-effect', L('effect'))
+  div.dialog-bar
+    h4= L('deny')
+    +SettingOption('deny-invite', L('invite'))
+    +SettingOption('deny-whisper', L('whisper'))
+    h4
+    +SettingOption('deny-friend', L('friend-add'))
+  div.dialog-bar
+    h4= L('in-game')
+    +SettingOption('auto-ready', L('auto-ready'))
+  div.dialog-bar
+    h4= L('etc')
+    +SettingOption('sort-user', L('sort-user'), "width: 200px;")
+    h4
+    +SettingOption('only-waiting', L('only-waiting'), "width: 200px;")
+    h4
+    +SettingOption('only-unlock', L('only-unlock'), "width: 200px;")
+  div.dialog-bar.tail-button
+    button#settings-ok= L('save')
+    button#settings-server= L('change-server')

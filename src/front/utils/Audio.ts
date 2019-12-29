@@ -87,6 +87,9 @@ export function playSound(key:Sound, isBGM?:boolean):void{
   if(sound.playingSource){
     sound.playingSource.stop();
   }
+  if(isBGM){
+    $data.bgm = sound;
+  }
   sound.playingSource = source;
   source.key = key;
   source.start();

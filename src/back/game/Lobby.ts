@@ -86,6 +86,9 @@ export async function main(cluster:number, channels:Cluster.Worker[]):Promise<vo
       return;
     }
     client = new Client(`GUEST-${key}`, socket);
+    client.socket.on('close', () => {
+      delete clients[client.id];
+    });
     clients[client.id] = client;
   });
   server.on('error', err => {
