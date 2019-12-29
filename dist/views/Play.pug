@@ -1,3 +1,20 @@
+//-
+  Rule the words! KKuTu Online
+  Copyright (C) 2020  JJoriping(op@jjo.kr)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 extend global
 
 block Jungle
@@ -9,3 +26,21 @@ block Middle
     div#version= locals.version
     div#intro-text= L('loading')
   div#loading
+  div.kkutu-menu
+    button#menu-help.tiny-menu.for-lobby.for-master.for-normal.for-gaming(style='display: none; background-color: #BBBBBB;')!= L('menu-help')
+    button#menu-settings.tiny-menu.for-lobby.for-master.for-normal.for-gaming(style='display: none; background-color: #CCCCCC;')!= L('menu-settings')
+    button#menu-community.tiny-menu.for-lobby.for-master.for-normal.for-gaming(style='display: none; background-color: #DAA9FF;')!= L('menu-community')
+    button#menu-spectate.for-master.for-normal(style='display: none; background-color: #D19DFF;')!= L('menu-spectate')
+    button#menu-room-set.for-master(style='display: none; background-color: #B0D2F3;')!= L('menu-room-set')
+    button#menu-room-new.for-lobby(style='display: none; background-color: #8EC0F3;')!= L('menu-room-new')
+    button#menu-room-quick.for-lobby(style='display: none; background-color: #B0D2F3;')!= L('menu-room-quick')
+    button#menu-shop.for-lobby(style='display: none; background-color: #B3E7B7;')!= L('menu-shop')
+    button#menu-dictionary.for-lobby.for-master.for-normal.for-gaming(style='display: none; background-color: #73D07A;')!= L('menu-dictionary')
+    button#menu-invite.for-master(style='display: none; background-color: #9FE669;')!= L('menu-invite')
+    button#menu-practice.for-master.for-normal(style='display: none; background-color: #FCF5A9;')!= L('menu-practice')
+    button#menu-ready.for-normal(style='display: none; background-color: #FFC67F;')!= L('menu-ready')
+    button#menu-start.for-master(style='display: none; background-color: #FFB576;')!= L('menu-start')
+    button#menu-exit.for-master.for-normal.for-gaming(style='display: none; background-color: #FFADAD;')!= L('menu-exit')
+    button#menu-replay.for-lobby(style='display: none; background-color: #D9FF82;')!= L('menu-replay')
+    button#menu-leaderboard.for-lobby(style='display: none; background-color: #FFADD3;')!= L('menu-leaderboard')
+  include ./components/dialogs/Help

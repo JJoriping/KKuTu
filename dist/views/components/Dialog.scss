@@ -1,0 +1,94 @@
+/*!
+ * Rule the words! KKuTu Online
+ * Copyright (C) 2020  JJoriping(op@jjo.kr)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+.dialog{
+	display: none;
+	position: fixed;
+	padding: 5px;
+	border-radius: 10px;
+	color: #111111;
+	box-shadow: 0 1px 1px #141414;
+	background-color: #EEEEEE;
+	z-index: 2;
+  &-option{
+    float: left;
+    width: 100px;
+  }
+  .close{
+    float: right;
+    border-radius: 6px;
+    margin-top: 1px;
+    width: 12px;
+    height: 12px;
+    background-color: #EE5555;
+    &:hover{
+      background-color: #EE7777;
+    }
+  }
+}
+.dialog-bar{
+  float: left;
+  margin: 3px 0;
+  width: 100%;
+  &-value{
+    width: calc(100% - 100px) !important;
+    text-align: left !important;
+  }
+  button{
+    float: left;
+  }
+  h4{
+    float: left;
+    padding-top: 6px;
+    width: 100%;
+    text-align: center;
+  }
+  input, select{
+    float: left;
+    width: 187px;
+    height: 14px;
+    box-sizing: inherit;
+    outline: none;
+  }
+  label{
+    font-size: 13px;
+  }
+}
+.dialog-head{
+  padding: 3px;
+  border-bottom: 1px solid #CCCCCC;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  height: 12px;
+  color: #222222;
+  font-size: 11px;
+  background-color: #DDDDDD;
+  .dialog-title{
+    float: left;
+    cursor: move;
+  }
+}
+.tail-button{
+  margin-top: 7px;
+  button{
+    float: right;
+    margin-right: 5px;
+    width: 80px;
+    height: 20px;
+  }
+}

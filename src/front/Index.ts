@@ -20,13 +20,13 @@ import $ = require("jquery");
 
 import { initialize, L } from "./utils/Global";
 
-const $stage:{
-  'list'?:JQuery,
-  'total'?:JQuery,
-  'start'?:JQuery,
-  'refresh'?:JQuery,
-  'refreshIcon'?:JQuery
-} = {};
+const $stage:Partial<{
+  'list':JQuery,
+  'total':JQuery,
+  'start':JQuery,
+  'refresh':JQuery,
+  'refreshIcon':JQuery
+}> = {};
 
 $(document).ready(() => {
   const PERCENTILE = 100;

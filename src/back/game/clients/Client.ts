@@ -18,6 +18,7 @@
 
 import WS = require("ws");
 
+import { Logger } from "back/utils/Logger";
 import { SETTINGS } from "back/utils/System";
 import { WSClient } from "back/utils/WSClient";
 
@@ -30,6 +31,7 @@ export class Client extends WSClient{
 
   constructor(id:string, socket:WS){
     super(id, socket);
+    Logger.info("New").put("Client").next("ID").put(id).out();
     this.response('welcome', {
       administrator: Boolean(SETTINGS.administrators.find(v => v.id === id))
     });

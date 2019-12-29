@@ -42,12 +42,34 @@
 
     "refreshing": "잠시 기다려 주세요."
   },
+  "Help": {
+    "title": "도움말 - 끄투 온라인"
+  },
   "Play": {
     "title": "글자로 놀자! 끄투 온라인",
 
     "loading": "불러오는 중",
     "loading-remain": "불러오는 중 ({#0} 남음)",
     "welcome": "환영합니다.",
+
+    "menu-help": "FA{question-circle}",
+    "menu-settings": "FA{wrench}",
+    "menu-community": "FA{comments}",
+    "menu-spectate": "관전",
+    "menu-room-set": "방 설정",
+    "menu-room-new": "방 만들기",
+    "menu-room-quick": "빠른 입장",
+    "menu-shop": "상점",
+    "menu-dictionary": "사전",
+    "menu-invite": "초대",
+    "menu-practice": "연습",
+    "menu-ready": "준비",
+    "menu-start": "시작",
+    "menu-exit": "나가기",
+    "menu-replay": "리플레이",
+    "menu-leaderboard": "FA{trophy}&nbsp;랭킹",
+
+    "dialog-help-title": "도움말",
 
     "closed": "서버와의 연결이 끊어졌습니다. (오류 #{#0})",
     "compatibility-error": "이 브라우저로는 끄투를 실행할 수 없어요!"

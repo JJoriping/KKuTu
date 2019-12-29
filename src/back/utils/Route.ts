@@ -34,6 +34,9 @@ export function route():Express.Router{
   R.get("/", (req, res) => {
     page(req, res, "Index");
   });
+  R.get("/help", (req, res) => {
+    page(req, res, "Help");
+  });
   R.get("/server/:index", (req, res) => {
     const index = Number(req.params['index']);
 

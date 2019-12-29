@@ -17,7 +17,7 @@
  */
 
 import { Logger } from "back/utils/Logger";
-import { $stage, updateLoading } from "front/Play";
+import { $stage, updateLoading, updateUI } from "front/Play";
 import { playSound, Sound, stopAllSounds } from "./Audio";
 import { L } from "./Global";
 
@@ -49,6 +49,7 @@ export function connectLobby(url:string):Promise<void>{
     lobbyClient = new WebSocket(url);
     lobbyClient.onopen = () => {
       updateLoading();
+      updateUI();
       res();
     };
     lobbyClient.onmessage = e => {

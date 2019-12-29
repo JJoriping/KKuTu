@@ -21,6 +21,7 @@ import $ = require("jquery");
 import { REGEXP_LANGUAGE_ARGS } from "back/utils/Utility";
 import { testCookie } from "./Cookie";
 import { overrideJQuery } from "./JQuery";
+import { startDrag, stopDrag } from "./Utility";
 
 /**
  * 자주 쓰이는 값들을 모아 놓은 객체.
@@ -85,6 +86,27 @@ export function initialize():void{
     });
   }).trigger('resize');
   registerTooltip();
+
+  // 대화 상자
+  $(".dialog").each((i, o) => {
+    const $head = $(o).children(".dialog-head");
+
+    if($head.hasClass("no-close")){
+      return;
+    }
+    $head.append($("<div>").addClass("close").on('click', e => {
+      $(e.currentTarget).parent().parent().hide();
+    }).hotKey(null, "Escape"));
+  });
+  $(".dialog-head .dialog-title").on('mousedown', e => {
+    const $target = $(e.currentTarget).parents(".dialog");
+
+    $(".dialog-front").removeClass("dialog-front");
+    $target.addClass("dialog-front");
+    startDrag($target, e.pageX, e.pageY);
+  }).on('mouseup', () => {
+    stopDrag();
+  });
 }
 /**
  * 언어 문자열표로부터 주어진 식별자에 대응하는 값을 읽어 반환한다.

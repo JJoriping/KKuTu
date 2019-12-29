@@ -17,3 +17,66 @@
  */
 
 @import "./global.scss";
+@import "./components/Dialog.scss";
+
+#intro{
+  position: fixed;
+  z-index: 4;
+  >img{
+    width: 1010px;
+    height: 604px;
+  }
+  >#version{
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: 13px;
+    text-shadow: 0 0 3px black;
+  }
+  >#intro-text{
+		position: absolute;
+		top: 360px;
+		left: 0px;
+		width: 100%;
+		font-size: 15px;
+		text-align: center;
+		text-shadow: 0 0 3px black;
+  }
+}
+#loading{
+	position: fixed;
+	padding-top: 200px;
+	width: 100%;
+	height: 100%;
+  left: 0;
+  top: 0;
+	text-align: center;
+	background-color: #232323;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 5;
+}
+.kkutu-menu{
+	float: left;
+	width: 1010px;
+	height: 30px;
+  >button{
+    float: left;
+    border: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    width: 98px;
+    height: 20px;
+    &:hover{
+      margin-top: -5px;
+      height: 25px;
+    }
+    &.toggled{
+      margin-top: 5px !important;
+      color: #EEEEEE;
+      background-color: #444444 !important;
+    }
+    &.tiny-menu{
+      width: 20px !important;
+    }
+  }
+}

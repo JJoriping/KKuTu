@@ -56,7 +56,7 @@ export abstract class WSClient{
       handler(data);
     });
     this.socket.on('close', code => {
-      Logger.info("WSClient").put(id).next("Code").put(code).out();
+      Logger.log("Closed").put(id).next("Code").put(code).out();
       this.socket.removeAllListeners();
       this.socket = null;
     });
