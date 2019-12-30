@@ -76,6 +76,7 @@ iframe{
 input, select, textarea{
 	display: block;
 	font-family: inherit;
+  box-sizing: content-box;
 	padding: 5px;
 	border: 1px solid #AAAAAA;
 	border-radius: 10px;

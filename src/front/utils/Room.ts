@@ -26,14 +26,21 @@ import { Rule } from "back/utils/Rule";
  * @param options 원하는 특수 규칙.
  * @param all 현재 입장할 수 없는 방도 탐색하는지 여부.
  */
-export function isRoomMatched(room:KKuTu.Game.Room, rule:Rule, options:Table<true>, all?:boolean):boolean{
+export function isRoomMatched(
+  room:KKuTu.Game.Room,
+  rule:Rule,
+  options:KKuTu.Game.RoomOptions,
+  all?:boolean
+):boolean{
+  let k:keyof KKuTu.Game.RoomOptions;
+
   if(!all){
     if(room.gaming) return false;
     if(room.password) return false;
     if(room.players.length >= room.limit) return false;
   }
   if(room.rule !== rule) return false;
-  for(const k in options){
+  for(k in options){
     if(!room.options[k]) return false;
   }
 

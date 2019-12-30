@@ -117,15 +117,10 @@ declare namespace KKuTu{
       'rule': string,
       /**
        * 특수 규칙 객체.
+       * 
+       * `extensions`를 제외한 키들은 열거형 `RuleOption`에서 받는다.
        */
-      'options': {
-        [key:string]: boolean
-      }&{
-        /**
-         * 어인정 주제 목록.
-         */
-        'extensions': string[]
-      },
+      'options': RoomOptions,
       /**
        * 총 라운드 수.
        */
@@ -150,6 +145,21 @@ declare namespace KKuTu{
        * 최대 인원.
        */
       'limit': number
+    };
+    type RoomOptions = {
+      'man'?: boolean,
+      'ext'?: boolean,
+      'mis'?: boolean,
+      'loa'?: boolean,
+      'str'?: boolean,
+      'k32'?: boolean,
+      'ijp'?: boolean,
+      'prv'?: boolean,
+      'no2'?: boolean,
+      /**
+       * 어인정 주제 목록.
+       */
+      'extensions'?: string[]
     };
   }
   namespace Packet{
@@ -176,14 +186,37 @@ declare namespace KKuTu{
     };
 
     type RequestTable = {
+      // 새 방을 만드는 경우.
+      'room-new': Partial<KKuTu.Game.Room>,
+      // 방 정보를 수정하는 경우.
+      'room-set': Partial<KKuTu.Game.Room>,
+      // 웹 서버가 접속 인원을 확인하는 경우.
       'seek': {},
+      // 채팅 내용을 보내는 경우.
+      'talk': {
+        /**
+         * 대화 내용.
+         */
+        value: string
+      }
       'welcome': never
     };
     type ResponseTable = {
+      'room-new': never,
+      'room-set': never,
+      // 게임 서버가 접속 인원을 알리는 경우.
       'seek': {
+        /**
+         * 접속 인원.
+         */
         'value': number
       },
+      'talk': never,
+      // 게임 서버가 사용자에게 접속자 목록이나 방 목록 등을 알리는 경우.
       'welcome': {
+        /**
+         * 관리자 여부.
+         */
         'administrator': boolean
       }
     };

@@ -76,6 +76,9 @@
     "menu-replay": "리플레이",
     "menu-leaderboard": "FA{trophy}&nbsp;랭킹",
 
+		"chat": "FA{comment}채팅",
+		"send": "전송",
+
     "dialog-help-title": "도움말",
 
     "dialog-settings-title": "설정",

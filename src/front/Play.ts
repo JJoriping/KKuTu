@@ -22,7 +22,7 @@ import { DateUnit } from "back/utils/enums/DateUnit";
 import { Rule, RULE_TABLE, RuleOption } from "back/utils/Rule";
 import { loadSounds } from "./utils/Audio";
 import { prettyTime } from "./utils/Format";
-import { connectLobby } from "./utils/GameClient";
+import { connectLobby, send } from "./utils/GameClient";
 import { G, initialize, L } from "./utils/Global";
 import { isRoomMatched } from "./utils/Room";
 import { applySettings, checkCompatibility } from "./utils/Utility";
@@ -31,15 +31,20 @@ import { applySettings, checkCompatibility } from "./utils/Utility";
  * 자주 쓰이는 JQuery 객체를 담은 객체.
  */
 export const $stage:Partial<{
+  'chat':JQuery,
+  'talk':JQuery,
   'intro':JQuery,
   'introText':JQuery,
   'loading':JQuery,
+  'box':{
+    'chat':JQuery
+  },
   'dialog':{
-    'help':JQuery,
-    'settings':JQuery,
-    'room':JQuery,
     'extended-theme':JQuery,
-    'quick':JQuery
+    'help':JQuery,
+    'quick':JQuery,
+    'room':JQuery,
+    'settings':JQuery
   },
   'menu':{
     'help':JQuery,
@@ -124,19 +129,23 @@ export const $data:Partial<{
    */
   'rooms':KKuTu.Game.Room[],
   /**
+   * 최근 연 방 설정 대화상자의 목적.
+   *
+   * 방을 만드려는 경우 `room-new`, 방장으로서 수정하려는 경우 `room-set`을 갖는다.
+   */
+  'roomAction':"room-new"|"room-set",
+  /**
    * 최근 설정된 설정 객체.
    */
   'settings':KKuTu.ClientSettings,
   /**
-   * 최근 연 방 설정 대화상자의 목적.
-   * 
-   * 방을 만드려는 경우 `new`, 방장으로서 수정하려는 경우 `set`을 갖는다.
-   */
-  'roomAction':"new"|"set",
-  /**
    * 접속할 게임 로비 서버의 주소.
    */
-  'url':string
+  'url':string,
+  /**
+   * 귓속말 상대.
+   */
+  'whisper':string
 }> = {};
 
 enum UIPhase{
@@ -165,9 +174,14 @@ $(document).ready(async () => {
 
     return;
   }
+  $stage.chat = $("#chat");
+  $stage.talk = $("#talk");
   $stage.intro = $("#intro");
   $stage.introText = $("#intro-text");
   $stage.loading = $("#loading");
+  $stage.box = {
+    chat: $(".chat-box")
+  };
   $stage.dialog = {
     'help': $("#dialog-help"),
     'settings': $("#dialog-settings"),
@@ -210,7 +224,7 @@ $(document).ready(async () => {
     showDialog($stage.dialog.settings);
   });
   $stage.menu['room-new'].on('click', () => {
-    $data.roomAction = "new";
+    $data.roomAction = "room-new";
     $stage.dialog.quick.hide();
     showDialog($stage.dialog.room);
     $stage.dialog.room.find(".dialog-title").html(L('dialog-room-new-title'));
@@ -218,7 +232,7 @@ $(document).ready(async () => {
   $stage.menu['room-set'].on('click', () => {
     const rule = RULE_TABLE[$data.room.rule as Rule];
 
-    $data.roomAction = "set";
+    $data.roomAction = "room-set";
     $("#room-title").val($data.room.title);
     $("#room-limit").val($data.room.limit);
     $("#room-mode").val($data.room.rule).trigger('change');
@@ -271,6 +285,21 @@ $(document).ready(async () => {
       $(o).html(Number($(o).val()) * rule.time + L('SECOND'));
     });
   }).trigger('change');
+  $("#room-ok").on('click', () => {
+    send($data.roomAction, {
+      title: $("#room-title").val().trim() || $("#room-title").attr('placeholder').trim(),
+      password: $("#room-pw").val(),
+      limit: Number($("#room-limit").val()),
+      rule: $("#room-mode").val(),
+      round: Number($("#room-round").val()),
+      time: Number($("#room-time").val()),
+      options: {
+        ...getGameOptions('room'),
+        extensions: $data.extensions
+      }
+    });
+    $stage.dialog.room.hide();
+  });
   // 대화상자 - 주제 선택
   $("#room-extensions").on('click', () => {
     const rule = RULE_TABLE[$("#room-mode").val() as Rule];
@@ -384,6 +413,20 @@ $(document).ready(async () => {
     }
     $("#quick-status").html(L('quick-status', counter));
   });
+  // 제품 - 채팅
+  $("#chat-send").on('click', () => {
+    const value = $stage.talk.val();
+
+    send('talk', {
+      value
+    });
+    if($data.whisper){
+      $stage.talk.val(`/e ${$data.whisper} `);
+      delete $data.whisper;
+    }else{
+      $stage.talk.val("");
+    }
+  }).hotKey($stage.talk, "Enter");
 });
 /**
  * 대화상자를 보인다.
@@ -412,8 +455,12 @@ export function showDialog($target:JQuery, noToggle?:boolean):boolean{
  *
  * @param prefix 객체 식별자의 접두어.
  */
-export function getGameOptions(prefix:string):Table<true>{
-  const R:Table<true> = {};
+export function getGameOptions(prefix:string):{
+  [key in RuleOption]?: true
+}{
+  const R:{
+    [key in RuleOption]?: true
+  } = {};
 
   for(const v of $data.options){
     if($(`#${prefix}-${v}`).is(':checked')){
@@ -475,4 +522,17 @@ export function updateUI():void{
 
   $(".kkutu-menu>button").hide();
   $(`.kkutu-menu>.for-${$data.phase}`).show();
+
+  for(const $v of Object.values($stage.box)){
+    $v.hide();
+  }
+  $stage.box.chat.show().width(790).height(190);
+  $stage.chat.height(120);
+
+  switch($data.phase){
+    case UIPhase.LOBBY:
+      break;
+    default:
+      break;
+  }
 }

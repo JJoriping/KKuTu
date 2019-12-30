@@ -21,8 +21,13 @@ import { $stage, updateLoading, updateUI } from "front/Play";
 import { playSound, Sound, stopAllSounds } from "./Audio";
 import { L } from "./Global";
 
+const SPAM_THRESHOLD = 10;
+const SPAM_CLOSE_THRESHOLD = 3;
+
 let lobbyClient:WebSocket;
 let roomClient:WebSocket;
+let spamCount = 0;
+let spamWarning = 0;
 
 const handlerTable:KKuTu.Packet.ResponseHandlerTable = {
   welcome: data => {
@@ -77,4 +82,31 @@ export function connectLobby(url:string):Promise<void>{
       Logger.error("Lobby").put(e.error).out();
     };
   });
+}
+/**
+ * 게임 서버로 메시지를 보낸다.
+ *
+ * `toLobby`가 `true`인 경우나 게임 방 서버에 접속 중이 아닐 때
+ * 게임 로비 서버로 메시지를 보내며,
+ * 이외의 경우 게임 방 서버로 메시지를 보낸다.
+ *
+ * @param type 요청 유형.
+ * @param data 추가 정보.
+ * @param toLobby 로비 서버로 전송 여부.
+ */
+export function send<T extends KKuTu.Packet.Type>(type:T, data:KKuTu.Packet.RequestData<T>, toLobby?:boolean):void{
+  const target = toLobby || !roomClient ? lobbyClient : roomClient;
+
+  if(spamCount++ > SPAM_THRESHOLD){
+    if(++spamWarning >= SPAM_CLOSE_THRESHOLD){
+      target.close();
+
+      return;
+    }
+    spamCount >>= 1;
+  }
+  target.send(JSON.stringify({
+    type,
+    ...data
+  }));
 }

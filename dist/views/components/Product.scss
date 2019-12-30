@@ -1,0 +1,32 @@
+.product{
+	float: left;
+	padding: 5px;
+	border-radius: 0px;
+	margin-bottom: 1px;
+	box-shadow: 0px 2px 1px #DDDDDD;
+	background-color: #EEEEEE;
+	color: #111111;
+}
+.product-title{
+	padding: 3px;
+	border-bottom: 1px solid #333333;
+	border-bottom-color: #CCCCCC;
+	border-radius: 5px;
+	margin-bottom: 5px;
+	color: #222222;
+	background-color: #DDDDDD;
+	i{
+		color: #111111;
+		margin-right: 5px;
+	}
+}
+.product-body{
+	padding: 5px 5px 0 5px;
+	font-size: 13px;
+  #top{
+    display: none;
+  }
+  #bottom{
+    display: none;
+  }
+}
