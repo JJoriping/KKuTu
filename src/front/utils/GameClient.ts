@@ -17,9 +17,10 @@
  */
 
 import { Logger } from "back/utils/Logger";
-import { $stage, updateLoading, updateUI } from "front/Play";
 import { playSound, Sound, stopAllSounds } from "./Audio";
+import { chat } from "./Chat";
 import { L } from "./Global";
+import { $stage, updateLoading, updateUI } from "./PlayUtility";
 
 const SPAM_THRESHOLD = 10;
 const SPAM_CLOSE_THRESHOLD = 3;
@@ -42,6 +43,9 @@ const handlerTable:KKuTu.Packet.ResponseHandlerTable = {
     ;
     $stage.introText.text(L('welcome'));
     Logger.success("Lobby").next("Administrator").put(data.administrator).out();
+  },
+  talk: data => {
+    chat(data.profile, data.value);
   }
 };
 /**

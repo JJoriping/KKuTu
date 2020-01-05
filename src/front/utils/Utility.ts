@@ -17,9 +17,9 @@
  */
 
 import { Logger } from "back/utils/Logger";
-import { $data } from "front/Play";
 import { playSound, Sound } from "./Audio";
 import { G } from "./Global";
+import { $data } from "./PlayUtility";
 
 /**
  * 주어진 객체에 명시된 대로 설정을 적용한다.

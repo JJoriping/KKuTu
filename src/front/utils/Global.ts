@@ -26,15 +26,16 @@ import { startDrag, stopDrag } from "./Utility";
 /**
  * 자주 쓰이는 값들을 모아 놓은 객체.
  */
-export const G:{
-  '$bottom'?:JQuery,
-  '$middle'?:JQuery,
-  '$notice'?:JQuery,
-  '$noticeBody'?:JQuery,
-  '$window'?:JQuery,
-  'windowSize'?:[number, number],
-  'tooltipSize'?:[number, number]
-} = {};
+export const G:Partial<{
+  '$bottom':JQuery,
+  '$middle':JQuery,
+  '$notice':JQuery,
+  '$noticeBody':JQuery,
+  '$window':JQuery,
+  'mobile':boolean,
+  'windowSize':[number, number],
+  'tooltipSize':[number, number]
+}> = {};
 /**
  * 페이지 작동에 필요한 기본적인 기능들을 준비한다.
  */

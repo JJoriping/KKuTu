@@ -17,8 +17,8 @@
  */
 
 import { Logger } from "back/utils/Logger";
-import { $data, updateLoading } from "front/Play";
 import { L } from "./Global";
+import { $data, updateLoading } from "./PlayUtility";
 
 /**
  * 끄투에서 활용할 수 있는 소리 열거형.

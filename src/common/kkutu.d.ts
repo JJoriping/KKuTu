@@ -102,11 +102,29 @@ declare namespace KKuTu{
     'max': number
   };
   namespace Game{
+    type Profile = {
+      /**
+       * 계정 식별자.
+       */
+      'id': string,
+      /**
+       * 계정 별명.
+       */
+      'title': string,
+      /**
+       * 계정 이름.
+       */
+      'name': string,
+    };
     type Room = {
       /**
        * 방 번호.
        */
       'id': number,
+      /**
+       * 방장 계정 식별자.
+       */
+      'master': string,
       /**
        * 방 제목.
        */
@@ -161,6 +179,12 @@ declare namespace KKuTu{
        */
       'extensions'?: string[]
     };
+    type User = {
+      /**
+       * 장착 아이템 목록 객체.
+       */
+      'equip': Table<string>
+    };
   }
   namespace Packet{
     type Type = keyof KKuTu.Packet.RequestTable
@@ -195,9 +219,17 @@ declare namespace KKuTu{
       // 채팅 내용을 보내는 경우.
       'talk': {
         /**
+         * 차례를 넘기기 위해 입력한 단어 여부.
+         */
+        'relay'?: boolean,
+        /**
          * 대화 내용.
          */
-        value: string
+        'value': string,
+        /**
+         * 귓속말 대상 계정 식별자.
+         */
+        'whisper'?: string
       }
       'welcome': never
     };
@@ -211,7 +243,24 @@ declare namespace KKuTu{
          */
         'value': number
       },
-      'talk': never,
+      'talk': {
+        /**
+         * 오류 번호.
+         */
+        'code'?: number,
+        /**
+         * 공지 여부.
+         */
+        'notice'?: boolean,
+        /**
+         * 대화 주체의 정보를 담은 객체.
+         */
+        'profile': KKuTu.Game.Profile,
+        /**
+         * 대화 내용.
+         */
+        'value': string
+      },
       // 게임 서버가 사용자에게 접속자 목록이나 방 목록 등을 알리는 경우.
       'welcome': {
         /**
