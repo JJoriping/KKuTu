@@ -27,10 +27,9 @@ module.exports = {
         enforce: "pre",
         use: [
           {
-            loader: "tslint-loader",
+            loader: "eslint-loader",
             options: {
-              configFile: "tslint.json",
-              emitErrors: true,
+              emitError: true,
               fix: true
             }
           }

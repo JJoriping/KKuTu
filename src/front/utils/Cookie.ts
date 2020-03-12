@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -16,11 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
- * 주어진 식별자에 대응하는 값을 쿠키로부터 읽어 반환한다.
- *
- * @param key 식별자.
- */
 export function getCookie(key:string):string{
   let chunk:string[] = [];
 

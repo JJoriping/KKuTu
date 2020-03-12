@@ -15,16 +15,3 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-import { SETTINGS, getProjectData } from "./System";
-
-export const SSL_OPTIONS = SETTINGS.https && ('pfx' in SETTINGS.https
-  ? {
-    pfx: getProjectData(SETTINGS.https.pfx)
-  }
-  : {
-    cert: getProjectData(SETTINGS.https.cert),
-    key : getProjectData(SETTINGS.https.key),
-    ca  : getProjectData(SETTINGS.https.ca)
-  }
-);

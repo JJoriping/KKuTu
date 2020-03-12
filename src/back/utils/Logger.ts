@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -17,20 +17,20 @@
  */
 
 import { DateUnit } from "./enums/DateUnit";
-import { cut, isFront, TIMEZONE_OFFSET, toSignedString } from "./Utility";
+import { TIMEZONE_OFFSET, cut, isFront, toSignedString } from "./Utility";
 
 let fs:typeof import("fs");
 let system:typeof import("back/utils/System");
 
 type CallerInfo = {
-  'file':string,
-  'line':number,
-  'function':string
+  'file':string;
+  'line':number;
+  'function':string;
 };
 type LogFileInfo = {
-  'stream':NodeJS.WritableStream,
-  'path':string,
-  'createdAt':number
+  'stream':NodeJS.WritableStream;
+  'path':string;
+  'createdAt':number;
 };
 /**
  * 로그의 색 열거형.
@@ -91,29 +91,29 @@ export class Logger{
   // 캡처되는 그룹 { 파일명, 줄 번호, 칸 번호 }
   private static readonly REGEXP_CALLER_ANONYMOUS = /^\s*at .+?([^\\/]+):(\d+):(\d+)$/;
   private static readonly CALLER_LENGTH = 20;
-  private static readonly WEBKIT_STYLE_TABLE:{ [key in LogColor]: string } = {
-    [LogColor.NORMAL]: "",
-    [LogColor.BRIGHT]: "font-weight: bold",
-    [LogColor.DIM]: "font-style: italic",
+  private static readonly WEBKIT_STYLE_TABLE:{ [key in LogColor]:string } = {
+    [LogColor.NORMAL]    : "",
+    [LogColor.BRIGHT]    : "font-weight: bold",
+    [LogColor.DIM]       : "font-style: italic",
     [LogColor.UNDERSCORE]: "text-decoration: underline",
 
-    [LogColor.F_BLACK]: "color: black",
-    [LogColor.F_RED]: "color: red",
-    [LogColor.F_GREEN]: "color: green",
-    [LogColor.F_YELLOW]: "color: yellow",
-    [LogColor.F_BLUE]: "color: blue",
+    [LogColor.F_BLACK]  : "color: black",
+    [LogColor.F_RED]    : "color: red",
+    [LogColor.F_GREEN]  : "color: green",
+    [LogColor.F_YELLOW] : "color: yellow",
+    [LogColor.F_BLUE]   : "color: blue",
     [LogColor.F_MAGENTA]: "color: magenta",
-    [LogColor.F_CYAN]: "color: deepskyblue",
-    [LogColor.F_WHITE]: "color: white",
+    [LogColor.F_CYAN]   : "color: deepskyblue",
+    [LogColor.F_WHITE]  : "color: white",
 
-    [LogColor.B_BLACK]: "background: black",
-    [LogColor.B_RED]: "background: red",
-    [LogColor.B_GREEN]: "background: green",
-    [LogColor.B_YELLOW]: "background: yellow",
-    [LogColor.B_BLUE]: "background: blue",
+    [LogColor.B_BLACK]  : "background: black",
+    [LogColor.B_RED]    : "background: red",
+    [LogColor.B_GREEN]  : "background: green",
+    [LogColor.B_YELLOW] : "background: yellow",
+    [LogColor.B_BLUE]   : "background: blue",
     [LogColor.B_MAGENTA]: "background: magenta",
-    [LogColor.B_CYAN]: "background: cyan",
-    [LogColor.B_WHITE]: "background: white"
+    [LogColor.B_CYAN]   : "background: cyan",
+    [LogColor.B_WHITE]  : "background: white"
   };
   private static recentFileInfo:LogFileInfo;
   private static subject:string;
@@ -141,10 +141,9 @@ export class Logger{
     if(system.SETTINGS.log.interval){
       system.schedule(Logger.shiftFile, system.SETTINGS.log.interval, {
         callAtStart: true,
-        punctual: true
+        punctual   : true
       });
-    }
-    else Logger.warning().put("Log files won't be generated.").out();
+    }else Logger.warning().put("Log files won't be generated.").out();
   }
 
   /**
@@ -199,14 +198,14 @@ export class Logger{
 
       if(chunk = error[level].match(Logger.REGEXP_CALLER)){
         return {
-          file: chunk[2],
-          line: Number(chunk[3]),
+          file    : chunk[2],
+          line    : Number(chunk[3]),
           function: chunk[1]
         };
       }else if(chunk = error[level].match(Logger.REGEXP_CALLER_ANONYMOUS)){
         return {
-          file: chunk[1],
-          line: Number(chunk[2]),
+          file    : chunk[1],
+          line    : Number(chunk[2]),
           function: `:${chunk[3]} (Unknown)`
         };
       }
@@ -241,7 +240,7 @@ export class Logger{
       Logger.recentFileInfo.stream.end();
     }
     Logger.recentFileInfo = {
-      stream: fs.createWriteStream(path),
+      stream   : fs.createWriteStream(path),
       path,
       createdAt: Date.now()
     };
@@ -258,7 +257,7 @@ export class Logger{
   private head:string;
   private chunk:string[];
 
-  constructor(type:LogLevel = LogLevel.NORMAL, title:string = ""){
+  constructor(type:LogLevel = LogLevel.NORMAL, title = ""){
     const caller = Logger.getCaller();
     let fileLimit = Logger.CALLER_LENGTH - String(caller.line).length;
 
@@ -307,7 +306,16 @@ export class Logger{
     return [
       this.list[0][1],
       ...this.list.slice(1).map(([ head, body ], i) => {
-        return `${prefix}${Logger.escape(LogStyle.LINE)}${i === last ? "└" : "├"}─ ${(head ?? String(i)).padEnd(maxDigit, " ")}${Logger.escape()}: ${body}`;
+        return [
+          prefix,
+          Logger.escape(LogStyle.LINE),
+          i === last ? "└" : "├",
+          "─ ",
+          (head ?? String(i)).padEnd(maxDigit, " "),
+          Logger.escape(),
+          ": ",
+          body
+        ].join('');
       })
     ].join('\n');
   }
@@ -334,7 +342,7 @@ export class Logger{
       this.next();
     }
     let text = this.getText();
-    let args:string[] = [];
+    const args:string[] = [];
 
     if(isFront()){
       text = text.replace(Logger.REGEXP_ANSI_ESCAPE, (v, p1) => {

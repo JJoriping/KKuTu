@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -17,7 +17,7 @@
  */
 
 import MySQL = require("mysql");
-import { createClient, RedisClient } from "redis";
+import { RedisClient, createClient } from "redis";
 
 import { Logger } from "./Logger";
 import { SETTINGS } from "./System";
@@ -33,9 +33,9 @@ let redis:RedisClient;
 export function connectDatabase():Promise<void>{
   return new Promise((res, rej) => {
     db = MySQL.createConnection({
-      host: SETTINGS.database.host,
-      port: SETTINGS.database.port,
-      user: SETTINGS.database.user,
+      host    : SETTINGS.database.host,
+      port    : SETTINGS.database.port,
+      user    : SETTINGS.database.user,
       password: SETTINGS.database.password,
       database: SETTINGS.database.name
     });

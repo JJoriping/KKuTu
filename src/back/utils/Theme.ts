@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -16,9 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
- * 사전에 등재된 언어별 단어 주제 객체.
- */
 export const THEMES = {
   ko: [
     "30", "40", "60", "80", "90",

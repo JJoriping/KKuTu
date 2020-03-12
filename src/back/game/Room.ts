@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -44,7 +44,7 @@ export async function main(cluster:number):Promise<void>{
     });
   }else{
     server = new WS.Server({
-      port: PORT,
+      port             : PORT,
       perMessageDeflate: false
     });
   }

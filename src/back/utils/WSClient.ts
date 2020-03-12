@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -45,7 +45,7 @@ export abstract class WSClient{
       Logger.warning("WSClient").put(id).next("Error").put(err.stack).out();
     });
     this.socket.on('message', chunk => {
-      const { type, ...data } = JSON.parse(chunk.toString());
+      const{ type, ...data } = JSON.parse(chunk.toString());
       const handler = (this.requestHandlerTable as any)?.[type] || (this.responseHandlerTable as any)?.[type];
 
       if(!handler){
@@ -73,10 +73,7 @@ export abstract class WSClient{
    * @param type 요청 유형.
    * @param data 추가 정보 객체.
    */
-  public request<T extends KKuTu.Packet.Type>(type:T, data?:KKuTu.Packet.RequestData<T>):void{
-    if(!data){
-      data = {} as any;
-    }
+  public request<T extends KKuTu.Packet.Type>(type:T, data:KKuTu.Packet.RequestData<T> = {} as any):void{
     data.type = type;
     if(this.socket.readyState === 1){
       this.socket.send(JSON.stringify(data));
@@ -88,10 +85,7 @@ export abstract class WSClient{
    * @param type 응답 유형.
    * @param data 추가 정보 객체.
    */
-  public response<T extends KKuTu.Packet.Type>(type:T, data?:KKuTu.Packet.ResponseData<T>):void{
-    if(!data){
-      data = {} as any;
-    }
+  public response<T extends KKuTu.Packet.Type>(type:T, data:KKuTu.Packet.ResponseData<T> = {} as any):void{
     data.type = type;
     if(this.socket.readyState === 1){
       this.socket.send(JSON.stringify(data));

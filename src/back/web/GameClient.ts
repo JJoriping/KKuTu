@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -18,8 +18,8 @@
 
 import WS = require("ws");
 
+import { SETTINGS, schedule } from "back/utils/System";
 import { Logger } from "back/utils/Logger";
-import { schedule, SETTINGS } from "back/utils/System";
 import { WSClient } from "back/utils/WSClient";
 
 const INTERVAL_SEEK = 10000;
@@ -63,14 +63,14 @@ export class GameClient extends WSClient{
 
   constructor(id:string, url:string){
     super(id, new WS(url, {
-      perMessageDeflate: false,
+      perMessageDeflate : false,
       rejectUnauthorized: false
     }));
     this.socket.on('open', () => {
       Logger.success("GameClient").put(this.id).out();
       schedule(this.onTick, INTERVAL_SEEK, {
         callAtStart: true,
-        punctual: true
+        punctual   : true
       });
     });
   }

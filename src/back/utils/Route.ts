@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -18,12 +18,12 @@
 
 import Express = require("express");
 
-import { GameClient } from "back/web/GameClient";
-import { StatusCode } from "./enums/StatusCode";
-import { getLanguageTable } from "./Language";
-import { RULE_TABLE, RuleOption } from "./Rule";
-import { PACKAGE, SETTINGS } from "./System";
 import { AVAILABLE_THEMES, EXTENDED_THEMES } from "./Theme";
+import { PACKAGE, SETTINGS } from "./System";
+import { RULE_TABLE, RuleOption } from "./Rule";
+import { GameClient } from "back/web/GameClient";
+import { getLanguageTable } from "./Language";
+import { StatusCode } from "./enums/StatusCode";
 
 const PROTOCOL = SETTINGS.https ? "wss" : "ws";
 
@@ -49,16 +49,16 @@ export function route():Express.Router{
     }
     page(req, res, "Play", {
       availableThemes: AVAILABLE_THEMES,
-      extensions: EXTENDED_THEMES,
-      rules: Object.keys(RULE_TABLE),
-      ruleOptions: Object.values(RuleOption).filter(v => v.length === 3),
-      url: `${PROTOCOL}://${req.hostname}:${SETTINGS.ports[index]}/${req.sessionID}`
+      extensions     : EXTENDED_THEMES,
+      rules          : Object.keys(RULE_TABLE),
+      ruleOptions    : Object.values(RuleOption).filter(v => v.length === RuleOption.EXTENDED.length),
+      url            : `${PROTOCOL}://${req.hostname}:${SETTINGS.ports[index]}/${req.sessionID}`
     });
   });
   R.get("/servers", (req, res) => {
     res.send({
       list: GameClient.list.map(v => v.seek),
-      max: SETTINGS.application['server-capacity']
+      max : SETTINGS.application['server-capacity']
     } as KKuTu.ServerList);
   });
 
@@ -68,8 +68,8 @@ function page(req:Express.Request, res:Express.Response, name:string, data:Table
   res.render(name, {
     ...data,
     copyright: SETTINGS.copyright,
-    page: name,
-    version: PACKAGE.version,
-    L: getLanguageTable(req.locale, name)
+    page     : name,
+    version  : PACKAGE.version,
+    L        : getLanguageTable(req.locale, name)
   });
 }

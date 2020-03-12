@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -20,7 +20,7 @@ import ALP = require("accept-language-parser");
 import Express = require("express");
 
 import { Logger } from "./Logger";
-import { getProjectData, SETTINGS } from "./System";
+import { SETTINGS, getProjectData } from "./System";
 
 const LANGUAGE_SUPPORT = Object.keys(SETTINGS.locales);
 const LANGUAGE_TABLE:Table<Table<Table<string>>> = {};
@@ -43,7 +43,7 @@ export function loadLanguages():void{
       };
 
       return pv;
-    },                                                                                   {} as Table<Table<string>>);
+    }, {} as Table<Table<string>>);
   }
   Logger.success("Language").out();
 }

@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -27,14 +27,14 @@ import { startDrag, stopDrag } from "./Utility";
  * 자주 쓰이는 값들을 모아 놓은 객체.
  */
 export const G:Partial<{
-  '$bottom':JQuery,
-  '$middle':JQuery,
-  '$notice':JQuery,
-  '$noticeBody':JQuery,
-  '$window':JQuery,
-  'mobile':boolean,
-  'windowSize':[number, number],
-  'tooltipSize':[number, number]
+  '$bottom':JQuery;
+  '$middle':JQuery;
+  '$notice':JQuery;
+  '$noticeBody':JQuery;
+  '$window':JQuery;
+  'mobile':boolean;
+  'windowSize':[number, number];
+  'tooltipSize':[number, number];
 }> = {};
 /**
  * 페이지 작동에 필요한 기본적인 기능들을 준비한다.
@@ -83,7 +83,7 @@ export function initialize():void{
     }
     $(".tooltip-active").css({
       left: Math.min(e.clientX + TOOLTIP_X_OFFSET, G.windowSize[0] - G.tooltipSize[0] - TOOLTIP_COMMON_OFFSET),
-      top: Math.min(e.clientY + TOOLTIP_Y_OFFSET, G.windowSize[1] - G.tooltipSize[1] - TOOLTIP_COMMON_OFFSET)
+      top : Math.min(e.clientY + TOOLTIP_Y_OFFSET, G.windowSize[1] - G.tooltipSize[1] - TOOLTIP_COMMON_OFFSET)
     });
   }).trigger('resize');
   registerTooltip();

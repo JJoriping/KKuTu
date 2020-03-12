@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -53,9 +53,9 @@ export function cut(text:string, limit:number):string{
 export function isFront():boolean{
   try{
     return window.FRONT;
-  }catch(e){}
-
-  return false;
+  }catch(e){
+    return false;
+  }
 }
 /**
  * 배열을 주어진 함수에 따라 딕셔너리로 바꾸어 반환한다.
@@ -66,9 +66,9 @@ export function isFront():boolean{
  */
 export function reduceToTable<T, U, V extends number|string>(
   target:T[],
-  placer:(v:T, i:number, my:T[]) => U,
-  keyPlacer?:(v:T, i:number, my:T[]) => V
-):{ [key in V]: U }{
+  placer:(v:T, i:number, my:T[])=>U,
+  keyPlacer?:(v:T, i:number, my:T[])=>V
+):{ [key in V]:U }{
   return target.reduce(
     keyPlacer
       ? (pv, v, i, my) => {
@@ -82,7 +82,7 @@ export function reduceToTable<T, U, V extends number|string>(
         return pv;
       }
     ,
-    {} as { [key in V]: U }
+    {} as { [key in V]:U }
   );
 }
 /**

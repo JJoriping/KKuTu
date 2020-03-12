@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -29,7 +29,7 @@ export enum Sound{
 }
 
 const sounds:{
-  [key in Sound]?: AudioBuffer
+  [key in Sound]?:AudioBuffer
 } = {};
 
 /**
@@ -58,8 +58,8 @@ export function loadSounds():Promise<void>{
         });
       };
       req.onerror = e => {
-        Logger.error("XMLHttpRequest").out();
-        rej();
+        Logger.error("XMLHttpRequest").put(e).out();
+        rej(e);
       };
       req.send();
     }

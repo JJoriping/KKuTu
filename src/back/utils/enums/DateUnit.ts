@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -16,11 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
- * 시간 단위 열거형.
- *
- * 각 멤버의 값은 밀리초 단위로 변환된 값이다.
- */
 export enum DateUnit{
   MILLISECOND = 1,
   SECOND = 1000,

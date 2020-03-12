@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -17,7 +17,7 @@
  */
 
 import { Logger } from "back/utils/Logger";
-import { playSound, Sound } from "./Audio";
+import { Sound, playSound } from "./Audio";
 import { G } from "./Global";
 import { $data } from "./PlayUtility";
 
@@ -66,10 +66,10 @@ export function applySettings(settings:KKuTu.ClientSettings):void{
  * 끄투를 즐기기 위해 필요한 조건을 브라우저가 충족했는지 여부를 반환한다.
  */
 export function checkCompatibility():boolean{
-  if(!window.hasOwnProperty('WebSocket')){
+  if(!('WebSocket' in window)){
     return false;
   }
-  if(!window.hasOwnProperty('AudioContext')){
+  if(!('AudioContext' in window)){
     return false;
   }
 
@@ -88,11 +88,11 @@ export function startDrag($target:JQuery, x:number, y:number):void{
   const position = $target.position();
 
   G.$window.on('mousemove', e => {
-    const [ deltaX, deltaY ] = [ e.pageX - x, e.pageY - y ];
+    const[ deltaX, deltaY ] = [ e.pageX - x, e.pageY - y ];
 
     $target.css({
       left: position.left + deltaX,
-      top: position.top + deltaY
+      top : position.top + deltaY
     });
   });
 }

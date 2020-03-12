@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -17,7 +17,7 @@
  */
 
 import { Logger } from "back/utils/Logger";
-import { playSound, Sound, stopAllSounds } from "./Audio";
+import { Sound, playSound, stopAllSounds } from "./Audio";
 import { chat } from "./Chat";
 import { L } from "./Global";
 import { $stage, updateLoading, updateUI } from "./PlayUtility";
@@ -48,13 +48,14 @@ const handlerTable:KKuTu.Packet.ResponseHandlerTable = {
     chat(data.profile, data.value);
   }
 };
+
 /**
  * 로비 서버에 접속한다.
  *
  * @param url 게임 로비 서버 주소.
  */
 export function connectLobby(url:string):Promise<void>{
-  return new Promise((res, rej) => {
+  return new Promise(res => {
     lobbyClient = new WebSocket(url);
     lobbyClient.onopen = () => {
       updateLoading();
@@ -62,9 +63,9 @@ export function connectLobby(url:string):Promise<void>{
       res();
     };
     lobbyClient.onmessage = e => {
-      const { type, ...data } = JSON.parse(String(e.data));
+      const{ type, ...data } = JSON.parse(String(e.data));
 
-      if(!handlerTable.hasOwnProperty(type)){
+      if(!(type in handlerTable)){
         Logger.error("Message").put(`Unhandled type: ${type}`).out();
 
         return;

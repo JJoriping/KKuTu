@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -57,13 +57,13 @@ export async function main(cluster:number, channels:Cluster.Worker[]):Promise<vo
     });
   }else{
     server = new WS.Server({
-      port: SETTINGS.ports[cluster],
+      port             : SETTINGS.ports[cluster],
       perMessageDeflate: false
     });
   }
   server.on('connection', (socket, req) => {
     const key = req.url.slice(1);
-    let client:Client;
+    let client:Client = null;
 
     socket.on('error', err => {
       Logger.warning("Client").put(key).next("Error").put(err.stack).out();

@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -16,9 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
- * 채팅 말풍선의 표시 형식 열거형.
- */
 export enum ChatBalloonFlag{
   /**
    * 게임 중 대화 여부.

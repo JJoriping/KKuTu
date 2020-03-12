@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -16,9 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
- * 끄투에서 제공하는 게임 유형 열거형.
- */
 export enum Rule{
   /**
    * 영어 끄투.
@@ -138,29 +135,29 @@ export enum RuleOption{
 }
 
 export const RULE_TABLE:{
-  [key in Rule]: KKuTu.RuleCharacteristics
+  [key in Rule]:KKuTu.RuleCharacteristics
 } = {
   [Rule.ENGLISH_KKUTU]: {
-    locale: "en",
-    name: "Classic",
-    options: [ RuleOption.MANNER, RuleOption.EXTENDED, RuleOption.MISSION ],
-    time: 1,
-    ai: true,
-    big: false,
+    locale        : "en",
+    name          : "Classic",
+    options       : [ RuleOption.MANNER, RuleOption.EXTENDED, RuleOption.MISSION ],
+    time          : 1,
+    ai            : true,
+    big           : false,
     newRoundOnQuit: true
   },
   [Rule.ENGLISH_REAR]: {
-    locale: "en",
-    name: "Classic",
-    options: [ RuleOption.EXTENDED, RuleOption.MISSION ],
-    time: 1,
-    ai: true,
-    big: false,
+    locale        : "en",
+    name          : "Classic",
+    options       : [ RuleOption.EXTENDED, RuleOption.MISSION ],
+    time          : 1,
+    ai            : true,
+    big           : false,
     newRoundOnQuit: true
   },
   [Rule.KOREAN_REAR_3]: {
-    locale: "ko",
-    name: "Classic",
+    locale : "ko",
+    name   : "Classic",
     options: [
       RuleOption.MANNER,
       RuleOption.EXTENDED,
@@ -169,14 +166,14 @@ export const RULE_TABLE:{
       RuleOption.STRICT,
       RuleOption.THREE_TWO
     ],
-    time: 1,
-    ai: true,
-    big: false,
+    time          : 1,
+    ai            : true,
+    big           : false,
     newRoundOnQuit: true
   },
   [Rule.KOREAN_REAR]: {
-    locale: "ko",
-    name: "Classic",
+    locale : "ko",
+    name   : "Classic",
     options: [
       RuleOption.MANNER,
       RuleOption.EXTENDED,
@@ -184,56 +181,56 @@ export const RULE_TABLE:{
       RuleOption.NO_LOANWORDS,
       RuleOption.STRICT
     ],
-    time: 1,
-    ai: true,
-    big: false,
+    time          : 1,
+    ai            : true,
+    big           : false,
     newRoundOnQuit: true
   },
   [Rule.CONSONANT_QUIZ]: {
-    locale: "ko",
-    name: "Jaqwi",
+    locale : "ko",
+    name   : "Jaqwi",
     options: [
       RuleOption.EXTENSIONS
     ],
-    time: 1,
-    ai: true,
-    big: false,
+    time          : 1,
+    ai            : true,
+    big           : false,
     newRoundOnQuit: false
   },
   [Rule.KOREAN_CROSSWORD]: {
-    locale: "ko",
-    name: "Crossword",
-    options: [],
-    time: 2,
-    ai: false,
-    big: true,
+    locale        : "ko",
+    name          : "Crossword",
+    options       : [],
+    time          : 2,
+    ai            : false,
+    big           : true,
     newRoundOnQuit: false
   },
   [Rule.KOREAN_TYPING]: {
-    locale: "ko",
-    name: "Typing",
+    locale : "ko",
+    name   : "Typing",
     options: [
       RuleOption.PROVERB
     ],
-    time: 1,
-    ai: false,
-    big: false,
+    time          : 1,
+    ai            : false,
+    big           : false,
     newRoundOnQuit: false
   },
   [Rule.ENGLISH_TYPING]: {
-    locale: "en",
-    name: "Typing",
+    locale : "en",
+    name   : "Typing",
     options: [
       RuleOption.PROVERB
     ],
-    time: 1,
-    ai: false,
-    big: false,
+    time          : 1,
+    ai            : false,
+    big           : false,
     newRoundOnQuit: false
   },
   [Rule.KOREAN_FRONT]: {
-    locale: "ko",
-    name: "Classic",
+    locale : "ko",
+    name   : "Classic",
     options: [
       RuleOption.MANNER,
       RuleOption.EXTENDED,
@@ -241,69 +238,69 @@ export const RULE_TABLE:{
       RuleOption.NO_LOANWORDS,
       RuleOption.STRICT
     ],
-    time: 1,
-    ai: true,
-    big: false,
+    time          : 1,
+    ai            : true,
+    big           : false,
     newRoundOnQuit: true
   },
   [Rule.HUNMINJEONGEUM]: {
-    locale: "ko",
-    name: "Hunmin",
+    locale : "ko",
+    name   : "Hunmin",
     options: [
       RuleOption.EXTENDED,
       RuleOption.MISSION,
       RuleOption.NO_LOANWORDS,
       RuleOption.STRICT
     ],
-    time: 1,
-    ai: true,
-    big: false,
+    time          : 1,
+    ai            : true,
+    big           : false,
     newRoundOnQuit: true
   },
   [Rule.KOREAN_THEME]: {
-    locale: "ko",
-    name: "Daneo",
+    locale : "ko",
+    name   : "Daneo",
     options: [
       RuleOption.EXTENSIONS,
       RuleOption.MISSION
     ],
-    time: 1,
-    ai: true,
-    big: false,
+    time          : 1,
+    ai            : true,
+    big           : false,
     newRoundOnQuit: true
   },
   [Rule.ENGLISH_THEME]: {
-    locale: "en",
-    name: "Daneo",
+    locale : "en",
+    name   : "Daneo",
     options: [
       RuleOption.EXTENSIONS,
       RuleOption.MISSION
     ],
-    time: 1,
-    ai: true,
-    big: false,
+    time          : 1,
+    ai            : true,
+    big           : false,
     newRoundOnQuit: true
   },
   [Rule.KOREAN_SOCK]: {
-    locale: "ko",
-    name: "Sock",
+    locale : "ko",
+    name   : "Sock",
     options: [
       RuleOption.NO_TWO
     ],
-    time: 1,
-    ai: false,
-    big: true,
+    time          : 1,
+    ai            : false,
+    big           : true,
     newRoundOnQuit: true
   },
   [Rule.ENGLISH_SOCK]: {
-    locale: "en",
-    name: "Sock",
+    locale : "en",
+    name   : "Sock",
     options: [
       RuleOption.NO_TWO
     ],
-    time: 1,
-    ai: false,
-    big: true,
+    time          : 1,
+    ai            : false,
+    big           : true,
     newRoundOnQuit: true
   }
 };

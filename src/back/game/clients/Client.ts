@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -18,10 +18,10 @@
 
 import WS = require("ws");
 
+import { clients } from "../Lobby";
 import { Logger } from "back/utils/Logger";
 import { SETTINGS } from "back/utils/System";
 import { WSClient } from "back/utils/WSClient";
-import { clients } from "../Lobby";
 
 const MAX_MESSAGE_LENGTH = 200;
 
@@ -29,6 +29,18 @@ const MAX_MESSAGE_LENGTH = 200;
  * 일반 사용자의 클라이언트 클래스.
  */
 export class Client extends WSClient{
+  /**
+   * 같은 곳에 접속한 다른 사용자들에게 메시지를 보낸다.
+   *
+   * @param type 응답 유형.
+   * @param data 추가 정보 객체.
+   */
+  public static publish<T extends KKuTu.Packet.Type>(type:T, data?:KKuTu.Packet.ResponseData<T>):void{
+    for(const v of Object.values(clients)){
+      v.response(type, data);
+    }
+  }
+
   protected requestHandlerTable:KKuTu.Packet.RequestHandlerTable = {
     talk: data => {
       if(!data.value?.slice) return;
@@ -52,25 +64,14 @@ export class Client extends WSClient{
    * @param value 대화 내용.
    */
   public chat(value:string):void{
-    this.publish('talk', {
+    Client.publish('talk', {
       profile: {
-        id: this.id,
+        id   : this.id,
         title: null,
         // TODO 구현
-        name: "test"
+        name : "test"
       },
       value
     });
-  }
-  /**
-   * 같은 곳에 접속한 다른 사용자들에게 메시지를 보낸다.
-   *
-   * @param type 응답 유형.
-   * @param data 추가 정보 객체.
-   */
-  public publish<T extends KKuTu.Packet.Type>(type:T, data?:KKuTu.Packet.ResponseData<T>):void{
-    for(const v of Object.values(clients)){
-      v.response(type, data);
-    }
   }
 }

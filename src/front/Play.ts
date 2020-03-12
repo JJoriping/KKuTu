@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -19,17 +19,22 @@
 import $ = require("jquery");
 
 import { DateUnit } from "back/utils/enums/DateUnit";
-import { Rule, RULE_TABLE, RuleOption } from "back/utils/Rule";
+import { RULE_TABLE, Rule, RuleOption } from "back/utils/Rule";
 import { loadSounds } from "./utils/Audio";
 import { UIPhase } from "./utils/enums/UIPhase";
 import { prettyTime } from "./utils/Format";
 import { connectLobby, send } from "./utils/GameClient";
-import { initialize, L } from "./utils/Global";
-import { $data, $stage, getGameOptions, runCommand, showDialog, updateGameOptions, updateLoading } from "./utils/PlayUtility";
+import { L, initialize } from "./utils/Global";
+import {
+  $data, $stage,
+  getGameOptions, runCommand, showDialog, updateGameOptions, updateLoading
+} from "./utils/PlayUtility";
 import { isRoomMatched } from "./utils/Room";
 import { applySettings, checkCompatibility } from "./utils/Utility";
 
-$(document).ready(async () => {
+const TYPING_DEFAULT_ROUND = 3;
+
+$(document).ready(async() => {
   initialize();
   if(!checkCompatibility()){
     updateLoading(L('compatibility-error'));
@@ -47,37 +52,37 @@ $(document).ready(async () => {
   };
   $stage.balloons = $("#balloons");
   $stage.dialog = {
-    'chat-log': $("#dialog-chat-log"),
-    'help': $("#dialog-help"),
-    'settings': $("#dialog-settings"),
-    'room': $("#dialog-room"),
+    'chat-log'      : $("#dialog-chat-log"),
+    'help'          : $("#dialog-help"),
+    'settings'      : $("#dialog-settings"),
+    'room'          : $("#dialog-room"),
     'extended-theme': $("#dialog-extended-theme"),
-    'quick': $("#dialog-quick")
+    'quick'         : $("#dialog-quick")
   };
   $stage.game = {
-    'here': $(".game-input").hide(),
+    'here'     : $(".game-input").hide(),
     'here-text': $("#game-input")
   };
   $stage.menu = {
-    'help': $("#menu-help"),
-    'settings': $("#menu-settings"),
-    'community': $("#menu-community"),
-    'spectate': $("#menu-spectate"),
-    'room-set': $("#menu-room-set"),
-    'room-new': $("#menu-room-new"),
-    'room-quick': $("#menu-room-quick"),
-    'shop': $("#menu-shop"),
-    'dictionary': $("#menu-dictionary"),
-    'invite': $("#menu-invite"),
-    'practice': $("#menu-practice"),
-    'ready': $("#menu-ready"),
-    'start': $("#menu-start"),
-    'exit': $("#menu-exit"),
-    'replay': $("#menu-replay"),
+    'help'       : $("#menu-help"),
+    'settings'   : $("#menu-settings"),
+    'community'  : $("#menu-community"),
+    'spectate'   : $("#menu-spectate"),
+    'room-set'   : $("#menu-room-set"),
+    'room-new'   : $("#menu-room-new"),
+    'room-quick' : $("#menu-room-quick"),
+    'shop'       : $("#menu-shop"),
+    'dictionary' : $("#menu-dictionary"),
+    'invite'     : $("#menu-invite"),
+    'practice'   : $("#menu-practice"),
+    'ready'      : $("#menu-ready"),
+    'start'      : $("#menu-start"),
+    'exit'       : $("#menu-exit"),
+    'replay'     : $("#menu-replay"),
     'leaderboard': $("#menu-leaderboard")
   };
 
-  $data.options = Object.values(RuleOption).filter(w => w.length === 3);
+  $data.options = Object.values(RuleOption).filter(w => w.length === RuleOption.EXTENDED.length);
   $data.rooms = [];
   $data.users = {};
   $data.url = $("#url").text();
@@ -149,7 +154,7 @@ $(document).ready(async () => {
       $("#room-extensions").hide();
     }
     if(rule.name === "Typing"){
-      $("#room-round").val(3);
+      $("#room-round").val(TYPING_DEFAULT_ROUND);
     }
     $("#room-time").children("option").each((i, o) => {
       $(o).html(Number($(o).val()) * rule.time + L('SECOND'));
@@ -157,13 +162,13 @@ $(document).ready(async () => {
   }).trigger('change');
   $("#room-ok").on('click', () => {
     send($data.roomAction, {
-      title: $("#room-title").val().trim() || $("#room-title").attr('placeholder').trim(),
+      title   : $("#room-title").val().trim() || $("#room-title").attr('placeholder').trim(),
       password: $("#room-pw").val(),
-      limit: Number($("#room-limit").val()),
-      rule: $("#room-mode").val(),
-      round: Number($("#room-round").val()),
-      time: Number($("#room-time").val()),
-      options: {
+      limit   : Number($("#room-limit").val()),
+      rule    : $("#room-mode").val(),
+      round   : Number($("#room-round").val()),
+      time    : Number($("#room-time").val()),
+      options : {
         ...getGameOptions('room'),
         extensions: $data.extensions
       }
@@ -242,8 +247,8 @@ $(document).ready(async () => {
       .prop('disabled', false)
     ;
     $data.quick = {
-      tick: 0,
-      timer: window.setInterval(onTick, INTERVAL_QUICK),
+      tick    : 0,
+      timer   : window.setInterval(onTick, INTERVAL_QUICK),
       prepared: false
     };
     function onTick():void{
@@ -269,7 +274,7 @@ $(document).ready(async () => {
   $("#quick-mode, #dialog-quick .game-option").on('change', e => {
     const value = $("#quick-mode").val() as Rule;
     let counter = 0;
-    let options:Table<true>;
+    let options:Table<true> = null;
 
     if(e.currentTarget.id === "quick-mode"){
       $("#dialog-quick .game-option").prop('checked', false);

@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -25,46 +25,46 @@ import { G } from "./Global";
  * 자주 쓰이는 JQuery 객체를 담은 객체.
  */
 export const $stage:Partial<{
-  'chat':JQuery,
-  'chatLog':JQuery,
-  'talk':JQuery,
-  'intro':JQuery,
-  'introText':JQuery,
-  'loading':JQuery,
-  'balloons':JQuery,
+  'chat':JQuery;
+  'chatLog':JQuery;
+  'talk':JQuery;
+  'intro':JQuery;
+  'introText':JQuery;
+  'loading':JQuery;
+  'balloons':JQuery;
   'box':{
-    'chat':JQuery
-  },
+    'chat':JQuery;
+  };
   'dialog':{
-    'chat-log':JQuery,
-    'extended-theme':JQuery,
-    'help':JQuery,
-    'quick':JQuery,
-    'room':JQuery,
-    'settings':JQuery
-  },
+    'chat-log':JQuery;
+    'extended-theme':JQuery;
+    'help':JQuery;
+    'quick':JQuery;
+    'room':JQuery;
+    'settings':JQuery;
+  };
   'game':{
-    'here':JQuery,
-    'here-text':JQuery
-  },
+    'here':JQuery;
+    'here-text':JQuery;
+  };
   'menu':{
-    'help':JQuery,
-    'settings':JQuery,
-    'community':JQuery,
-    'spectate':JQuery,
-    'room-set':JQuery,
-    'room-new':JQuery,
-    'room-quick':JQuery,
-    'shop':JQuery,
-    'dictionary':JQuery,
-    'invite':JQuery,
-    'practice':JQuery,
-    'ready':JQuery,
-    'start':JQuery,
-    'exit':JQuery,
-    'replay':JQuery,
-    'leaderboard':JQuery
-  }
+    'help':JQuery;
+    'settings':JQuery;
+    'community':JQuery;
+    'spectate':JQuery;
+    'room-set':JQuery;
+    'room-new':JQuery;
+    'room-quick':JQuery;
+    'shop':JQuery;
+    'dictionary':JQuery;
+    'invite':JQuery;
+    'practice':JQuery;
+    'ready':JQuery;
+    'start':JQuery;
+    'exit':JQuery;
+    'replay':JQuery;
+    'leaderboard':JQuery;
+  };
 }> = {};
 /**
  * 자주 쓰이는 전역 정보를 담은 객체.
@@ -73,44 +73,44 @@ export const $data:Partial<{
   /**
    * DOM API 없이 소리 처리를 하기 위한 오디오 콘텍스트.
    */
-  'audioContext':AudioContext,
+  'audioContext':AudioContext;
   /**
    * 현재 재생 중인 배경 음악의 오디오 버퍼.
    */
-  'bgm':AudioBuffer,
+  'bgm':AudioBuffer;
   /**
    * 차단한 사용자 목록 객체.
    */
-  'blacklist':Table<true>,
+  'blacklist':Table<true>;
   /**
    * 최근 설정된 어인정 주제 목록.
    */
-  'extensions':string[],
+  'extensions':string[];
   /**
    * 어인정 주제 선택 중, 어떤 언어의 목록에서 골랐는지를 구분하기 위해 쓰는
    * CSS 선택자의 접두어.
    */
-  'extensionPrefix':string,
+  'extensionPrefix':string;
   /**
    * 현재 접속한 계정의 식별자.
    */
-  'id':string,
+  'id':string;
   /**
    * 최근 설정된 배경 음악 음소거 여부.
    */
-  'mutedBGM':boolean,
+  'mutedBGM':boolean;
   /**
    * 최근 설정된 효과음 음소거 여부.
    */
-  'mutedSE':boolean,
+  'mutedSE':boolean;
   /**
    * 설정할 수 있는 특수 규칙 목록.
    */
-  'options':RuleOption[],
+  'options':RuleOption[];
   /**
    * 현재 UI에서 보여줘야 할 화면.
    */
-  'phase':UIPhase,
+  'phase':UIPhase;
   /**
    * 빠른 입장 처리를 위해 필요한 정보 객체.
    */
@@ -118,57 +118,57 @@ export const $data:Partial<{
     /**
      * 빠른 입장 경과 시간(㎳).
      */
-    'tick':number,
+    'tick':number;
     /**
      * 경과 시간을 계산하고 입장 시도를 하기 위해 사용하는
      * `setInterval()` 함수의 반환값.
      */
-    'timer':number,
+    'timer':number;
     /**
      * 입장할 수 있는 방이 나와 입장을 시도하는 중인지 여부.
      */
-    'prepared':boolean
-  },
+    'prepared':boolean;
+  };
   /**
    * 최근 이 클라이언트로 귓속말을 보낸 계정 식별자.
    */
-  'recentFrom':string,
+  'recentFrom':string;
   /**
    * 이 클라이언트가 입장한 방 정보 객체.
    */
-  'room':KKuTu.Game.Room,
+  'room':KKuTu.Game.Room;
   /**
    * 이 서버의 방 목록.
    */
-  'rooms':KKuTu.Game.Room[],
+  'rooms':KKuTu.Game.Room[];
   /**
    * 최근 연 방 설정 대화상자의 목적.
    *
    * 방을 만드려는 경우 `room-new`, 방장으로서 수정하려는 경우 `room-set`을 갖는다.
    */
-  'roomAction':"room-new"|"room-set",
+  'roomAction':"room-new"|"room-set";
   /**
    * 최근 설정된 설정 객체.
    */
-  'settings':KKuTu.ClientSettings,
+  'settings':KKuTu.ClientSettings;
   /**
    * 접속할 게임 로비 서버의 주소.
    */
-  'url':string,
+  'url':string;
   /**
    * 현재 접속 중인 사용자 목록 객체.
    */
-  'users':Table<KKuTu.Game.User>,
+  'users':Table<KKuTu.Game.User>;
   /**
    * 귓속말 상대.
    */
-  'whisper':string
+  'whisper':string;
 }> = {};
 
 const SIZE_CHAT_WIDTH = 790;
 const SIZE_CHAT_HEIGHT = 190;
 const SIZE_INNER_CHAT_HEIGHT = 120;
-const COMMAND_TABLE:Table<(chunk:string[]) => void> = {
+const COMMAND_TABLE:Table<(chunk:string[])=>void> = {
   ㄱ: () => {
     if(!$data.room){
       return;
@@ -208,7 +208,7 @@ export function showDialog($target:JQuery, noToggle?:boolean):boolean{
   $(".dialog-front").removeClass("dialog-front");
   $target.show().addClass("dialog-front").css({
     left: (G.windowSize[0] - $target.width()) / 2,
-    top: (G.windowSize[1] - $target.height()) / 2
+    top : (G.windowSize[1] - $target.height()) / 2
   });
 
   return true;
@@ -219,10 +219,10 @@ export function showDialog($target:JQuery, noToggle?:boolean):boolean{
  * @param prefix 객체 식별자의 접두어.
  */
 export function getGameOptions(prefix:string):{
-  [key in RuleOption]?: true
+  [key in RuleOption]?:true
 }{
   const R:{
-    [key in RuleOption]?: true
+    [key in RuleOption]?:true
   } = {};
 
   for(const v of $data.options){
@@ -244,7 +244,7 @@ export function runCommand(chunk:string[]):void{
   if(runner){
     runner(chunk);
   }else{
-
+    // TODO
   }
 }
 /**

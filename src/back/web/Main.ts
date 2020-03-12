@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -23,14 +23,14 @@ import HTTPS = require("https");
 import Passport = require("passport");
 import Path = require("path");
 
-import { connectDatabase } from "back/utils/Database";
-import { StatusCode } from "back/utils/enums/StatusCode";
 import { getLocale, loadLanguages } from "back/utils/Language";
-import { Logger, LogStyle } from "back/utils/Logger";
-import { route } from "back/utils/Route";
-import { SSL_OPTIONS } from "back/utils/SSL";
-import { SETTINGS } from "back/utils/System";
+import { LogStyle, Logger } from "back/utils/Logger";
+import { connectDatabase } from "back/utils/Database";
 import { GameClient } from "./GameClient";
+import { route } from "back/utils/Route";
+import { SETTINGS } from "back/utils/System";
+import { SSL_OPTIONS } from "back/utils/SSL";
+import { StatusCode } from "back/utils/enums/StatusCode";
 
 const CLUSTER = Number(process.env['KKUTU_CLUSTER']) || 0;
 const SECRET = "kkutu";
@@ -39,7 +39,7 @@ const PORT_HTTPS = 443;
 
 const app = Express();
 
-Logger.initialize(`web-${CLUSTER}`).then(async () => {
+Logger.initialize(`web-${CLUSTER}`).then(async() => {
   await connectDatabase();
   loadLanguages();
   GameClient.initialize();
@@ -50,8 +50,8 @@ Logger.initialize(`web-${CLUSTER}`).then(async () => {
   app.use("/scripts", Express.static(`${__dirname}/scripts`));
   app.use(CookieParser(SECRET));
   app.use(ExpressSession({
-    secret: SECRET,
-    resave: false,
+    secret           : SECRET,
+    resave           : false,
     saveUninitialized: true
   }));
   app.use(Passport.initialize());

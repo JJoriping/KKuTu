@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -18,14 +18,14 @@
 
 import $ = require("jquery");
 
-import { initialize, L } from "./utils/Global";
+import { L, initialize } from "./utils/Global";
 
 const $stage:Partial<{
-  'list':JQuery,
-  'total':JQuery,
-  'start':JQuery,
-  'refresh':JQuery,
-  'refreshIcon':JQuery
+  'list':JQuery;
+  'total':JQuery;
+  'start':JQuery;
+  'refresh':JQuery;
+  'refreshIcon':JQuery;
 }> = {};
 
 $(document).ready(() => {
@@ -51,21 +51,25 @@ $(document).ready(() => {
     for(let ratio = RATIO_START; ratio < 1; ratio += RATIO_STEP){
       for(let i = 0; i < servers.list.length; i++){
         if(servers.list[i] < ratio * servers.max){
-          return void $(`#server-${i}`).trigger('click');
+          $(`#server-${i}`).trigger('click');
+
+          return;
         }
       }
     }
   });
   $stage.refresh.on('click', () => {
     if($stage.refreshIcon.hasClass("fa-spin")){
-      return alert(L('refreshing'));
+      alert(L('refreshing'));
+
+      return;
     }
     $stage.refreshIcon.addClass("fa-spin");
     window.setTimeout(seek, INTERVAL_SEEK);
   });
   window.setInterval(() => {
     $stage.refresh.trigger('click');
-  },                 INTERVAL_AUTOSEEK);
+  }, INTERVAL_AUTOSEEK);
   seek();
 
   function seek():void{
@@ -78,7 +82,7 @@ $(document).ready(() => {
         let status = v === null ? "x" : "o";
         const percentile = v / data.max * PERCENTILE;
         const people = (status === "x") ? "-" : `${v} / ${data.max}`;
-        let $baby:JQuery;
+        let $baby:JQuery = null;
 
         sum += v || 0;
         if(status === "o"){
@@ -90,8 +94,7 @@ $(document).ready(() => {
           .append($("<div>").addClass("server-name").html(L(`server-${i}`)))
           .append($("<div>").addClass("server-people graph")
             .append($("<div>").addClass("graph-bar").width(`${percentile}%`))
-            .append($("<label>").html(people))
-          )
+            .append($("<label>").html(people)))
           .append($("<div>").addClass("server-enter").html(L('server-enter')))
         ;
         $stage.list.append($baby);
