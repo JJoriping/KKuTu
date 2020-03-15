@@ -67,6 +67,7 @@ export function route():Express.Router{
 function page(req:Express.Request, res:Express.Response, name:string, data:Table<any> = {}):void{
   res.render(name, {
     ...data,
+    constants: SETTINGS.application,
     copyright: SETTINGS.copyright,
     page     : name,
     version  : PACKAGE.version,

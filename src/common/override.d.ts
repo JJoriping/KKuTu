@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -32,6 +32,7 @@ interface JQueryStatic{
   cookie(key:string, value?:string):string|void;
 }
 interface Window{
+  CONSTANTS:Schema.Settings['application'];
   FRONT:true;
   L:Table<string>;
 }

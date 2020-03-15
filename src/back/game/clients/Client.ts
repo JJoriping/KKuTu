@@ -22,6 +22,7 @@ import { clients } from "../Lobby";
 import { Logger } from "back/utils/Logger";
 import { SETTINGS } from "back/utils/System";
 import { WSClient } from "back/utils/WSClient";
+import { WebSocketCloseCode } from "back/utils/enums/StatusCode";
 
 const MAX_MESSAGE_LENGTH = 200;
 
@@ -35,7 +36,7 @@ export class Client extends WSClient{
    * @param type 응답 유형.
    * @param data 추가 정보 객체.
    */
-  public static publish<T extends KKuTu.Packet.Type>(type:T, data?:KKuTu.Packet.ResponseData<T>):void{
+  public static publish<T extends KKuTu.Packet.ResponseType>(type:T, data?:KKuTu.Packet.ResponseData<T>):void{
     for(const v of Object.values(clients)){
       v.response(type, data);
     }
@@ -51,27 +52,67 @@ export class Client extends WSClient{
   };
   protected responseHandlerTable:KKuTu.Packet.ResponseHandlerTable = null;
 
+  private lastChat = Date.now();
+  private spamScore = 0;
+  private blocked = false;
+
   constructor(id:string, socket:WS){
     super(id, socket);
-    Logger.info("New").put("Client").next("ID").put(id).out();
+    Logger.info("Opened").put("Client").next("ID").put(id).out();
     this.response('welcome', {
       administrator: Boolean(SETTINGS.administrators.find(v => v.id === id))
     });
   }
+
   /**
    * 같은 곳에 접속한 다른 사용자들에게 대화 메시지를 보낸다.
    *
    * @param value 대화 내용.
    */
   public chat(value:string):void{
-    Client.publish('talk', {
-      profile: {
-        id   : this.id,
-        title: null,
-        // TODO 구현
-        name : "test"
-      },
-      value
-    });
+    const now = Date.now();
+    const gap = now - this.lastChat;
+    let enabled = false;
+
+    if(this.blocked){
+      if(gap >= SETTINGS.application.spam['block-interval']){
+        this.blocked = false;
+        this.spamScore = 0;
+        enabled = true;
+      }else{
+        this.spamScore++;
+        if(this.spamScore >= SETTINGS.application.spam['close-threshold']){
+          this.close(WebSocketCloseCode.SPAM);
+
+          return;
+        }
+      }
+    }else if(gap < SETTINGS.application.spam['add-interval']){
+      this.spamScore++;
+      if(this.spamScore >= SETTINGS.application.spam['threshold']){
+        this.blocked = true;
+      }else{
+        enabled = true;
+      }
+    }else if(gap >= SETTINGS.application.spam['clear-interval']){
+      this.spamScore = 0;
+      enabled = true;
+    }else{
+      enabled = true;
+    }
+    if(enabled){
+      Client.publish('talk', {
+        profile: {
+          id   : this.id,
+          title: null,
+          // TODO 구현
+          name : "test"
+        },
+        value
+      });
+    }else{
+      this.response('blocked');
+    }
+    this.lastChat = now;
   }
 }

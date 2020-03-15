@@ -16,6 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * 표시할 UI 상태 열거형.
+ */
 export enum UIPhase{
   /**
    * 로비 화면.

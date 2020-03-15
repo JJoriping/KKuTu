@@ -28,7 +28,7 @@ html
     link(rel='stylesheet', href=`/scripts/${locals.page}.css`)
     script(type='text/javascript', src='/media/jquery.js')
     script(type='text/javascript', src=`/scripts/${locals.page}.js`)
-    script(type='text/javascript')!= `window.FRONT=true;window.L=${JSON.stringify(locals.L)};`
+    script(type='text/javascript')!= `window.FRONT=true;window.CONSTANTS=${JSON.stringify(locals.constants)};window.L=${JSON.stringify(locals.L)};`
   body
     div#top
       div#global-notice

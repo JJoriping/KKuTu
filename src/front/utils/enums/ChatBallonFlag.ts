@@ -16,6 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * 말풍선 상태 열거형.
+ */
 export enum ChatBalloonFlag{
   /**
    * 게임 중 대화 여부.

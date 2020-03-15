@@ -36,6 +36,7 @@ export const G:Partial<{
   'windowSize':[number, number];
   'tooltipSize':[number, number];
 }> = {};
+
 /**
  * 페이지 작동에 필요한 기본적인 기능들을 준비한다.
  */

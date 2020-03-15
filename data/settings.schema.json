@@ -33,10 +33,45 @@
         "server-capacity": {
           "type": "number",
           "description": "한 서버에 접속할 수 있는 최대 인원."
+        },
+        "spam": {
+          "type": "object",
+          "properties": {
+            "add-interval": {
+              "type": "number",
+              "description": "도배 점수가 올라가게 하는 전송 사이 간격.\n\n1초로 설정된 경우, A를 전송 후 1초 내에 B를 전송할 때 점수가 오른다."
+            },
+            "block-interval": {
+              "type": "number",
+              "description": "도배 차단이 풀리기까지 필요한 전송 사이 간격."
+            },
+            "clear-interval": {
+              "type": "number",
+              "description": "도배 점수를 초기화시키는 전송 사이 간격.\n\n5초로 설정된 경우, A를 전송 후 5초 내에 B를 전송할 때 점수가 0점이 된다."
+            },
+            "close-threshold": {
+              "type": "number",
+              "description": "접속 강제 종료에 이르기까지 필요한 도배 점수."
+            },
+            "threshold": {
+              "type": "number",
+              "description": "도배 차단에 이르기까지 필요한 도배 점수."
+            }
+          },
+          "required": [
+            "add-interval",
+            "block-interval",
+            "clear-interval",
+            "close-threshold",
+            "threshold"
+          ],
+          "additionalProperties": false,
+          "description": "도배 차단에 관한 설정 객체."
         }
       },
       "required": [
-        "server-capacity"
+        "server-capacity",
+        "spam"
       ],
       "additionalProperties": false,
       "description": "끄투 게임 자체에 관한 설정 객체."
@@ -50,7 +85,7 @@
         },
         "web": {
           "type": "number",
-          "description": "웹 서버의 프로세스 수.\r\n\r\n웹 서버가 멀티프로세싱된 경우 세션 유지를 위해서는\r\nRedis 등 별도 세션 데이터베이스가 마련되어야 한다."
+          "description": "웹 서버의 프로세스 수.\n\n웹 서버가 멀티프로세싱된 경우 세션 유지를 위해서는\nRedis 등 별도 세션 데이터베이스가 마련되어야 한다."
         }
       },
       "required": [
@@ -58,7 +93,7 @@
         "web"
       ],
       "additionalProperties": false,
-      "description": "멀티프로세스 서버 구축에 필요한 정보를 담은 객체.\r\n\r\n멀티프로세싱된 경우 프로세스가 마스터 하나와 슬레이브 하나 이상으로 나뉘며\r\n각 슬레이브는 0부터 시작하는 고유한 번호를 갖는다."
+      "description": "멀티프로세스 서버 구축에 필요한 정보를 담은 객체.\n\n멀티프로세싱된 경우 프로세스가 마스터 하나와 슬레이브 하나 이상으로 나뉘며\n각 슬레이브는 0부터 시작하는 고유한 번호를 갖는다."
     },
     "copyright": {
       "type": "object",
@@ -161,25 +196,25 @@
           "additionalProperties": false
         }
       ],
-      "description": "HTTPS 통신에 필요한 정보를 담은 객체.\r\n\r\n인증서 파일이 상대 경로로 입력된 경우 `data` 디렉토리 안을 기준으로 탐색한다."
+      "description": "HTTPS 통신에 필요한 정보를 담은 객체.\n\n인증서 파일이 상대 경로로 입력된 경우 `data` 디렉토리 안을 기준으로 탐색한다."
     },
     "locales": {
       "type": "object",
       "additionalProperties": {
         "type": "string"
       },
-      "description": "지원하는 언어 객체.\r\n\r\n키는 ISO 639 식별자, 값은 해당 언어 이름을 나타낸다."
+      "description": "지원하는 언어 객체.\n\n키는 ISO 639 식별자, 값은 해당 언어 이름을 나타낸다."
     },
     "log": {
       "type": "object",
       "properties": {
         "directory": {
           "type": "string",
-          "description": "로그 파일이 담길 디렉토리.\r\n\r\n디렉토리가 없는 경우 새로 만든다."
+          "description": "로그 파일이 담길 디렉토리.\n\n디렉토리가 없는 경우 새로 만든다."
         },
         "directory-k-hot": {
           "type": "string",
-          "description": "*끄투에서의 인기 단어* 서비스용 로그 디렉토리.\r\n\r\n`directory` 값 뒤에 합쳐진 결과를 실제 경로로 삼는다."
+          "description": "*끄투에서의 인기 단어* 서비스용 로그 디렉토리.\n\n`directory` 값 뒤에 합쳐진 결과를 실제 경로로 삼는다."
         },
         "interval": {
           "type": "number",
@@ -199,7 +234,7 @@
       "items": {
         "type": "number"
       },
-      "description": "기본 포트 번호 목록.\r\n\r\n게임 로비 서버의 포트 번호가 곧 기본 포트이며,\r\n게임 방 서버의 포트 번호는 기본 포트에서 416과 슬레이브 번호를 더한 값이다."
+      "description": "기본 포트 번호 목록.\n\n게임 로비 서버의 포트 번호가 곧 기본 포트이며,\n게임 방 서버의 포트 번호는 기본 포트에서 416과 슬레이브 번호를 더한 값이다."
     },
     "recaptcha": {
       "type": "object",
@@ -228,7 +263,7 @@
         "secret"
       ],
       "additionalProperties": false,
-      "description": "구글 reCAPTCHA 모듈에 필요한 정보를 담은 객체.\r\n\r\n게임 로비에 접속하기 위해 사용자에게 reCAPTCHA 통과를 요구할 수 있다."
+      "description": "구글 reCAPTCHA 모듈에 필요한 정보를 담은 객체.\n\n게임 로비에 접속하기 위해 사용자에게 reCAPTCHA 통과를 요구할 수 있다."
     },
     "title": {
       "type": "string",

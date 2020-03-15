@@ -99,6 +99,7 @@ export function schedule(
 ):void{
   if(options?.callAtStart){
     callback();
+    options.callAtStart = false;
   }
   if(options?.punctual){
     const now = Date.now() + TIMEZONE_OFFSET;
@@ -107,7 +108,7 @@ export function schedule(
     global.setTimeout(
       () => {
         callback();
-        global.setInterval(callback, interval);
+        schedule(callback, interval, options);
       },
       gap
     );

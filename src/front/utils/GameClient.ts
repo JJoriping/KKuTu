@@ -18,22 +18,17 @@
 
 import { Logger } from "back/utils/Logger";
 import { Sound, playSound, stopAllSounds } from "./Audio";
-import { chat } from "./Chat";
+import { chat, notice } from "./Chat";
 import { L } from "./Global";
 import { $stage, updateLoading, updateUI } from "./PlayUtility";
 
-const SPAM_THRESHOLD = 10;
-const SPAM_CLOSE_THRESHOLD = 3;
+const INTERVAL_INTRO_ANIMATION = 1000;
 
 let lobbyClient:WebSocket;
 let roomClient:WebSocket;
-let spamCount = 0;
-let spamWarning = 0;
 
 const handlerTable:KKuTu.Packet.ResponseHandlerTable = {
   welcome: data => {
-    const INTERVAL_INTRO_ANIMATION = 1000;
-
     playSound(Sound.BGM_LOBBY, true);
     $stage.intro
       .animate({ opacity: 1 }, INTERVAL_INTRO_ANIMATION)
@@ -43,6 +38,9 @@ const handlerTable:KKuTu.Packet.ResponseHandlerTable = {
     ;
     $stage.introText.text(L('welcome'));
     Logger.success("Lobby").next("Administrator").put(data.administrator).out();
+  },
+  blocked: () => {
+    notice(L('blocked'));
   },
   talk: data => {
     chat(data.profile, data.value);
@@ -63,7 +61,7 @@ export function connectLobby(url:string):Promise<void>{
       res();
     };
     lobbyClient.onmessage = e => {
-      const{ type, ...data } = JSON.parse(String(e.data));
+      const { type, ...data } = JSON.parse(String(e.data));
 
       if(!(type in handlerTable)){
         Logger.error("Message").put(`Unhandled type: ${type}`).out();
@@ -99,17 +97,13 @@ export function connectLobby(url:string):Promise<void>{
  * @param data 추가 정보.
  * @param toLobby 로비 서버로 전송 여부.
  */
-export function send<T extends KKuTu.Packet.Type>(type:T, data:KKuTu.Packet.RequestData<T>, toLobby?:boolean):void{
+export function send<T extends KKuTu.Packet.RequestType>(
+  type:T,
+  data:KKuTu.Packet.RequestData<T>,
+  toLobby?:boolean
+):void{
   const target = toLobby || !roomClient ? lobbyClient : roomClient;
 
-  if(spamCount++ > SPAM_THRESHOLD){
-    if(++spamWarning >= SPAM_CLOSE_THRESHOLD){
-      target.close();
-
-      return;
-    }
-    spamCount >>= 1;
-  }
   target.send(JSON.stringify({
     type,
     ...data

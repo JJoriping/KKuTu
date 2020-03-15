@@ -62,18 +62,11 @@ module.exports = {
       "before": false,
       "after": false,
       "overrides": {
-        "import": {
-          "before": true,
-          "after": true
-        },
-        "from": {
-          "before": true,
-          "after": true
-        },
-        "return": {
-          "before": true,
-          "after": true
-        }
+        "const": { "before": true, "after": true },
+        "from": { "before": true, "after": true },
+        "import": { "before": true, "after": true },
+        "let": { "before": true, "after": true },
+        "return": { "before": true, "after": true }
       }
     }],
     "linebreak-style": 2,

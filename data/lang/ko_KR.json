@@ -76,6 +76,8 @@
     "menu-replay": "리플레이",
     "menu-leaderboard": "FA{trophy}&nbsp;랭킹",
 
+		"notice": "알림",
+		"blocked": "과도한 메시지 전송으로 관련 기능을 잠시 이용할 수 없습니다.",
 		"chat": "FA{comment}채팅",
 		"send": "전송",
 

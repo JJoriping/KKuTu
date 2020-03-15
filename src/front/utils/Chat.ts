@@ -113,12 +113,33 @@ export function chat(profile:KKuTu.Game.Profile, message:string, from?:string, t
   }
   if(from){
     if(from !== $data.id) $data.recentFrom = from;
-    $message.html(`<label
-      style="color: #7777FF; font-weight: bold;"
-    >&lt;${L('whisper')}&gt;</label>${$message.html()}`);
+    $message.html(`<label style="color: #7777FF; font-weight: bold;">
+      &lt;${L('whisper')}&gt;
+    </label>${$message.html()}`);
   }
   addonNickname($bar, equip);
   $stage.chat.append($baby).scrollTop(Number.MAX_SAFE_INTEGER);
+}
+/**
+ * 주어진 내용을 공지 형태로 채팅 창에 출력한다.
+ *
+ * @param message HTML 내용.
+ * @param head 글쓴이.
+ */
+export function notice(message:string, head = L('notice')):void{
+  const now = new Date();
+  let $baby:JQuery = null;
+
+  playSound(Sound.CHAT);
+  pruneChat();
+
+  $baby = $("<div>").addClass("chat-item chat-notice")
+    .append($("<div>").addClass("chat-head").text(head))
+    .append($("<div>").addClass("chat-body").html(message))
+    .append($("<div>").addClass("chat-stamp").text(now.toLocaleTimeString()))
+  ;
+  $stage.chat.append($baby).scrollTop(Number.MAX_SAFE_INTEGER);
+  $stage.chatLog.append($baby);
 }
 /**
  * 주어진 문자열에 포함된 나쁜 말을 대체 문구로 바꿔 반환한다.

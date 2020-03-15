@@ -1,4 +1,4 @@
-/*!
+/*
  * Rule the words! KKuTu Online
  * Copyright (C) 2020  JJoriping(op@jjo.kr)
  *
@@ -24,39 +24,39 @@ declare namespace KKuTu{
     /**
      * 배경 음악 음소거 여부.
      */
-    'mb': boolean,
+    'mb':boolean;
     /**
      * 효과음 음소거 여부.
      */
-    'me': boolean,
+    'me':boolean;
     /**
      * 초대 거부 여부.
      */
-    'di': boolean,
+    'di':boolean;
     /**
      * 귓속말 거부 여부.
      */
-    'dw': boolean,
+    'dw':boolean;
     /**
      * 친구 요청 거부 여부.
      */
-    'df': boolean,
+    'df':boolean;
     /**
      * 자동 준비 여부.
      */
-    'ar': boolean,
+    'ar':boolean;
     /**
      * 접속자 목록 정렬 여부.
      */
-    'su': boolean,
+    'su':boolean;
     /**
      * 대기 중인 방만 보기 여부.
      */
-    'ow': boolean,
+    'ow':boolean;
     /**
      * 열려 있는 방만 보기 여부.
      */
-    'ou': boolean
+    'ou':boolean;
   };
   /**
    * 게임 유형의 특징을 설명하는 객체.
@@ -65,209 +65,232 @@ declare namespace KKuTu{
     /**
      * 다루는 언어.
      */
-    'locale': 'ko'|'en',
+    'locale':'ko'|'en';
     /**
      * 유형 식별자.
      */
-    'name': string,
+    'name':string;
     /**
      * 지원하는 특수 규칙 목록.
      */
-    'options': string[],
+    'options':string[];
     /**
      * 시간 상수.
-     * 
+     *
      * 이 값이 1인 경우 사용자는 한 라운드의 총 시간을
      * 10초, 30초, 60초, 90초, 120초, 150초 중 하나로 설정할 수 있다.
      * 2인 경우 그 두 배의 목록 중 하나로 설정할 수 있다.
      */
-    'time': number,
+    'time':number;
     /**
      * 끄투 봇 초대 가능 여부.
      */
-    'ai': boolean,
+    'ai':boolean;
     /**
      * 큰 화면 여부.
-     * 
+     *
      * 단어를 입력하는 형식이 아닌 경우에 사용할 수 있다.
      */
-    'big': boolean,
+    'big':boolean;
     /**
      * 현재 턴 사용자 퇴장 시 라운드 종료 여부.
      */
-    'newRoundOnQuit': boolean
+    'newRoundOnQuit':boolean;
   };
   type ServerList = {
-    'list': number[],
-    'max': number
+    'list':number[];
+    'max':number;
   };
   namespace Game{
     type Profile = {
       /**
        * 계정 식별자.
        */
-      'id': string,
+      'id':string;
       /**
        * 계정 별명.
        */
-      'title': string,
+      'title':string;
       /**
        * 계정 이름.
        */
-      'name': string,
+      'name':string;
     };
     type Room = {
       /**
        * 방 번호.
        */
-      'id': number,
+      'id':number;
       /**
        * 방장 계정 식별자.
        */
-      'master': string,
+      'master':string;
       /**
        * 방 제목.
        */
-      'title': string,
+      'title':string;
       /**
        * 게임 유형.
        */
-      'rule': string,
+      'rule':string;
       /**
        * 특수 규칙 객체.
-       * 
+       *
        * `extensions`를 제외한 키들은 열거형 `RuleOption`에서 받는다.
        */
-      'options': RoomOptions,
+      'options':RoomOptions;
       /**
        * 총 라운드 수.
        */
-      'round': number,
+      'round':number;
       /**
        * 한 라운드당 시간(초).
        */
-      'time': number,
+      'time':number;
       /**
        * 게임 진행 중 여부.
        */
-      'gaming': boolean,
+      'gaming':boolean;
       /**
        * 비밀번호 설정 여부.
        */
-      'password': boolean,
+      'password':boolean;
       /**
        * 참여자 목록.
        */
-      'players': any[],
+      'players':any[];
       /**
        * 최대 인원.
        */
-      'limit': number
+      'limit':number;
     };
     type RoomOptions = {
-      'man'?: boolean,
-      'ext'?: boolean,
-      'mis'?: boolean,
-      'loa'?: boolean,
-      'str'?: boolean,
-      'k32'?: boolean,
-      'ijp'?: boolean,
-      'prv'?: boolean,
-      'no2'?: boolean,
+      'man'?:boolean;
+      'ext'?:boolean;
+      'mis'?:boolean;
+      'loa'?:boolean;
+      'str'?:boolean;
+      'k32'?:boolean;
+      'ijp'?:boolean;
+      'prv'?:boolean;
+      'no2'?:boolean;
       /**
        * 어인정 주제 목록.
        */
-      'extensions'?: string[]
+      'extensions'?:string[];
     };
     type User = {
       /**
        * 장착 아이템 목록 객체.
        */
-      'equip': Table<string>
+      'equip':Table<string>;
     };
   }
   namespace Packet{
-    type Type = keyof KKuTu.Packet.RequestTable
-      | keyof KKuTu.Packet.ResponseTable
-    ;
-    type RequestData<T extends KKuTu.Packet.Type> = {
-      'type'?: T
+    type RequestType = keyof KKuTu.Packet.RequestTable;
+    type ResponseType = keyof KKuTu.Packet.ResponseTable;
+    type RequestData<T extends KKuTu.Packet.RequestType> = {
+      'type'?:T;
     }&KKuTu.Packet.RequestTable[T];
-    type ResponseData<T extends KKuTu.Packet.Type> = {
-      'type'?: T
+    type ResponseData<T extends KKuTu.Packet.ResponseType> = {
+      'type'?:T;
     }&KKuTu.Packet.ResponseTable[T];
     /**
      * 요청(외부 → 게임 서버) 메시지를 유형별로 처리하는 핸들러 객체.
      */
     type RequestHandlerTable = {
-      [key in KKuTu.Packet.Type]?: (data:KKuTu.Packet.RequestData<key>) => void
+      [key in KKuTu.Packet.RequestType]?:(data:KKuTu.Packet.RequestData<key>)=>void
     };
     /**
      * 응답(게임 서버 → 외부) 메시지를 유형별로 처리하는 핸들러 객체.
      */
     type ResponseHandlerTable = {
-      [key in KKuTu.Packet.Type]?: (data:KKuTu.Packet.ResponseData<key>) => void
+      [key in KKuTu.Packet.ResponseType]?:(data:KKuTu.Packet.ResponseData<key>)=>void
     };
 
     type RequestTable = {
-      // 새 방을 만드는 경우.
-      'room-new': Partial<KKuTu.Game.Room>,
-      // 방 정보를 수정하는 경우.
-      'room-set': Partial<KKuTu.Game.Room>,
-      // 웹 서버가 접속 인원을 확인하는 경우.
-      'seek': {},
-      // 채팅 내용을 보내는 경우.
-      'talk': {
+      /**
+       * (사용자 → 게임 서버)
+       * 방 만들기 요청.
+       */
+      'room-new':Partial<KKuTu.Game.Room>;
+      /**
+       * (사용자 → 게임 서버)
+       * 방 정보 수정 요청.
+       */
+      'room-set':Partial<KKuTu.Game.Room>;
+      /**
+       * (웹 서버 → 게임 서버)
+       * 접속 인원 확인 요청.
+       */
+      'seek':{};
+      /**
+       * (사용자 → 게임 서버)
+       * 대화 전송 요청.
+       */
+      'talk':{
         /**
          * 차례를 넘기기 위해 입력한 단어 여부.
          */
-        'relay'?: boolean,
+        'relay'?:boolean;
         /**
          * 대화 내용.
          */
-        'value': string,
+        'value':string;
         /**
          * 귓속말 대상 계정 식별자.
          */
-        'whisper'?: string
-      }
-      'welcome': never
+        'whisper'?:string;
+      };
     };
     type ResponseTable = {
-      'room-new': never,
-      'room-set': never,
-      // 게임 서버가 접속 인원을 알리는 경우.
-      'seek': {
+      /**
+       * (게임 서버 → 웹 서버)
+       * 차단 고지 응답.
+       */
+      'blocked':never;
+      /**
+       * (게임 서버 → 웹 서버)
+       * 접속 인원 응답.
+       */
+      'seek':{
         /**
          * 접속 인원.
          */
-        'value': number
-      },
-      'talk': {
+        'value':number;
+      };
+      /**
+       * (게임 서버 → 사용자)
+       * 대화 응답.
+       */
+      'talk':{
         /**
          * 오류 번호.
          */
-        'code'?: number,
+        'code'?:number;
         /**
          * 공지 여부.
          */
-        'notice'?: boolean,
+        'notice'?:boolean;
         /**
          * 대화 주체의 정보를 담은 객체.
          */
-        'profile': KKuTu.Game.Profile,
+        'profile':KKuTu.Game.Profile;
         /**
          * 대화 내용.
          */
-        'value': string
-      },
-      // 게임 서버가 사용자에게 접속자 목록이나 방 목록 등을 알리는 경우.
-      'welcome': {
+        'value':string;
+      };
+      /**
+       * (게임 서버 → 사용자)
+       * 초기 정보(접속자 목록, 방 목록 등) 응답.
+       */
+      'welcome':{
         /**
          * 관리자 여부.
          */
-        'administrator': boolean
-      }
+        'administrator':boolean;
+      };
     };
   }
 }

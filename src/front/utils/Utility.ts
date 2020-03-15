@@ -88,7 +88,7 @@ export function startDrag($target:JQuery, x:number, y:number):void{
   const position = $target.position();
 
   G.$window.on('mousemove', e => {
-    const[ deltaX, deltaY ] = [ e.pageX - x, e.pageY - y ];
+    const [ deltaX, deltaY ] = [ e.pageX - x, e.pageY - y ];
 
     $target.css({
       left: position.left + deltaX,
