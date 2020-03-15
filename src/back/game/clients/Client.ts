@@ -30,6 +30,8 @@ const MAX_MESSAGE_LENGTH = 200;
  * 일반 사용자의 클라이언트 클래스.
  */
 export class Client extends WSClient{
+  private static readonly GUEST_ID_RANGE = 10000;
+
   /**
    * 같은 곳에 접속한 다른 사용자들에게 메시지를 보낸다.
    *
@@ -42,6 +44,18 @@ export class Client extends WSClient{
     }
   }
 
+  private static generateProfile(id:string):KKuTu.Game.Profile{
+    const number = String(Math.floor(Math.random() * Client.GUEST_ID_RANGE))
+      .padStart(String(Client.GUEST_ID_RANGE).length - 1, "0")
+    ;
+
+    return {
+      id,
+      name : null,
+      title: `GUEST-${number}`
+    };
+  }
+
   protected requestHandlerTable:KKuTu.Packet.RequestHandlerTable = {
     talk: data => {
       if(!data.value?.slice) return;
@@ -52,13 +66,19 @@ export class Client extends WSClient{
   };
   protected responseHandlerTable:KKuTu.Packet.ResponseHandlerTable = null;
 
-  private lastChat = Date.now();
+  private profile:KKuTu.Game.Profile;
+  private lastChatAt = Date.now();
   private spamScore = 0;
   private blocked = false;
 
-  constructor(id:string, socket:WS){
+  constructor(id:string, socket:WS, profile:KKuTu.Game.Profile = Client.generateProfile(id)){
     super(id, socket);
-    Logger.info("Opened").put("Client").next("ID").put(id).out();
+    this.profile = profile;
+    Logger.info("Opened").put("Client")
+      .next("ID").put(id)
+      .next("Profile").put(this.profile.title || this.profile.name)
+      .out()
+    ;
     this.response('welcome', {
       administrator: Boolean(SETTINGS.administrators.find(v => v.id === id))
     });
@@ -71,7 +91,7 @@ export class Client extends WSClient{
    */
   public chat(value:string):void{
     const now = Date.now();
-    const gap = now - this.lastChat;
+    const gap = now - this.lastChatAt;
     let enabled = false;
 
     if(this.blocked){
@@ -102,17 +122,12 @@ export class Client extends WSClient{
     }
     if(enabled){
       Client.publish('talk', {
-        profile: {
-          id   : this.id,
-          title: null,
-          // TODO 구현
-          name : "test"
-        },
+        profile: this.profile,
         value
       });
     }else{
       this.response('blocked');
     }
-    this.lastChat = now;
+    this.lastChatAt = now;
   }
 }

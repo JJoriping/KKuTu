@@ -17,9 +17,9 @@
  */
 
 import { RuleOption } from "back/utils/Rule";
-import { sendWhisper } from "./Chat";
+import { notice, sendWhisper } from "./Chat";
 import { UIPhase } from "./enums/UIPhase";
-import { G } from "./Global";
+import { G, L } from "./Global";
 
 /**
  * 자주 쓰이는 JQuery 객체를 담은 객체.
@@ -179,12 +179,12 @@ const COMMAND_TABLE:Table<(chunk:string[])=>void> = {
       $stage.menu.ready.trigger('click');
     }
   },
+  ㄷ: chunk => {
+    sendWhisper(chunk[1], chunk.slice(2).join(' '));
+  },
   ㄹ: () => {
     showDialog($stage.dialog['chat-log']);
     $stage.chatLog.scrollTop(Number.MAX_SAFE_INTEGER);
-  },
-  귓: chunk => {
-    sendWhisper(chunk[1], chunk.slice(2).join(' '));
   },
   청소: () => {
     $stage.chat.empty();
@@ -239,12 +239,15 @@ export function getGameOptions(prefix:string):{
  * @param chunk 명령 내용.
  */
 export function runCommand(chunk:string[]):void{
-  const runner = COMMAND_TABLE[chunk[0]];
+  const name = chunk[0].slice(1);
+  const runner = COMMAND_TABLE[name];
 
   if(runner){
     runner(chunk);
   }else{
-    // TODO
+    for(const k in COMMAND_TABLE){
+      notice(L(`command-${k}`), k);
+    }
   }
 }
 /**

@@ -166,6 +166,17 @@ span{
     }
   }
 }
+.jt-image{
+	float: left;
+	border-radius: 5px;
+	background-size: 100%;
+}
+.moremi{
+  position: relative;
+  img{
+    position: relative;
+  }
+}
 .tooltip{
 	display: none;
 	float: left;
