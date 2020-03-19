@@ -1,0 +1,38 @@
+//-
+  Rule the words! KKuTu Online
+  Copyright (C) 2020  JJoriping(op@jjo.kr)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+include ../Dialog
+include ../GameOption
+
++Dialog('dialog-profile', 300, 365)
+  div.dialog-bar.profile-head
+  div.dialog-bar
+    h4(style='width: 83px;')= L('place')
+    h4.dialog-bar-value#profile-place
+  div.dialog-bar.profile-record(style='padding: 2px 0px; border-top: 1px dashed #CCC; margin: 2px 0px; height: 175px; overflow-y: scroll;')
+    div.profile-record-field(style='font-weight: bold; text-align: center;')
+      div.profile-field-name= L('game-mode')
+      div.profile-field-record= L('record')
+      div.profile-field-score= L('record-score')
+    div#profile-record
+  div.dialog-bar.tail-button
+    button#profile-whisper= L('whisper')
+    button#profile-shut= L('shut')
+    button#profile-kick= L('kick')
+    button#profile-level= L('ai-setting')
+    button#profile-dress= L('dress')
+    button#profile-handover= L('handover')

@@ -52,7 +52,8 @@ export class Client extends WSClient{
     return {
       id,
       name : null,
-      title: `GUEST-${number}`
+      title: `GUEST-${number}`,
+      image: "/media/images/guest.png"
     };
   }
 
@@ -66,22 +67,24 @@ export class Client extends WSClient{
   };
   protected responseHandlerTable:KKuTu.Packet.ResponseHandlerTable = null;
 
+  private guest:boolean;
   private profile:KKuTu.Game.Profile;
+  private place:number;
+
   private lastChatAt = Date.now();
   private spamScore = 0;
   private blocked = false;
 
-  constructor(id:string, socket:WS, profile:KKuTu.Game.Profile = Client.generateProfile(id)){
+  constructor(id:string, socket:WS, profile:KKuTu.Game.Profile = null){
     super(id, socket);
-    this.profile = profile;
+    this.guest = !profile;
+    this.profile = profile || Client.generateProfile(id);
+    this.place = 0;
     Logger.info("Opened").put("Client")
       .next("ID").put(id)
       .next("Profile").put(this.profile.title || this.profile.name)
       .out()
     ;
-    this.response('welcome', {
-      administrator: Boolean(SETTINGS.administrators.find(v => v.id === id))
-    });
   }
 
   /**
@@ -129,5 +132,23 @@ export class Client extends WSClient{
       this.response('blocked');
     }
     this.lastChatAt = now;
+  }
+  /**
+   * 이 클라이언트의 사용자 정보를 반환한다.
+   */
+  public toUser():KKuTu.Game.User{
+    return {
+      id      : this.id,
+      guest   : this.guest,
+      robot   : false,
+      exordial: "", // TODO
+      profile : this.profile,
+      place   : this.place,
+      data    : {
+        score : 0, // TODO
+        record: {} // TODO
+      },
+      equip: {}
+    };
   }
 }

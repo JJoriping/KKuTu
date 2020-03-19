@@ -17,9 +17,12 @@
  */
 
 import { RuleOption } from "back/utils/Rule";
-import { notice, sendWhisper } from "./Chat";
+import { notice, replaceInsults, sendWhisper } from "./Chat";
 import { UIPhase } from "./enums/UIPhase";
 import { G, L } from "./Global";
+import { Iterator } from "back/utils/Utility";
+import { JTImage, LevelImage, UserListBar } from "./PlayComponent";
+import { send } from "./GameClient";
 
 /**
  * 자주 쓰이는 JQuery 객체를 담은 객체.
@@ -34,11 +37,20 @@ export const $stage:Partial<{
   'balloons':JQuery;
   'box':{
     'chat':JQuery;
+    'user':JQuery;
   };
   'dialog':{
     'chat-log':JQuery;
     'extended-theme':JQuery;
     'help':JQuery;
+    'invite-list':JQuery;
+    'profile':JQuery;
+    'profile-dress':JQuery;
+    'profile-handover':JQuery;
+    'profile-kick':JQuery;
+    'profile-level':JQuery;
+    'profile-shut':JQuery;
+    'profile-whisper':JQuery;
     'quick':JQuery;
     'room':JQuery;
     'settings':JQuery;
@@ -46,6 +58,10 @@ export const $stage:Partial<{
   'game':{
     'here':JQuery;
     'here-text':JQuery;
+  };
+  'lobby':{
+    'user-list':JQuery;
+    'user-list-title':JQuery;
   };
   'menu':{
     'help':JQuery;
@@ -112,6 +128,10 @@ export const $data:Partial<{
    */
   'phase':UIPhase;
   /**
+   * 프로필 창에 나타난 정보의 주체 식별자.
+   */
+  'profiledUser':string;
+  /**
    * 빠른 입장 처리를 위해 필요한 정보 객체.
    */
   'quick':{
@@ -134,6 +154,10 @@ export const $data:Partial<{
    */
   'recentFrom':string;
   /**
+   * 게임 대기실에 입장한 끄투 봇 목록 객체.
+   */
+  'robots':Table<KKuTu.Game.User>;
+  /**
    * 이 클라이언트가 입장한 방 정보 객체.
    */
   'room':KKuTu.Game.Room;
@@ -147,6 +171,10 @@ export const $data:Partial<{
    * 방을 만드려는 경우 `room-new`, 방장으로서 수정하려는 경우 `room-set`을 갖는다.
    */
   'roomAction':"room-new"|"room-set";
+  /**
+   * 접속한 서버 번호.
+   */
+  'server':number;
   /**
    * 최근 설정된 설정 객체.
    */
@@ -190,6 +218,11 @@ const COMMAND_TABLE:Table<(chunk:string[])=>void> = {
     $stage.chat.empty();
   }
 };
+const MAX_LEVEL = 360;
+const EXP_TABLE = [
+  ...Iterator(MAX_LEVEL).map((_, i) => getRequiredScore(i)),
+  Infinity
+];
 
 /**
  * 대화상자를 보인다.
@@ -232,6 +265,152 @@ export function getGameOptions(prefix:string):{
   }
 
   return R;
+}
+/**
+ * 주어진 경험치로부터 레벨을 구해 반환한다.
+ *
+ * @param score 경험치.
+ */
+export function getLevel(score:number):number{
+  let i:number;
+
+  for(i = 0; i < EXP_TABLE.length; i++){
+    if(score < EXP_TABLE[i]) break;
+  }
+
+  return i + 1;
+}
+/**
+ * 주어진 레벨에서 다음 레벨로 올리기 위해 필요한 경험치를 반환한다.
+ *
+ * @param level 레벨.
+ */
+export function getRequiredScore(level:number):number{
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  const BUMPED_SMALL = level % 5 ? 1 : 1.3;
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  const BUMPED_MIDDLE = level % 15 ? 1 : 1.4;
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  const BUMPED_BIG = level % 45 ? 1 : 1.5;
+
+  return Math.round(
+    BUMPED_SMALL * BUMPED_MIDDLE * BUMPED_BIG * (
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      120 + Math.floor(level / 5) * 60 + Math.floor(level * level / 225) * 120 + Math.floor(level * level / 2025) * 180
+    )
+  );
+}
+/**
+ * 주어진 JQuery 객체에 모레미를 그린다.
+ *
+ * @param $target 대상 JQuery 객체.
+ * @param equip 착용한 아이템 목록 객체.
+ */
+export function renderMoremi($target:JQuery, equip:KKuTu.Game.User['equip'] = {}):void{
+  const LR = {
+    'Mlhand': "Mhand",
+    'Mrhand': "Mhand"
+  };
+
+  $target.empty();
+  // TODO
+}
+/**
+ * 대상 사용자에게 초대 메시지를 보낸다.
+ *
+ * @param target 대상 사용자의 식별자. 값이 AI인 경우 끄투 봇을 추가한다.
+ */
+export function requestInvite(target:string):void{
+  if(target !== "AI"){
+    const name = $data.users[target].profile.title || $data.users[target].profile.name;
+
+    if(!confirm(L('sure-invite', name))) return;
+  }
+  send('invite', { target });
+}
+/**
+ * 대상 사용자의 정보 창을 띄운다.
+ *
+ * @param target 대상 사용자의 식별자.
+ */
+export function requestProfile(target:string):void{
+  const TITLE_LENGTH = 5;
+  const user = $data.users[target] || $data.robots[target];
+  const $record = $("#profile-record").empty();
+  let $moremi:JQuery;
+  let $exordial:JQuery;
+  let level:number;
+
+  if(!user){
+    notice(L('error-405'));
+
+    return;
+  }
+  $("#dialog-profile .dialog-title").html(L('dialog-profile-title', user.profile.title || user.profile.name));
+  $(".profile-head").empty()
+    .append($moremi = $("<div>").addClass("moremi profile-moremi"))
+    .append(
+      $("<div>").addClass("profile-head-item")
+        .append(JTImage(user.profile.image).addClass("profile-image"))
+        .append(
+          $("<div>").addClass("profile-title ellipse").html(user.profile.title || user.profile.name)
+            .append(
+              $("<label>").addClass("profile-tag").html(` #${String(user.id).substr(0, TITLE_LENGTH)}`)
+            )
+        )
+    )
+    .append(
+      $("<div>").addClass("profile-head-item")
+        .append(LevelImage(user.data.score).addClass("profile-level"))
+        .append($("<div>").addClass("profile-level-text").html(L('LEVEL', level = getLevel(user.data.score))))
+        .append(
+          $("<div>").addClass("profile-score-text")
+            .html(`${user.data.score.toLocaleString()} / ${(EXP_TABLE[level - 1]).toLocaleString()} ${L('PTS')}`)
+        )
+    )
+    .append(
+      $exordial = $("<div>").addClass("profile-head-item profile-exordial ellipse")
+        .text(replaceInsults(user.exordial || ""))
+    )
+  ;
+  if(user.robot){
+    $stage.dialog['profile-level'].show();
+    $stage.dialog['profile-level'].prop('disabled', $data.id !== $data.room.master);
+    $("#profile-place").html(L('room-number', $data.room.id));
+  }else{
+    $stage.dialog['profile-level'].hide();
+    $("#profile-place").html(user.place ? L('room-number', user.place) : L('lobby'));
+    for(const [ k, v ] of Object.entries(user.data.record)){
+      $record.append(
+        $("<div>").addClass("profile-record-field")
+          .append($("<div>").addClass("profile-field-name").html(L(`mode-${k}`)))
+          .append($("<div>").addClass("profile-field-record").html(L('record-p-w', v.plays, v.wins)))
+          .append($("<div>").addClass("profile-field-score").html(L('PTS', v.scores.toLocaleString())))
+      );
+    }
+    renderMoremi($moremi, user.equip);
+  }
+  $stage.dialog['profile-kick'].hide();
+  $stage.dialog['profile-shut'].hide();
+  $stage.dialog['profile-dress'].hide();
+  $stage.dialog['profile-whisper'].hide();
+  $stage.dialog['profile-handover'].hide();
+
+  if($data.id === target){
+    $stage.dialog['profile-dress'].show();
+  }else if(!user.robot){
+    $stage.dialog['profile-shut'].show();
+    $stage.dialog['profile-whisper'].show();
+  }
+  if($data.room){
+    if($data.id !== target && $data.id === $data.room.master){
+      $stage.dialog['profile-kick'].show();
+      $stage.dialog['profile-handover'].show();
+    }
+  }
+  $data.profiledUser = target;
+  showDialog($stage.dialog.profile);
+  $stage.dialog.profile.show();
 }
 /**
  * 채팅으로 입력한 명령어를 실행한다.
@@ -311,8 +490,33 @@ export function updateUI():void{
 
   switch($data.phase){
     case UIPhase.LOBBY:
+      $stage.box.user.show();
+      updateUserList();
       break;
     default:
       break;
+  }
+}
+/**
+ * 접속자 목록을 갱신한다.
+ */
+export function updateUserList():void{
+  const list = Object.values($data.users);
+
+  $stage.lobby['user-list-title'].html(L(
+    'user-list-n',
+    L(`server-${$data.server}`),
+    list.length
+  ));
+  $stage.lobby['user-list'].empty();
+  $stage.dialog['invite-list'].empty();
+  for(const v of list){
+    if(v.robot){
+      continue;
+    }
+    $stage.lobby['user-list'].append(UserListBar(v));
+    if(!v.place){
+      $stage.dialog['invite-list'].append(UserListBar(v, true));
+    }
   }
 }

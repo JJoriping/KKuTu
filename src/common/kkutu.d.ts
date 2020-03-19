@@ -115,6 +115,10 @@ declare namespace KKuTu{
        * 계정 이름.
        */
       'name':string;
+      /**
+       * 프로필 사진 주소.
+       */
+      'image':string;
     };
     type Room = {
       /**
@@ -181,6 +185,60 @@ declare namespace KKuTu{
     };
     type User = {
       /**
+       * 계정 식별자.
+       */
+      'id':string;
+      /**
+       * 손님 여부.
+       */
+      'guest':boolean;
+      /**
+       * 끄투 봇 여부.
+       */
+      'robot':boolean;
+      /**
+       * 소개말.
+       */
+      'exordial':string;
+      /**
+       * 프로필 정보.
+       */
+      'profile':KKuTu.Game.Profile;
+      /**
+       * 게임 정보.
+       */
+      'data':{
+        /**
+         * 경험치.
+         */
+        'score':number;
+        /**
+         * 유형별 게임 플레이 기록 객체.
+         */
+        'record':Table<{
+          /**
+           * 판 수.
+           */
+          'plays':number;
+          /**
+           * 1위 횟수.
+           */
+          'wins':number;
+          /**
+           * 총 획득 경험치.
+           */
+          'scores':number;
+          /**
+           * 총 플레이타임(㎳).
+           */
+          'playtime':number;
+        }>;
+      };
+      /**
+       * 방 번호. 0인 경우 로비를 가리킨다.
+       */
+      'place':number;
+      /**
        * 장착 아이템 목록 객체.
        */
       'equip':Table<string>;
@@ -224,6 +282,13 @@ declare namespace KKuTu{
        * 접속 인원 확인 요청.
        */
       'seek':{};
+      /**
+       * (사용자 → 게임 서버)
+       * 초대 요청.
+       */
+      'invite':{
+        'target':string;
+      };
       /**
        * (사용자 → 게임 서버)
        * 대화 전송 요청.
@@ -290,6 +355,18 @@ declare namespace KKuTu{
          * 관리자 여부.
          */
         'administrator':boolean;
+        /**
+         * 접속한 서버 번호.
+         */
+        'server':number;
+        /**
+         * 접속자 목록.
+         */
+        'users':KKuTu.Game.User[];
+        /**
+         * 개설된 방 목록.
+         */
+        'rooms':KKuTu.Game.Room[];
       };
     };
   }

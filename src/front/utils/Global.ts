@@ -122,7 +122,9 @@ export function L(key:string, ...args:any[]):string{
   const R = window.L[key];
 
   return R
-    ? R.replace(REGEXP_LANGUAGE_ARGS, (_, g1) => args[Number(g1)])
+    ? R
+      .replace(REGEXP_LANGUAGE_ARGS, (_, g1) => args[Number(g1)])
+      .replace(/FA\{([^}]+)}/g, (_, p1) => `<i class="fa fa-${p1}"></i>`)
     : `(L#${key})`
   ;
 }

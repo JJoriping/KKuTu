@@ -164,7 +164,7 @@ export function sendWhisper(target:string, message:string):void{
     whisper: target,
     value  : message
   }, true);
-  chat({ id: null, title: `→${target}`, name: null }, message, $data.id);
+  chat({ id: null, title: `→${target}`, name: null, image: null }, message, $data.id);
 }
 /**
  * 말풍선을 주어진 계정 위에 표시한다.

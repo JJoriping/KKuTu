@@ -33,7 +33,7 @@ const CAPACITY = SETTINGS.application['server-capacity'];
 /**
  * 현재 접속 중인 일반 클라이언트를 (식별자, 웹소켓 인스턴스) 쌍으로 묶은 객체.
  */
-export const clients:Table<WSClient> = {};
+export const clients:Table<Client> = {};
 /**
  * 현재 접속 중인 웹 서버 클라이언트를 (식별자, 웹소켓 인스턴스) 쌍으로 묶은 객체.
  */
@@ -90,6 +90,12 @@ export async function main(cluster:number, channels:Cluster.Worker[]):Promise<vo
       delete clients[client.id];
     });
     clients[client.id] = client;
+    client.response('welcome', {
+      administrator: Boolean(SETTINGS.administrators.find(v => v.id === client.id)),
+      server       : cluster,
+      users        : Object.values(clients).map(v => v.toUser()),
+      rooms        : []
+    });
   });
   server.on('error', err => {
     Logger.error("Server").next("Error").put(err.stack).out();

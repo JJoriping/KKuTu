@@ -9,22 +9,11 @@
     "HOUR": "시",
     "MINUTE": "분",
     "SECOND": "초",
+		"LEVEL": "레벨 {#0}",
+		"PTS": "점",
 
     "OK": "확인",
     "NO": "취소",
-
-    "support-dictionary": "사전 정보 제공: <a href='https://wordnet.princeton.edu/' target='_blank'>WordNet</a><br>WordNet 3.0 Copyright 2006 by Princeton University. All rights reserved.",
-    "support-etc": "도움: <a href='https://cafe.naver.com/sdbx' target='_blank'>샌드박스 :: SDBX</a>"
-  },
-  "Index": {
-    "title": "글자로 놀자! 끄투 온라인",
-
-    "server-counter": "총 {#0}명",
-    "server-enter": "접속",
-    "server-list": "서버 목록",
-    "x-server-refresh": "서버 목록을 다시 불러옵니다.",
-
-    "game-start": "게임 시작!",
 
     "server-0": "감자",
     "server-1": "냉이",
@@ -46,6 +35,19 @@
     "server-17": "쑥갓",
     "server-18": "찔레",
     "server-19": "고구마",
+
+    "support-dictionary": "사전 정보 제공: <a href='https://wordnet.princeton.edu/' target='_blank'>WordNet</a><br>WordNet 3.0 Copyright 2006 by Princeton University. All rights reserved.",
+    "support-etc": "도움: <a href='https://cafe.naver.com/sdbx' target='_blank'>샌드박스 :: SDBX</a>"
+  },
+  "Index": {
+    "title": "글자로 놀자! 끄투 온라인",
+
+    "server-counter": "총 {#0}명",
+    "server-enter": "접속",
+    "server-list": "서버 목록",
+    "x-server-refresh": "서버 목록을 다시 불러옵니다.",
+
+    "game-start": "게임 시작!",
 
     "refreshing": "잠시 기다려 주세요."
   },
@@ -90,6 +92,7 @@
 		"command-아이디": "(/아이디 <i>대상</i>) 대상의 식별 번호를 얻습니다.",
 
 		"user-list": "FA{users}접속자 목록",
+		"user-list-n": "FA{users}<b><{#0}></b> 접속자 목록 ({#1}명)",
 
 		"room-list": "FA{bars}방 목록",
 
@@ -136,6 +139,21 @@
     "dialog-quick-title": "빠른 입장",
     "quick-status": "해당 유형의 방 수: {#0}",
     "quick-queue": "방 찾는 중... {#0}",
+
+		"sure-invite": "{#0} 님을 초대할까요?",
+
+		"dialog-profile-title": "{#0} 님의 정보",
+		"room-number": "{#0}번 방",
+		"lobby": "로비",
+		"record-p-w": "{#0}전 {#1}승",
+		"place": "위치",
+		"record": "전적",
+		"record-score": "총 경험치",
+		"shut": "차단",
+		"kick": "강퇴",
+		"ai-setting": "AI 설정",
+		"dress": "프로필 관리",
+		"handover": "방장 인계",
 
     "group-korean": "한국어",
     "group-english": "영어",
@@ -291,6 +309,8 @@
 		"theme-520": "해양",
 		"theme-530": "화학",
 		"theme-1001": "나라 이름과 수도",
+
+		"error-405": "해당 사용자를 찾을 수 없습니다.",
 
     "closed": "서버와의 연결이 끊어졌습니다. (오류 #{#0})",
     "compatibility-error": "이 브라우저로는 끄투를 실행할 수 없어요!"

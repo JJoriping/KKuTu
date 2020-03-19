@@ -48,20 +48,33 @@ $(document).ready(async() => {
   $stage.introText = $("#intro-text");
   $stage.loading = $("#loading");
   $stage.box = {
-    chat: $(".chat-box")
+    chat: $(".chat-box"),
+    user: $(".user-list-box")
   };
   $stage.balloons = $("#balloons");
   $stage.dialog = {
-    'chat-log'      : $("#dialog-chat-log"),
-    'help'          : $("#dialog-help"),
-    'settings'      : $("#dialog-settings"),
-    'room'          : $("#dialog-room"),
-    'extended-theme': $("#dialog-extended-theme"),
-    'quick'         : $("#dialog-quick")
+    'chat-log'        : $("#dialog-chat-log"),
+    'extended-theme'  : $("#dialog-extended-theme"),
+    'help'            : $("#dialog-help"),
+    'invite-list'     : $(".invite-list"),
+    'profile'         : $("#dialog-profile"),
+    'profile-dress'   : $("#profile-dress"),
+    'profile-handover': $("#profile-handover"),
+    'profile-kick'    : $("#profile-kick"),
+    'profile-level'   : $("#profile-level"),
+    'profile-shut'    : $("#profile-shut"),
+    'profile-whisper' : $("#profile-whisper"),
+    'quick'           : $("#dialog-quick"),
+    'room'            : $("#dialog-room"),
+    'settings'        : $("#dialog-settings")
   };
   $stage.game = {
     'here'     : $(".game-input").hide(),
     'here-text': $("#game-input")
+  };
+  $stage.lobby = {
+    'user-list'      : $(".user-list-box>.product-body"),
+    'user-list-title': $(".user-list-box>.product-title")
   };
   $stage.menu = {
     'help'       : $("#menu-help"),
@@ -83,6 +96,7 @@ $(document).ready(async() => {
   };
 
   $data.options = Object.values(RuleOption).filter(w => w.length === RuleOption.EXTENDED.length);
+  $data.robots = {};
   $data.rooms = [];
   $data.users = {};
   $data.url = $("#url").text();

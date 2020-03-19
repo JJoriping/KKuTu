@@ -66,7 +66,9 @@ module.exports = {
         "from": { "before": true, "after": true },
         "import": { "before": true, "after": true },
         "let": { "before": true, "after": true },
-        "return": { "before": true, "after": true }
+        "return": { "before": true, "after": true },
+        "break": { "before": true, "after": true },
+        "of": { "before": true, "after": true }
       }
     }],
     "linebreak-style": 2,

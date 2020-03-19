@@ -16,46 +16,54 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-.user-list-box{
-  width: 200px;
-  height: 360px;
-  >.product-body{
-    width: 190px;
-    height: 330px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-  }
-  div{
+#dialog-profile{
+  >.dialog-body div{
     float: left;
   }
 }
-.users-item{
+.profile-moremi{
+  width: 80px;
+  height: 80px;
+  margin-right: 3px;
+}
+.profile-head-item{
+  width: 213px;
+  margin: 3px 2px;
+}
+.profile-image, .profile-level{
+  width: 20px;
+  height: 20px;
+  margin-right: 3px;
+}
+.profile-title{
   width: 190px;
-  &:hover{
-    cursor: pointer;
-    background-color: #F4F4F4;
-  }
+  padding-top: 1px;
+  font-size: 15px;
+  font-weight: bold;
 }
-.users-image{
-  width: 18px;
-  height: 18px;
-  margin: 1px;
+.profile-tag{
+  font-size: 11px;
+  color: #777;
 }
-.users-level{
-  width: 18px;
-  height: 18px;
-  margin: 1px;
-}
-.users-name{
-  width: 147px;
-  padding: 2px 0 0 3px;
+.profile-level-text{
+  padding-top: 2px;
   font-size: 13px;
 }
-.invite-item{
+.profile-score-text{
+  float: right !important;
+  padding-top: 3px;
+  font-size: 11px;
+  color: #444;
+}
+.profile-record-field{
   width: 100%;
-  height: 20px;
   margin: 2px 0;
-  .users-name{
-    width: 270px;
-  }
+}
+.profile-field-name{
+  width: 35%;
+  text-align: center;
+}
+.profile-field-record, .profile-field-score{
+  width: 32%;
+  text-align: center;
 }
