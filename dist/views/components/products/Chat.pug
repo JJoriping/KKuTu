@@ -19,5 +19,5 @@ include ../Product
 
 +Product('chat')
   div#chat
-  input#talk(maxlength=200)
+  input#talk(maxlength=locals.constants['max-message-length'])
   button#chat-send= L('send')

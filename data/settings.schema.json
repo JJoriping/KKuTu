@@ -30,6 +30,17 @@
     "application": {
       "type": "object",
       "properties": {
+        "max-message-length": {
+          "type": "number",
+          "description": "채팅 내용의 최대 길이."
+        },
+        "moremi-parts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "모레미의 치장 가능 부위 목록.\n\n그리는 순서를 포함하며, 가장 먼저 오는 부위가 가장 뒤로 간다."
+        },
         "server-capacity": {
           "type": "number",
           "description": "한 서버에 접속할 수 있는 최대 인원."
@@ -39,15 +50,15 @@
           "properties": {
             "add-interval": {
               "type": "number",
-              "description": "도배 점수가 올라가게 하는 전송 사이 간격.\n\n1초로 설정된 경우, A를 전송 후 1초 내에 B를 전송할 때 점수가 오른다."
+              "description": "도배 점수가 올라가게 하는 전송 사이 간격(㎳).\n\n1000으로 설정된 경우, A를 전송 후 1초 내에 B를 전송할 때 점수가 오른다."
             },
             "block-interval": {
               "type": "number",
-              "description": "도배 차단이 풀리기까지 필요한 전송 사이 간격."
+              "description": "도배 차단이 풀리기까지 필요한 전송 사이 간격(㎳)."
             },
             "clear-interval": {
               "type": "number",
-              "description": "도배 점수를 초기화시키는 전송 사이 간격.\n\n5초로 설정된 경우, A를 전송 후 5초 내에 B를 전송할 때 점수가 0점이 된다."
+              "description": "도배 점수를 초기화시키는 전송 사이 간격(㎳).\n\n5000으로 설정된 경우, A를 전송 후 5초 내에 B를 전송할 때 점수가 0점이 된다."
             },
             "close-threshold": {
               "type": "number",
@@ -70,6 +81,8 @@
         }
       },
       "required": [
+        "max-message-length",
+        "moremi-parts",
         "server-capacity",
         "spam"
       ],

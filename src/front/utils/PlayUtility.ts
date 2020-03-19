@@ -23,6 +23,8 @@ import { G, L } from "./Global";
 import { Iterator } from "back/utils/Utility";
 import { JTImage, LevelImage, UserListBar } from "./PlayComponent";
 import { send } from "./GameClient";
+import { moremiImage } from "./Moremi";
+import { ItemGroup } from "back/utils/enums/ItemGroup";
 
 /**
  * 자주 쓰이는 JQuery 객체를 담은 객체.
@@ -180,6 +182,10 @@ export const $data:Partial<{
    */
   'settings':KKuTu.ClientSettings;
   /**
+   * 전체 아이템 목록 객체.
+   */
+  'shop':Table<KKuTu.Game.Item>;
+  /**
    * 접속할 게임 로비 서버의 주소.
    */
   'url':string;
@@ -220,7 +226,8 @@ const COMMAND_TABLE:Table<(chunk:string[])=>void> = {
 };
 const MAX_LEVEL = 360;
 const EXP_TABLE = [
-  ...Iterator(MAX_LEVEL).map((_, i) => getRequiredScore(i)),
+  ...Iterator(MAX_LEVEL).map((_, i) => getRequiredScore(i)).slice(1),
+  Infinity,
   Infinity
 ];
 
@@ -307,13 +314,37 @@ export function getRequiredScore(level:number):number{
  * @param equip 착용한 아이템 목록 객체.
  */
 export function renderMoremi($target:JQuery, equip:KKuTu.Game.User['equip'] = {}):void{
-  const LR = {
-    'Mlhand': "Mhand",
-    'Mrhand': "Mhand"
+  const LR:Table<ItemGroup> = {
+    'Mlhand': ItemGroup.MOREMI_HAND,
+    'Mrhand': ItemGroup.MOREMI_HAND
   };
 
   $target.empty();
-  // TODO
+  for(const v of window.CONSTANTS['moremi-parts']){
+    const key = `M${v}` as ItemGroup;
+
+    $target.append(
+      $("<img>")
+        .addClass(`moremies moremi-${v}`)
+        .attr('src', moremiImage(equip[key], LR[key] || key))
+        .css({ width: "100%", height: "100%" })
+    );
+  }
+  if(equip[ItemGroup.BADGE]){
+    $target.append(
+      $("<img>")
+        .addClass(`moremies moremi-badge`)
+        .attr('src', moremiImage(equip[ItemGroup.BADGE]))
+        .css({ width: "100%", height: "100%" })
+    );
+  }
+  $target.children(".moremi-back").after(
+    $("<img>")
+      .addClass("moremies moremi-body")
+      .attr('src', equip[ItemGroup.ROBOT] ? "/media/images/moremi/robot.png" : "/media/images/moremi/body.png")
+      .css({ width: "100%", height: "100%" })
+  );
+  $target.children(".moremi-rhand").css('transform', "scaleX(-1)");
 }
 /**
  * 대상 사용자에게 초대 메시지를 보낸다.
@@ -385,7 +416,7 @@ export function requestProfile(target:string):void{
         $("<div>").addClass("profile-record-field")
           .append($("<div>").addClass("profile-field-name").html(L(`mode-${k}`)))
           .append($("<div>").addClass("profile-field-record").html(L('record-p-w', v.plays, v.wins)))
-          .append($("<div>").addClass("profile-field-score").html(L('PTS', v.scores.toLocaleString())))
+          .append($("<div>").addClass("profile-field-score").html(`${v.scores.toLocaleString()} ${L('PTS')}`))
       );
     }
     renderMoremi($moremi, user.equip);

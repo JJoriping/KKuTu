@@ -24,6 +24,7 @@ import { RULE_TABLE, RuleOption } from "./Rule";
 import { GameClient } from "back/web/GameClient";
 import { getLanguageTable } from "./Language";
 import { StatusCode } from "./enums/StatusCode";
+import { query } from "./Database";
 
 const PROTOCOL = SETTINGS.https ? "wss" : "ws";
 
@@ -60,6 +61,11 @@ export function route():Express.Router{
       list: GameClient.list.map(v => v.seek),
       max : SETTINGS.application['server-capacity']
     } as KKuTu.ServerList);
+  });
+  R.get("/shop", async(req, res) => {
+    res.send({
+      goods: await query("SELECT * FROM kkutu_shop")
+    });
   });
 
   return R;

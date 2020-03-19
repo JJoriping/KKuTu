@@ -40,6 +40,16 @@ declare namespace Schema{
      */
     'application':{
       /**
+       * 채팅 내용의 최대 길이.
+       */
+      'max-message-length':number;
+      /**
+       * 모레미의 치장 가능 부위 목록.
+       *
+       * 그리는 순서를 포함하며, 가장 먼저 오는 부위가 가장 뒤로 간다.
+       */
+      'moremi-parts':string[];
+      /**
        * 한 서버에 접속할 수 있는 최대 인원.
        */
       'server-capacity':number;

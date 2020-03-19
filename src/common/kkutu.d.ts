@@ -120,6 +120,41 @@ declare namespace KKuTu{
        */
       'image':string;
     };
+    type Item = {
+      /**
+       * 식별자.
+       */
+      '_id':string;
+      /**
+       * 유형.
+       */
+      'group':string;
+      /**
+       * 아이템 착용 효과 객체.
+       */
+      'options':{
+        /**
+         * 경험치 획득량 증가(%).
+         */
+        'gEXP'?:number;
+        /**
+         * 핑 획득량 증가(%).
+         */
+        'gMNY'?:number;
+        /**
+         * 경험치 획득량 증가(+).
+         */
+        'hEXP'?:number;
+        /**
+         * 핑 획득량 증가(+).
+         */
+        'hMNY'?:number;
+        /**
+         * 이미지 파일의 GIF 여부.
+         */
+        'gif'?:boolean;
+      };
+    };
     type Room = {
       /**
        * 방 번호.

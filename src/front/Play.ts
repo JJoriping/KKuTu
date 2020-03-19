@@ -23,7 +23,7 @@ import { RULE_TABLE, Rule, RuleOption } from "back/utils/Rule";
 import { loadSounds } from "./utils/Audio";
 import { UIPhase } from "./utils/enums/UIPhase";
 import { prettyTime } from "./utils/Format";
-import { connectLobby, send } from "./utils/GameClient";
+import { connectLobby, loadShop, send } from "./utils/GameClient";
 import { L, initialize } from "./utils/Global";
 import {
   $data, $stage,
@@ -98,9 +98,11 @@ $(document).ready(async() => {
   $data.options = Object.values(RuleOption).filter(w => w.length === RuleOption.EXTENDED.length);
   $data.robots = {};
   $data.rooms = [];
+  $data.shop = {};
   $data.users = {};
   $data.url = $("#url").text();
 
+  await loadShop();
   await loadSounds();
   await connectLobby($data.url);
 

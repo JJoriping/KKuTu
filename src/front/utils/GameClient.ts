@@ -90,6 +90,19 @@ export function connectLobby(url:string):Promise<void>{
   });
 }
 /**
+ * 데이터베이스로부터 모든 상점 품목을 불러와 메모리에 저장한다.
+ */
+export function loadShop():Promise<void>{
+  return new Promise(res => {
+    $.get("/shop", (chunk:{ 'goods':KKuTu.Game.Item[] }) => {
+      for(const v of chunk.goods){
+        $data.shop[v._id] = v;
+      }
+      res();
+    });
+  });
+}
+/**
  * 게임 서버로 메시지를 보낸다.
  *
  * `toLobby`가 `true`인 경우나 게임 방 서버에 접속 중이 아닐 때
