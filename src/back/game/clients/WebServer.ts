@@ -17,7 +17,7 @@
  */
 
 import { WSClient } from "back/utils/WSClient";
-import { clients } from "../Lobby";
+import { clients } from "../LobbyServer";
 
 /**
  * 웹 서버의 클라이언트 클래스.

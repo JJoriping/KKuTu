@@ -25,8 +25,12 @@ import { Logger } from "back/utils/Logger";
 import { SSL_OPTIONS } from "back/utils/SSL";
 import { SETTINGS } from "back/utils/System";
 import { WSClient } from "back/utils/WSClient";
-import { Client } from "./clients/Client";
+import { Client, RefreshResult } from "./clients/Client";
 import { WebServer } from "./clients/WebServer";
+import { Room } from "./Room";
+import { reduceToTable } from "back/utils/Utility";
+import { Channel } from "./clients/Channel";
+import { StatusCode, WebSocketCloseCode } from "back/utils/enums/StatusCode";
 
 const CAPACITY = SETTINGS.application['server-capacity'];
 
@@ -35,9 +39,17 @@ const CAPACITY = SETTINGS.application['server-capacity'];
  */
 export const clients:Table<Client> = {};
 /**
+ * 현재 개설된 게임 방을 (식별자, 인스턴스) 쌍으로 묶은 객체.
+ */
+export const rooms:Table<Room> = {};
+/**
  * 현재 접속 중인 웹 서버 클라이언트를 (식별자, 웹소켓 인스턴스) 쌍으로 묶은 객체.
  */
 export const webServers:Table<WSClient> = {};
+/**
+ * 개설된 게임 방 서버 프로세스 객체.
+ */
+export const channels:Table<Channel> = {};
 
 let server:WS.Server;
 
@@ -45,9 +57,10 @@ let server:WS.Server;
  * 게임 로비 서버로서 작동하기 시작한다.
  *
  * @param cluster 이 프로세스의 순번.
- * @param channels 게임 방 서버 프로세스의 목록.
+ * @param channelList 게임 방 서버 프로세스의 목록.
  */
-export async function main(cluster:number, channels:Cluster.Worker[]):Promise<void>{
+export async function main(cluster:number, channelList:Cluster.Worker[]):Promise<void>{
+  Object.assign(channels, reduceToTable(channelList, v => new Channel(v), v => v.id));
   Logger.info(`Lobby #${cluster}`).next("Channels").put(channels.length).out();
   await connectDatabase();
 
@@ -61,9 +74,10 @@ export async function main(cluster:number, channels:Cluster.Worker[]):Promise<vo
       perMessageDeflate: false
     });
   }
-  server.on('connection', (socket, req) => {
+  server.on('connection', async(socket, req) => {
     const key = req.url.slice(1);
     let client:Client = null;
+    let refreshResult:RefreshResult = null;
 
     socket.on('error', err => {
       Logger.warning("Client").put(key).next("Error").put(err.stack).out();
@@ -85,7 +99,14 @@ export async function main(cluster:number, channels:Cluster.Worker[]):Promise<vo
 
       return;
     }
-    client = new Client(`GUEST-${key}`, socket);
+    client = new Client(Client.generateId(key), socket);
+    refreshResult = await client.refresh();
+    if(refreshResult.result !== StatusCode.OK){
+      client.responseError(refreshResult.result, refreshResult.black);
+      client.close(WebSocketCloseCode.REFRESH_FAILED);
+
+      return;
+    }
     client.socket.on('close', () => {
       delete clients[client.id];
     });
@@ -93,13 +114,36 @@ export async function main(cluster:number, channels:Cluster.Worker[]):Promise<vo
     client.response('welcome', {
       administrator: Boolean(SETTINGS.administrators.find(v => v.id === client.id)),
       server       : cluster,
-      users        : Object.values(clients).map(v => v.toUser()),
+      users        : Object.values(clients).map(v => v.sessionize()),
       rooms        : []
     });
   });
   server.on('error', err => {
     Logger.error("Server").next("Error").put(err.stack).out();
   });
+}
+/**
+ * 가장 한산한 채널을 골라 그 번호를 반환한다.
+ */
+export function getAvailableChannel():number{
+  if(!Cluster.isMaster){
+    return Number(process.env['KKUTU_CHANNEL']) || 0;
+  }
+  const table:Table<number> = {};
+
+  for(const k in channels){
+    if(channels[k].isDead()){
+      continue;
+    }
+    table[k] = 0;
+  }
+  for(const v of Object.values(rooms)){
+    if(v.channel in table){
+      table[v.channel]++;
+    }
+  }
+
+  return Number(Object.entries(table).sort((a, b) => a[1] - b[1])[0][0]);
 }
 process.on('uncaughtException', err => {
   Logger.error("Lobby").put("Uncaught exception").next("Error").put(err.stack).out();

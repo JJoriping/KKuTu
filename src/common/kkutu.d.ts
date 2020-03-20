@@ -102,6 +102,9 @@ declare namespace KKuTu{
     'max':number;
   };
   namespace Game{
+    /**
+     * 사용자 프로필 객체.
+     */
     type Profile = {
       /**
        * 계정 식별자.
@@ -120,6 +123,9 @@ declare namespace KKuTu{
        */
       'image':string;
     };
+    /**
+     * 상점 아이템 객체.
+     */
     type Item = {
       /**
        * 식별자.
@@ -155,11 +161,25 @@ declare namespace KKuTu{
         'gif'?:boolean;
       };
     };
+    /**
+     * 강퇴 투표 객체.
+     */
+    type KickVote = {
+      'Y':number;
+      'N':number;
+    };
+    /**
+     * 게임 방 객체.
+     */
     type Room = {
       /**
        * 방 번호.
        */
       'id':number;
+      /**
+       * 채널 번호.
+       */
+      'channel':number;
       /**
        * 방장 계정 식별자.
        */
@@ -197,12 +217,15 @@ declare namespace KKuTu{
       /**
        * 참여자 목록.
        */
-      'players':any[];
+      'players':KKuTu.Game.User[];
       /**
        * 최대 인원.
        */
       'limit':number;
     };
+    /**
+     * 특수 규칙 객체.
+     */
     type RoomOptions = {
       'man'?:boolean;
       'ext'?:boolean;
@@ -218,6 +241,103 @@ declare namespace KKuTu{
        */
       'extensions'?:string[];
     };
+    /**
+     * 한 방의 게임 상태 객체.
+     */
+    type Play = {
+      /**
+       * 릴레이 순서 배열.
+       */
+      'seq':string[];
+      /**
+       * 릴레이 상태.
+       */
+      'chain'?:string[];
+      /**
+       * 이번 라운드에 선택된 주제.
+       */
+      'theme'?:string;
+      /**
+       * 이번 라운드에 제시되는 초성.
+       */
+      'consonants'?:string;
+      /**
+       * 답이 공개된 단어들을 (좌표, 단어) 쌍으로 묶은 객체.
+       */
+      'prisoners'?:Table<string>;
+      /**
+       * 보드 목록.
+       */
+      'boards'?:[number, number, 0|1, number, string][][];
+      /**
+       * 개별 단어 정보 목록.
+       */
+      'means'?:Array<Table<{
+        /**
+         * 보드에서의 가로 위치.
+         */
+        'x':number;
+        /**
+         * 보드에서의 세로 위치.
+         */
+        'y':number;
+        /**
+         * 방향. 0은 가로, 1은 세로를 나타낸다.
+         */
+        'direction':0|1;
+        /**
+         * 단어 길이.
+         */
+        'length':number;
+        /**
+         * 단어의 품사 정보.
+         */
+        'type':string;
+        /**
+         * 단어의 주제 정보.
+         */
+        'theme':string;
+        /**
+         * 단어의 뜻 정보.
+         */
+        'meaning':string;
+      }>>;
+    };
+    /**
+     * 한 사용자의 게임 상태 객체.
+     */
+    type Status = {
+      /**
+       * 준비 여부.
+       */
+      'ready':boolean;
+      /**
+       * 팀 번호.
+       *
+       * 0은 개인전을 나타낸다.
+       */
+      'team':number;
+      /**
+       * 게임 중 방에 입장 여부.
+       */
+      'cameWhenGaming':boolean;
+      /**
+       * 참여 유형.
+       *
+       * 가능한 값은 다음과 같다.
+       * - `J`: 게임에 직접 참여.
+       * - `O`: 옵저버. 게임이 끝나면 자동으로 퇴장한다.
+       * - `S`: 게임 관전.
+       */
+      'form':"J"|"O"|"S";
+      /**
+       * 획득 점수.
+       */
+      'score':number;
+    };
+    /**
+     * 사용자 객체.
+     */
     type User = {
       /**
        * 계정 식별자.
@@ -303,29 +423,104 @@ declare namespace KKuTu{
 
     type RequestTable = {
       /**
-       * (사용자 → 게임 서버)
+       * (오류) (로비 서버 → 게임 방 서버)
+       * 예약이 성사되고 `room-new`의 과정 (5)까지 마쳤으나
+       * 그 사이 방이 이미 생겼거나 사용자가 접속 종료했을 경우,
+       * 게임 방 서버로 예약을 지우라는 요청.
+       */
+      'room-invalid':{
+        'room':KKuTu.Packet.RequestData<'room-new'>;
+      };
+      /**
+       * (사용자 → 로비 서버 및 게임 방 서버)
+       * 방 만들기 요청.
+       *
+       * 방 만들기는 아래 과정을 따라 이루어진다.
+       * ```plain
+       *. ┌──────────┐
+       *. │  사용자  ├──────┐
+       *. └─┬────────┘      │
+       *.  (1) ↑           (4)
+       *.   ↓ (3)           ↓
+       *. ┌────┴─────┐    ┌──────────┐
+       *. │   로비   ├(2)→│  게임방  │
+       *. │   서버   │←(5)┤   서버   │
+       *. └──────────┘    └──────────┘
+       * ```
+       * (1) 웹소켓 `room-new` 요청을 보낸다. \
+       * (2) IPC `room-reserve` 요청을 보낸다. \
+       * (3) 웹소켓 `pre-room` 응답을 보낸다. \
+       * (4) 웹소켓 `room-new` 요청을 보낸다. \
+       * (5) IPC `room-reserve` 응답을 보낸다.
+       */
+      'room-new':{
+        /**
+         * *(과정 (4)에만 존재)*
+         * 방 식별자.
+         */
+        'id'?:number;
+        /**
+         * 방 제목.
+         */
+        'title':string;
+        /**
+         * 방 암호.
+         */
+        'password':string;
+        /**
+         * 최대 인원.
+         */
+        'limit':number;
+        /**
+         * 게임 유형.
+         */
+        'rule':string;
+        /**
+         * 총 라운드 수.
+         */
+        'round':number;
+        /**
+         * 한 라운드당 시간(초).
+         */
+        'time':number;
+        /**
+         * 특수 규칙 객체.
+         */
+        'options':KKuTu.Game.RoomOptions;
+      };
+      /**
+       * (로비 서버 → 게임 방 서버)
        * 방 만들기 요청.
        */
-      'room-new':Partial<KKuTu.Game.Room>;
+      'room-reserve':{
+        /**
+         * 예약한 사용자 식별자.
+         */
+        'master':string;
+        /**
+         * 예약된 방 정보 객체.
+         */
+        'room':KKuTu.Packet.RequestData<'room-new'>;
+      };
       /**
-       * (사용자 → 게임 서버)
+       * (사용자 → 게임 방 서버)
        * 방 정보 수정 요청.
        */
-      'room-set':Partial<KKuTu.Game.Room>;
+      'room-set':KKuTu.Packet.RequestData<'room-new'>;
       /**
-       * (웹 서버 → 게임 서버)
+       * (웹 서버 → 로비 서버)
        * 접속 인원 확인 요청.
        */
       'seek':{};
       /**
-       * (사용자 → 게임 서버)
+       * (사용자 → 로비 서버)
        * 초대 요청.
        */
       'invite':{
         'target':string;
       };
       /**
-       * (사용자 → 게임 서버)
+       * (사용자 → 로비 서버 및 게임 방 서버)
        * 대화 전송 요청.
        */
       'talk':{
@@ -345,12 +540,145 @@ declare namespace KKuTu{
     };
     type ResponseTable = {
       /**
-       * (게임 서버 → 웹 서버)
+       * (로비 서버 → 사용자)
        * 차단 고지 응답.
        */
       'blocked':never;
       /**
-       * (게임 서버 → 웹 서버)
+       * (오류) (로비 서버 → 사용자)
+       * 일반 오류 응답.
+       */
+      'error':{
+        /**
+         * 오류 번호.
+         */
+        'code':number;
+        /**
+         * 추가 정보.
+         */
+        'message':string;
+      };
+      /**
+       * (로비 서버 → 사용자)
+       * 방 예약 완료 응답.
+       *
+       * 빈 방 생성이 완료되었으니 주어진 채널과 방 번호로
+       * 사용자가 웹소켓 클라이언트를 만들어 접속해야 한다.
+       */
+      'pre-room':{
+        /**
+         * 새 방 번호.
+         */
+        'id':number;
+        /**
+         * 새 방의 채널 번호.
+         */
+        'channel':number;
+      };
+      /**
+       * (로비 서버 또는 게임 방 서버 → 사용자)
+       * 방 상태 갱신 응답.
+       */
+      'room':{
+        /**
+         * *(게임 방 서버 → 로비 서버 전용)* 방 암호.
+         */
+        'password'?:string;
+        /**
+         * 대상 사용자 식별자.
+         */
+        'target'?:string;
+        /**
+         * 강퇴 투표 상태 객체.
+         */
+        'kick-vote'?:KKuTu.Game.KickVote;
+        /**
+         * *(게임 중 입장 전용)* 릴레이 횟수.
+         */
+        'chain'?:number;
+        /**
+         * *(게임 중 입장 전용)* *(자음퀴즈 전용)* 이번 라운드에 선택된 주제.
+         */
+        'theme'?:KKuTu.Game.Play['theme'];
+        /**
+         * *(게임 중 입장 전용)* *(자음퀴즈 전용)* 이번 라운드에 제시되는 초성.
+         */
+        'consonants'?:KKuTu.Game.Play['consonants'];
+        /**
+         * *(게임 중 입장 전용)* *(십자말풀이 전용)* 답이 공개된 단어들을 (좌표, 단어) 쌍으로 묶은 객체.
+         */
+        'prisoners'?:KKuTu.Game.Play['prisoners'];
+        /**
+         * *(게임 중 입장 전용)* *(십자말풀이 전용)* 보드 목록.
+         */
+        'boards'?:KKuTu.Game.Play['boards'];
+        /**
+         * *(게임 중 입장 전용)* *(십자말풀이 전용)* 개별 단어 정보 목록.
+         */
+        'means'?:KKuTu.Game.Play['means'];
+        /**
+         * *(게임 중 입장 전용)* 참여자 점수 객체.
+         */
+        'scores'?:Table<number>;
+        /**
+         * 방 객체.
+         */
+        'room':KKuTu.Game.Room;
+      };
+      /**
+       * (게임 방 서버 → 로비 서버)
+       * 방 입장 안내 응답.
+       */
+      'room-come':{
+        /**
+         * 입장한 사용자 식별자.
+         */
+        'target':string;
+        /**
+         * 입장한 방 번호.
+         */
+        'id':number;
+      };
+      /**
+       * (오류) (게임 방 서버 → 로비 서버)
+       * 방 예약 만료 응답.
+       */
+      'room-expired':{
+        /**
+         * 예약한 사용자 식별자.
+         */
+        'master':string;
+        /**
+         * 예약된 방 번호.
+         */
+        'id':number;
+      };
+      /**
+       * (게임 방 서버 → 로비 서버)
+       * 방 상태 갱신 응답.
+       */
+      'room-publish':KKuTu.Packet.ResponseData<'room'>;
+      /**
+       * (게임 방 서버 → 로비 서버)
+       * 방 예약 성공 응답.
+       */
+      'room-reserve':{
+        /**
+         * 예약한 사용자 식별자.
+         */
+        'master':string;
+        /**
+         * 예약된 방 정보 객체.
+         */
+        'room':KKuTu.Packet.RequestData<'room-new'>;
+      };
+      /**
+       * (오류) (로비 서버 → 사용자)
+       * 로비가 아닌 상황에서 방 입장 시도 응답.
+       */
+      'room-stuck':never;
+      /**
+       * (로비 서버 → 웹 서버)
        * 접속 인원 응답.
        */
       'seek':{
@@ -360,7 +688,7 @@ declare namespace KKuTu{
         'value':number;
       };
       /**
-       * (게임 서버 → 사용자)
+       * (로비 서버 → 사용자)
        * 대화 응답.
        */
       'talk':{
@@ -382,7 +710,7 @@ declare namespace KKuTu{
         'value':string;
       };
       /**
-       * (게임 서버 → 사용자)
+       * (로비 서버 → 사용자)
        * 초기 정보(접속자 목록, 방 목록 등) 응답.
        */
       'welcome':{

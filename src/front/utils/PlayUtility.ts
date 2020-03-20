@@ -156,7 +156,7 @@ export const $data:Partial<{
    */
   'recentFrom':string;
   /**
-   * 게임 대기실에 입장한 끄투 봇 목록 객체.
+   * 게임 방에 입장한 끄투 봇 목록 객체.
    */
   'robots':Table<KKuTu.Game.User>;
   /**

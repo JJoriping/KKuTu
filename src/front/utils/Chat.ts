@@ -20,7 +20,7 @@ import { Sound, playSound } from "./Audio";
 import { ChatBalloonFlag } from "./enums/ChatBallonFlag";
 import { send } from "./GameClient";
 import { G, L } from "./Global";
-import { $data, $stage } from "./PlayUtility";
+import { $data, $stage, requestProfile } from "./PlayUtility";
 
 const REGEXP_LINK = /https?:\/\/[\w.?/&#%=-_+]+/g;
 const REGEXP_INSULTS = new RegExp(
@@ -94,7 +94,7 @@ export function chat(profile:KKuTu.Game.Profile, message:string, from?:string, t
     $bar.prepend($("<i>").addClass("fa fa-video-camera"));
   }
   $bar.on('click', () => {
-    // requestProfile(profile.id);
+    requestProfile(profile.id);
   });
   $stage.chatLog.append($baby.clone()
     .append($("<div>").addClass("tooltip")

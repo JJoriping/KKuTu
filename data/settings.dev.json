@@ -5,5 +5,6 @@
     "directory": "logs",
     "directory-k-hot": "k-hot",
     "interval": 0
-  }
+  },
+  "test": true
 }

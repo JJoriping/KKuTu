@@ -30,6 +30,65 @@
     "application": {
       "type": "object",
       "properties": {
+        "guest-permission": {
+          "type": "object",
+          "properties": {
+            "create": {
+              "type": "boolean",
+              "description": "방 생성 권한."
+            },
+            "enter": {
+              "type": "boolean",
+              "description": "방 입장 권한."
+            },
+            "talk": {
+              "type": "boolean",
+              "description": "대화 권한."
+            },
+            "practice": {
+              "type": "boolean",
+              "description": "연습 권한."
+            },
+            "ready": {
+              "type": "boolean",
+              "description": "준비 권한."
+            },
+            "start": {
+              "type": "boolean",
+              "description": "게임 시작 권한."
+            },
+            "invite": {
+              "type": "boolean",
+              "description": "초대 권한."
+            },
+            "invite-response": {
+              "type": "boolean",
+              "description": "초대 응답 권한."
+            },
+            "kick": {
+              "type": "boolean",
+              "description": "강퇴 권한."
+            },
+            "kick-vote": {
+              "type": "boolean",
+              "description": "강퇴 투표 권한."
+            }
+          },
+          "required": [
+            "create",
+            "enter",
+            "talk",
+            "practice",
+            "ready",
+            "start",
+            "invite",
+            "invite-response",
+            "kick",
+            "kick-vote"
+          ],
+          "additionalProperties": false,
+          "description": "손님 계정의 권한 객체."
+        },
         "max-message-length": {
           "type": "number",
           "description": "채팅 내용의 최대 길이."
@@ -40,6 +99,47 @@
             "type": "string"
           },
           "description": "모레미의 치장 가능 부위 목록.\n\n그리는 순서를 포함하며, 가장 먼저 오는 부위가 가장 뒤로 간다."
+        },
+        "room-constraints": {
+          "type": "object",
+          "properties": {
+            "max-title-length": {
+              "type": "number",
+              "description": "방 제목의 최대 길이."
+            },
+            "max-password-length": {
+              "type": "number",
+              "description": "방 암호의 최대 길이."
+            },
+            "max-player-count": {
+              "type": "number",
+              "description": "최대 참여자 수."
+            },
+            "max-round-count": {
+              "type": "number",
+              "description": "최대 라운드 수."
+            },
+            "available-round-times": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "description": "설정 가능한 라운드 시간 목록."
+            }
+          },
+          "required": [
+            "max-title-length",
+            "max-password-length",
+            "max-player-count",
+            "max-round-count",
+            "available-round-times"
+          ],
+          "additionalProperties": false,
+          "description": "방 설정의 제약 객체."
+        },
+        "room-reservation-timeout": {
+          "type": "number",
+          "description": "로비 서버의 `room-reserve` 요청으로 인해 예약된 방 번호가\n사용자가 접속하기 전까지 유지되는 기간(㎳)."
         },
         "server-capacity": {
           "type": "number",
@@ -81,8 +181,11 @@
         }
       },
       "required": [
+        "guest-permission",
         "max-message-length",
         "moremi-parts",
+        "room-constraints",
+        "room-reservation-timeout",
         "server-capacity",
         "spam"
       ],
@@ -277,6 +380,10 @@
       ],
       "additionalProperties": false,
       "description": "구글 reCAPTCHA 모듈에 필요한 정보를 담은 객체.\n\n게임 로비에 접속하기 위해 사용자에게 reCAPTCHA 통과를 요구할 수 있다."
+    },
+    "test": {
+      "type": "boolean",
+      "description": "테스트 서버 여부."
     },
     "title": {
       "type": "string",

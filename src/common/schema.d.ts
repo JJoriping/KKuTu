@@ -40,6 +40,51 @@ declare namespace Schema{
      */
     'application':{
       /**
+       * 손님 계정의 권한 객체.
+       */
+      'guest-permission':{
+        /**
+         * 방 생성 권한.
+         */
+        'create':boolean;
+        /**
+         * 방 입장 권한.
+         */
+        'enter':boolean;
+        /**
+         * 대화 권한.
+         */
+        'talk':boolean;
+        /**
+         * 연습 권한.
+         */
+        'practice':boolean;
+        /**
+         * 준비 권한.
+         */
+        'ready':boolean;
+        /**
+         * 게임 시작 권한.
+         */
+        'start':boolean;
+        /**
+         * 초대 권한.
+         */
+        'invite':boolean;
+        /**
+         * 초대 응답 권한.
+         */
+        'invite-response':boolean;
+        /**
+         * 강퇴 권한.
+         */
+        'kick':boolean;
+        /**
+         * 강퇴 투표 권한.
+         */
+        'kick-vote':boolean;
+      };
+      /**
        * 채팅 내용의 최대 길이.
        */
       'max-message-length':number;
@@ -49,6 +94,36 @@ declare namespace Schema{
        * 그리는 순서를 포함하며, 가장 먼저 오는 부위가 가장 뒤로 간다.
        */
       'moremi-parts':string[];
+      /**
+       * 방 설정의 제약 객체.
+       */
+      'room-constraints':{
+        /**
+         * 방 제목의 최대 길이.
+         */
+        'max-title-length':number;
+        /**
+         * 방 암호의 최대 길이.
+         */
+        'max-password-length':number;
+        /**
+         * 최대 참여자 수.
+         */
+        'max-player-count':number;
+        /**
+         * 최대 라운드 수.
+         */
+        'max-round-count':number;
+        /**
+         * 설정 가능한 라운드 시간 목록.
+         */
+        'available-round-times':number[];
+      };
+      /**
+       * 로비 서버의 `room-reserve` 요청으로 인해 예약된 방 번호가
+       * 사용자가 접속하기 전까지 유지되는 기간(㎳).
+       */
+      'room-reservation-timeout':number;
       /**
        * 한 서버에 접속할 수 있는 최대 인원.
        */
@@ -244,6 +319,14 @@ declare namespace Schema{
        */
       'secret':string;
     };
+    /**
+     * 테스트 서버 여부.
+     */
+    'test'?:boolean;
+    /**
+     * 테스트 서버에 접속할 수 있는 계정 식별자 목록.
+     */
+    'testers'?:string[];
     /**
      * 프리서버 제목.
      */

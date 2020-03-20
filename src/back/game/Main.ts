@@ -20,8 +20,8 @@ import Cluster = require("cluster");
 
 import { Logger } from "back/utils/Logger";
 import { SETTINGS } from "back/utils/System";
-import { main as runAsLobby } from "./Lobby";
-import { main as runAsRoom } from "./Room";
+import { main as runAsLobby } from "./LobbyServer";
+import { main as runAsRoom } from "./RoomServer";
 
 const CLUSTER = Number(process.env['KKUTU_CLUSTER']) || 0;
 const PORT = SETTINGS.ports[CLUSTER];

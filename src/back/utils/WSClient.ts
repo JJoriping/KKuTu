@@ -19,7 +19,7 @@
 import WS = require("ws");
 
 import { Logger } from "./Logger";
-import { WebSocketCloseCode } from "./enums/StatusCode";
+import { ApplicationError, WebSocketCloseCode } from "./enums/StatusCode";
 
 /**
  * 웹소켓 클라이언트 추상 클래스.
@@ -123,5 +123,14 @@ export abstract class WSClient{
     if(this.socket.readyState === 1){
       this.socket.send(JSON.stringify(data));
     }
+  }
+  /**
+   * 클라이언트로 오류 응답을 보낸다.
+   *
+   * @param code 오류 유형.
+   * @param message 추가 정보.
+   */
+  public responseError(code:ApplicationError, message?:string):void{
+    this.response('error', { code, message });
   }
 }
