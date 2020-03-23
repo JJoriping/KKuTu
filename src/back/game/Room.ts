@@ -20,10 +20,11 @@ import Cluster = require("cluster");
 
 import { Client } from "./clients/Client";
 import { RULE_TABLE, Rule } from "back/utils/Rule";
-import { rooms } from "./LobbyServer";
+import { clients as lobbyClients, rooms } from "./LobbyServer";
 import { Channel } from "./clients/Channel";
 import { reduceToTable } from "back/utils/Utility";
-import { clients } from "./RoomServer";
+import { clients as roomClients } from "./RoomServer";
+import { ApplicationError } from "back/utils/enums/StatusCode";
 
 /**
  * 게임 방 클래스.
@@ -33,6 +34,9 @@ export class Room{
   private static readonly MAX_ID_SEQUENCE = 999;
   private static idSequence = Room.MIN_ID_SEQUENCE;
 
+  private static get clients():Table<Client>{
+    return Cluster.isMaster ? lobbyClients : roomClients;
+  }
   /**
    * 새로 설정 가능한 방 번호를 생성해 반환한다.
    */
@@ -62,7 +66,7 @@ export class Room{
   public password:string;
   public limit:number;
 
-  public players:string[];
+  public players:string[] = [];
   public kickVote:KKuTu.Game.KickVote;
   public game:KKuTu.Game.Play;
 
@@ -75,9 +79,9 @@ export class Room{
   }
 
   /**
-   * 주어진 사용자 객체를 이 방에 입장시킨다.
+   * 주어진 사용자를 이 방에 입장시킨다.
    *
-   * @param client 사용자 객체.
+   * @param client 사용자 인스턴스.
    */
   public come(client:Client):void{
     if(!this.forPractice){
@@ -87,13 +91,6 @@ export class Room{
       this.master = client.id;
     }
     if(Cluster.isWorker){
-      client.status = {
-        ready         : false,
-        team          : 0,
-        cameWhenGaming: false,
-        form          : "J",
-        score         : 0
-      };
       if(!this.forPractice){
         Channel.responseToMaster('room-come', {
           target: client.id,
@@ -126,29 +123,105 @@ export class Room{
     }
     if(forSpectate && this.gaming){
       switch(RULE_TABLE[this.rule].name){
-        case"Classic":
+        case "Classic":
           if(this.game.chain){
             data.chain = this.game.chain.length;
           }
           break;
-        case"Jaqwi":
+        case "Jaqwi":
           data.theme = this.game.theme;
           data.consonants = this.game.consonants;
           break;
-        case"Crossword":
+        case "Crossword":
           data.prisoners = this.game.prisoners;
           data.boards = this.game.boards;
           data.means = this.game.means;
           break;
         default:
       }
-      data.scores = reduceToTable(this.game.seq, v => clients[v]?.status.score);
+      data.scores = reduceToTable(this.game.seq, v => Room.clients[v]?.status.score);
     }
     if(this.forPractice){
-      clients[this.master].response('room');
-    }else{
-      data.password = this.password;
+      Room.clients[this.master].response('room');
+    }else if(Cluster.isMaster){
       Client.publish('room', data);
+    }else{
+      Channel.responseToMaster('room-publish', {
+        room: this
+      });
+    }
+  }
+  /**
+   * 주어진 사용자를 이 방에서 퇴장시킨다.
+   *
+   * @param client 사용자 인스턴스.
+   * @param kickVote 강퇴 투표 객체.
+   */
+  public go(client:Client, kickVote?:KKuTu.Game.KickVote):void{
+    let index = this.players.indexOf(client.id);
+    let isMyTurn:boolean;
+
+    if(index === -1){
+      client.place = 0;
+      if(this.players.length < 1){
+        delete rooms[this.id];
+      }
+      client.responseError(ApplicationError.NOT_LOBBY);
+
+      return;
+    }
+    this.players.splice(index, 1);
+    client.status = null;
+    if(client.id === this.master){
+      // TODO while(my.removeAI(false, true));
+      this.master = this.players[0];
+    }
+    if(Room.clients[this.master]){
+      Room.clients[this.master].status.ready = false;
+      if(this.gaming){
+        index = this.game.seq.indexOf(client.id);
+        if(index !== -1){
+          if(this.game.seq.length <= 2){
+            this.game.seq.splice(index, 1);
+            // TODO my.roundEnd();
+          }else{
+            isMyTurn = this.game.turn === index;
+            if(isMyTurn && RULE_TABLE[this.rule].newRoundOnQuit){
+              // TODO clearTimeout(...); ...
+            }
+            this.game.seq.splice(index, 1);
+            if(this.game.turn > index){
+              this.game.turn--;
+              if(this.game.turn < 0){
+                this.game.turn = this.game.seq.length - 1;
+              }
+            }
+            if(this.game.turn >= this.game.seq.length){
+              this.game.turn = 0;
+            }
+          }
+        }
+      }
+    }else{
+      // TODO if(my.gaming){ ... }
+      delete rooms[this.id];
+    }
+    if(this.forPractice){
+      global.clearTimeout(this.game.turnTimer);
+      client.subplace = 0;
+    }else{
+      client.place = 0;
+    }
+    if(Cluster.isWorker){
+      if(!this.forPractice){
+        client.close();
+        Channel.responseToMaster('room-go', {
+          target : client.id,
+          id     : this.id,
+          removed: !rooms[this.id]
+        });
+      }
+      this.export(client.id, kickVote);
     }
   }
   /**
@@ -180,7 +253,7 @@ export class Room{
       time    : this.time,
       gaming  : this.gaming,
       password: Boolean(this.password),
-      players : this.players.map(v => clients[v].sessionize()),
+      players : this.players.map(v => Room.clients[v]?.sessionize()),
       limit   : this.limit
     };
   }

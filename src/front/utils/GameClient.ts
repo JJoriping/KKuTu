@@ -22,6 +22,7 @@ import { chat, notice } from "./Chat";
 import { L } from "./Global";
 import { $data, $stage, updateLoading, updateUI } from "./PlayUtility";
 import { reduceToTable } from "back/utils/Utility";
+import { WebSocketCloseCode } from "back/utils/enums/StatusCode";
 
 const INTERVAL_INTRO_ANIMATION = 1000;
 
@@ -29,25 +30,33 @@ let lobbyClient:WebSocket;
 let roomClient:WebSocket;
 
 const handlerTable:KKuTu.Packet.ResponseHandlerTable = {
-  welcome: data => {
-    playSound(Sound.BGM_LOBBY, true);
-    $stage.intro
-      .animate({ opacity: 1 }, INTERVAL_INTRO_ANIMATION)
-      .animate({ opacity: 0 }, INTERVAL_INTRO_ANIMATION, () => {
-        $stage.intro.hide();
-      })
-    ;
-    $stage.introText.text(L('welcome'));
-    $data.server = data.server;
-    $data.users = reduceToTable(data.users, v => v, v => v.id);
-    updateUI();
-    Logger.success("Lobby").next("Administrator").put(data.administrator).out();
+  'welcome': data => {
+    if($data.pendingRoom){
+      send('room-new', $data.pendingRoom);
+      delete $data.pendingRoom;
+    }else{
+      playSound(Sound.BGM_LOBBY, true);
+      $stage.intro
+        .animate({ opacity: 1 }, INTERVAL_INTRO_ANIMATION)
+        .animate({ opacity: 0 }, INTERVAL_INTRO_ANIMATION, () => {
+          $stage.intro.hide();
+        })
+      ;
+      $stage.introText.text(L('welcome'));
+      $data.server = data.server;
+      $data.users = reduceToTable(data.users, v => v, v => v.id);
+      updateUI();
+      Logger.success("Lobby").next("Administrator").put(data.administrator).out();
+    }
   },
-  blocked: () => {
+  'blocked': () => {
     notice(L('blocked'));
   },
-  talk: data => {
+  'talk': data => {
     chat(data.profile, data.value);
+  },
+  'pre-room': ({ channel, id }) => {
+    connectRoom(channel, id);
   }
 };
 
@@ -82,11 +91,53 @@ export function connectLobby(url:string):Promise<void>{
       $.get("/media/closed-notice.html", html => {
         updateLoading(html);
       });
-      Logger.warning("Closed").put(e.code).out();
+      inspectClose(e.code);
     };
-    lobbyClient.onerror = (e:ErrorEvent) => {
-      Logger.error("Lobby").put(e.error).out();
+    lobbyClient.onerror = () => {
+      Logger.error("lobbyClient").out();
     };
+  });
+}
+/**
+ * 게임 방 서버에 접속한다.
+ *
+ * @param channel 게임 방 채널 번호.
+ * @param roomId 방 번호.
+ */
+export function connectRoom(channel:number, roomId:number):Promise<void>{
+  return new Promise(res => {
+    const url = $data.url.replace(/:(\d+)/, (v, p1) => (
+      `:${Number(p1) + window.CONSTANTS['room-port-offset']}`
+    )) + `&${channel}&${roomId}`;
+
+    if(roomClient){
+      return;
+    }
+    roomClient = new WebSocket(url);
+
+    updateLoading([
+      L('loading-room'),
+      `<center><button id="cancel-room-connection">${L('cancel-room-connection')}</button></center>`
+    ].join('\n'));
+    $("#cancel-room-connection").on('click', () => {
+      updateLoading();
+      if(roomClient){
+        roomClient.close();
+      }
+    });
+    roomClient.onopen = () => {
+      Logger.success("roomClient").put(url).out();
+      $data.pendingRoom.id = Number(roomId);
+    };
+    roomClient.onmessage = lobbyClient.onmessage;
+    roomClient.onclose = e => {
+      inspectClose(e.code);
+      roomClient = null;
+    };
+    roomClient.onerror = () => {
+      Logger.error("roomClient").out();
+    };
+    res();
   });
 }
 /**
@@ -124,4 +175,13 @@ export function send<T extends KKuTu.Packet.RequestType>(
     type,
     ...data
   }));
+}
+
+function inspectClose(code:number):void{
+  const logger = Logger.warning("Closed").put(code);
+
+  if(code in WebSocketCloseCode){
+    logger.next("Description").put(WebSocketCloseCode[code]);
+  }
+  logger.out();
 }

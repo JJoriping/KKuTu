@@ -32,19 +32,19 @@ import { Client } from "./Client";
 export class Channel{
   private static readonly requestHandlerTable:KKuTu.Packet.RequestHandlerTable = {
     'room-reserve': data => {
-      if(reservations[data.master]){
-        Logger.warning("room-reserve").put(`Already reserved: ${data.master}`).out();
+      if(reservations[data.session]){
+        Logger.warning("room-reserve").put(`Already reserved: ${data.session}`).out();
 
         return;
       }
-      reservations[data.master] = {
+      reservations[data.session] = {
         room : data.room,
         timer: global.setTimeout(() => {
           Channel.responseToMaster('room-expired', {
-            master: data.master,
-            id    : data.room.id
+            session: data.session,
+            id     : data.room.id
           });
-          delete reservations[data.master];
+          delete reservations[data.session];
         }, SETTINGS.application['room-reservation-timeout'])
       };
     }
@@ -88,10 +88,17 @@ export class Channel{
   }
 
   private readonly responseHandlerTable:KKuTu.Packet.ResponseHandlerTable = {
-    'room-expired': data => {
-      if(!rooms[data.id]){
-        Logger.warning("room-expired").put(`No such room: ${data.id}`).out();
+    'room-come': data => {
+      if(!rooms[data.id] || !clients[data.target]){
+        Logger.warning("room-come").put(`Wrong coming to ${data.id} by ${data.target}`).out();
 
+        return;
+      }
+      rooms[data.id].come(clients[data.target]);
+    },
+    'room-expired': data => {
+      Logger.warning("room-expired").put(data.id).next("By").put(data.session).out();
+      if(!rooms[data.id]){
         return;
       }
       for(const v of rooms[data.id].players){
@@ -113,6 +120,11 @@ export class Channel{
     },
     'room-reserve': ({ master, room }) => {
       if(rooms[room.id] || !clients[master]){
+        Logger.warning("room-reserve").put(`Invalid room information`)
+          .next("Room").put(room.id)
+          .next("Master").put(master)
+          .out()
+        ;
         this.requestToWorker('room-invalid', { room });
 
         return;

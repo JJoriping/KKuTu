@@ -246,6 +246,14 @@ declare namespace KKuTu{
      */
     type Play = {
       /**
+       * 현재 턴 인덱스.
+       */
+      'turn':number;
+      /**
+       * 턴 제한시간 타이머.
+       */
+      'turnTimer':NodeJS.Timer;
+      /**
        * 릴레이 순서 배열.
        */
       'seq':string[];
@@ -438,20 +446,22 @@ declare namespace KKuTu{
        * 방 만들기는 아래 과정을 따라 이루어진다.
        * ```plain
        *. ┌──────────┐
-       *. │  사용자  ├──────┐
-       *. └─┬────────┘      │
-       *.  (1) ↑           (4)
-       *.   ↓ (3)           ↓
-       *. ┌────┴─────┐    ┌──────────┐
+       *. │  사용자  ├──────┬─────┐
+       *. └─┬────────┘      │  ↑  │
+       *.  (1) ↑           (4) │ (6)
+       *.   ↓ (3)           ↓ (5) ↓
+       *. ┌────┴─────┐    ┌────┴─────┐
        *. │   로비   ├(2)→│  게임방  │
-       *. │   서버   │←(5)┤   서버   │
+       *. │   서버   │←(7)┤   서버   │
        *. └──────────┘    └──────────┘
        * ```
        * (1) 웹소켓 `room-new` 요청을 보낸다. \
        * (2) IPC `room-reserve` 요청을 보낸다. \
        * (3) 웹소켓 `pre-room` 응답을 보낸다. \
-       * (4) 웹소켓 `room-new` 요청을 보낸다. \
-       * (5) IPC `room-reserve` 응답을 보낸다.
+       * (4) 게임 방 서버로 접속한다. \
+       * (5) 웹소켓 'welcome' 응답을 보낸다. \
+       * (6) 웹소켓 `room-new` 요청을 보낸다. \
+       * (7) IPC `room-reserve` 응답을 보낸다.
        */
       'room-new':{
         /**
@@ -494,9 +504,9 @@ declare namespace KKuTu{
        */
       'room-reserve':{
         /**
-         * 예약한 사용자 식별자.
+         * 예약한 사용자의 세션 식별자.
          */
-        'master':string;
+        'session':string;
         /**
          * 예약된 방 정보 객체.
          */
@@ -545,6 +555,26 @@ declare namespace KKuTu{
        */
       'blocked':never;
       /**
+       * (로비 서버 → 사용자)
+       * 사용자의 접속 종료 응답.
+       */
+      'disconnected':{
+        /**
+         * 접속을 종료한 계정 식별자.
+         */
+        'id':string;
+      };
+      /**
+       * (게임 방 서버 → 사용자)
+       * 이 채널 접속자의 접속 종료 응답.
+       */
+      'disconnected-room':{
+        /**
+         * 접속을 종료한 계정 식별자.
+         */
+        'id':string;
+      };
+      /**
        * (오류) (로비 서버 → 사용자)
        * 일반 오류 응답.
        */
@@ -580,10 +610,6 @@ declare namespace KKuTu{
        * 방 상태 갱신 응답.
        */
       'room':{
-        /**
-         * *(게임 방 서버 → 로비 서버 전용)* 방 암호.
-         */
-        'password'?:string;
         /**
          * 대상 사용자 식별자.
          */
@@ -645,9 +671,9 @@ declare namespace KKuTu{
        */
       'room-expired':{
         /**
-         * 예약한 사용자 식별자.
+         * 예약한 사용자의 세션 식별자.
          */
-        'master':string;
+        'session':string;
         /**
          * 예약된 방 번호.
          */
@@ -655,9 +681,32 @@ declare namespace KKuTu{
       };
       /**
        * (게임 방 서버 → 로비 서버)
+       * 방 퇴장 안내 응답.
+       */
+      'room-go':{
+        /**
+         * 퇴장한 사용자 식별자.
+         */
+        'target':string;
+        /**
+         * 대상 방 번호.
+         */
+        'id':number;
+        /**
+         * 대상 방 제거 여부.
+         */
+        'removed':boolean;
+      };
+      /**
+       * (게임 방 서버 → 로비 서버)
        * 방 상태 갱신 응답.
        */
-      'room-publish':KKuTu.Packet.ResponseData<'room'>;
+      'room-publish':{
+        /**
+         * 방 인스턴스.
+         */
+        'room':any;
+      };
       /**
        * (게임 방 서버 → 로비 서버)
        * 방 예약 성공 응답.
@@ -710,7 +759,7 @@ declare namespace KKuTu{
         'value':string;
       };
       /**
-       * (로비 서버 → 사용자)
+       * (로비 서버 또는 게임 방 서버 → 사용자)
        * 초기 정보(접속자 목록, 방 목록 등) 응답.
        */
       'welcome':{

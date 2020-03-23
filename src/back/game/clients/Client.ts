@@ -29,6 +29,7 @@ import { reduceToTable } from "back/utils/Utility";
 import { Room } from "../Room";
 import { query } from "back/utils/Database";
 import { Channel } from "./Channel";
+import { CHANNEL } from "../RoomServer";
 
 const ROOM_CONSTRAINTS = SETTINGS.application['room-constraints'];
 
@@ -59,12 +60,8 @@ export class Client extends WSClient{
    * @param data 추가 정보 객체.
    */
   public static publish<T extends KKuTu.Packet.ResponseType>(type:T, data?:KKuTu.Packet.ResponseData<T>):void{
-    if(Cluster.isMaster || type !== "room"){
-      for(const v of Object.values(clients)){
-        v.response(type, data);
-      }
-    }else{
-      Channel.responseToMaster('room-publish', data as KKuTu.Packet.ResponseData<'room-publish'>);
+    for(const v of Object.values(clients)){
+      v.response(type, data);
     }
   }
   /**
@@ -154,31 +151,36 @@ export class Client extends WSClient{
 
         return;
       }
+      let room:Room;
+
       if(Cluster.isMaster){
         const availableChannel = getAvailableChannel();
-        const room = new Room(Room.generateId(), availableChannel);
 
-        room.setData(data);
+        room = new Room(Room.generateId(), availableChannel, data);
+        data.id = room.id;
+
         channels[room.channel].requestToWorker('room-reserve', {
-          master: this.id,
-          room  : data
+          session: this.sessionId,
+          room   : data
         });
         this.response('pre-room', {
           id     : room.id,
           channel: room.channel
         });
-      }else if(this.place){
-        this.responseError(ApplicationError.NOT_LOBBY);
       }else{
+        room = new Room(data.id, CHANNEL, data);
+
         Channel.responseToMaster('room-reserve', {
           master: this.id,
           room  : data
         });
       }
+      room.come(this);
     }
   };
   protected responseHandlerTable:KKuTu.Packet.ResponseHandlerTable = null;
 
+  public readonly sessionId:string;
   public guest:boolean;
   public profile:KKuTu.Game.Profile;
   public data:KKuTu.Game.User['data'];
@@ -186,19 +188,32 @@ export class Client extends WSClient{
   public money:number;
   public friends:Table<string>;
   public place:number;
+  public subplace:number;
   public status:KKuTu.Game.Status;
 
+  private practiceRoom:Room;
   private lastChatAt = Date.now();
   private spamScore = 0;
   private blocked = false;
 
-  constructor(id:string, socket:WS, profile:KKuTu.Game.Profile = null){
+  constructor(id:string, socket:WS, sessionId:string, profile:KKuTu.Game.Profile = null){
     super(id, socket);
+    this.sessionId = sessionId;
     this.guest = !profile;
     this.profile = profile || Client.generateProfile(id);
     this.place = 0;
+    this.subplace = 0;
+    this.socket.on('close', () => {
+      if(rooms[this.place]){
+        rooms[this.place].go(this);
+      }
+      if(this.subplace){
+        this.practiceRoom.go(this);
+      }
+    });
     Logger.info("Opened").put("Client")
       .next("ID").put(id)
+      .next("Session").put(sessionId)
       .next("Profile").put(this.profile.title || this.profile.name)
       .out()
     ;

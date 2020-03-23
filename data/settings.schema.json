@@ -137,6 +137,10 @@
           "additionalProperties": false,
           "description": "방 설정의 제약 객체."
         },
+        "room-port-offset": {
+          "type": "number",
+          "description": "`(첫 게임 방 서버 포트) - (로비 서버 포트)`의 값."
+        },
         "room-reservation-timeout": {
           "type": "number",
           "description": "로비 서버의 `room-reserve` 요청으로 인해 예약된 방 번호가\n사용자가 접속하기 전까지 유지되는 기간(㎳)."
@@ -185,6 +189,7 @@
         "max-message-length",
         "moremi-parts",
         "room-constraints",
+        "room-port-offset",
         "room-reservation-timeout",
         "server-capacity",
         "spam"
@@ -384,6 +389,13 @@
     "test": {
       "type": "boolean",
       "description": "테스트 서버 여부."
+    },
+    "testers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "테스트 서버에 접속할 수 있는 계정 식별자 목록."
     },
     "title": {
       "type": "string",

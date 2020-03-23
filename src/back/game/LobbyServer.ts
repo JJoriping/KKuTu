@@ -60,8 +60,12 @@ let server:WS.Server;
  * @param channelList 게임 방 서버 프로세스의 목록.
  */
 export async function main(cluster:number, channelList:Cluster.Worker[]):Promise<void>{
-  Object.assign(channels, reduceToTable(channelList, v => new Channel(v), v => v.id));
-  Logger.info(`Lobby #${cluster}`).next("Channels").put(channels.length).out();
+  Object.assign(channels, reduceToTable(channelList, v => new Channel(v), (_, i) => i));
+  Logger.info(`Lobby #${cluster}`)
+    .next("Port").put(SETTINGS.ports[cluster])
+    .next("Channels").put(channels.length)
+    .out()
+  ;
   await connectDatabase();
 
   if(SETTINGS.https){
@@ -99,7 +103,7 @@ export async function main(cluster:number, channelList:Cluster.Worker[]):Promise
 
       return;
     }
-    client = new Client(Client.generateId(key), socket);
+    client = new Client(Client.generateId(key), socket, key);
     refreshResult = await client.refresh();
     if(refreshResult.result !== StatusCode.OK){
       client.responseError(refreshResult.result, refreshResult.black);
@@ -107,15 +111,19 @@ export async function main(cluster:number, channelList:Cluster.Worker[]):Promise
 
       return;
     }
+    if(clients[client.id]){
+      clients[client.id].close(WebSocketCloseCode.MULTI_CONNECTION);
+    }
     client.socket.on('close', () => {
       delete clients[client.id];
+      Client.publish('disconnected', { id: client.id });
     });
     clients[client.id] = client;
     client.response('welcome', {
       administrator: Boolean(SETTINGS.administrators.find(v => v.id === client.id)),
       server       : cluster,
       users        : Object.values(clients).map(v => v.sessionize()),
-      rooms        : []
+      rooms        : Object.values(rooms).map(v => v.sessionize())
     });
   });
   server.on('error', err => {

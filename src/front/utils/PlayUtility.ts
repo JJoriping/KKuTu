@@ -126,6 +126,10 @@ export const $data:Partial<{
    */
   'options':RuleOption[];
   /**
+   * `room-new` 과정 (4)를 위해 잠시 기록되는 방 정보 객체.
+   */
+  'pendingRoom':KKuTu.Packet.RequestData<'room-new'>;
+  /**
    * 현재 UI에서 보여줘야 할 화면.
    */
   'phase':UIPhase;

@@ -120,6 +120,10 @@ declare namespace Schema{
         'available-round-times':number[];
       };
       /**
+       * `(첫 게임 방 서버 포트) - (로비 서버 포트)`의 값.
+       */
+      'room-port-offset':number;
+      /**
        * 로비 서버의 `room-reserve` 요청으로 인해 예약된 방 번호가
        * 사용자가 접속하기 전까지 유지되는 기간(㎳).
        */

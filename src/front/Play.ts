@@ -177,7 +177,7 @@ $(document).ready(async() => {
     });
   }).trigger('change');
   $("#room-ok").on('click', () => {
-    send($data.roomAction, {
+    send($data.roomAction, $data.pendingRoom = {
       title   : $("#room-title").val().trim() || $("#room-title").attr('placeholder').trim(),
       password: $("#room-pw").val(),
       limit   : Number($("#room-limit").val()),

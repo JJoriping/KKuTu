@@ -26,7 +26,6 @@ import { main as runAsRoom } from "./RoomServer";
 const CLUSTER = Number(process.env['KKUTU_CLUSTER']) || 0;
 const PORT = SETTINGS.ports[CLUSTER];
 const CHANNEL = Number(process.env['KKUTU_CHANNEL']);
-const ROOM_PORT_OFFSET = 416;
 
 Logger.initialize(isNaN(CHANNEL) ? `game-${CLUSTER}` : `game-${CLUSTER}-${CHANNEL}`).then(() => {
   if(isNaN(CHANNEL)){
@@ -35,7 +34,7 @@ Logger.initialize(isNaN(CHANNEL) ? `game-${CLUSTER}` : `game-${CLUSTER}-${CHANNE
     Logger.info("Game").next("Sequence").put(CLUSTER).next("Slaves").put(SETTINGS.cluster['game-slave']).out();
     for(let i = 0; i < SETTINGS.cluster['game-slave']; i++){
       channels.push(Cluster.fork({
-        KKUTU_PORT   : PORT + ROOM_PORT_OFFSET + i,
+        KKUTU_PORT   : PORT + SETTINGS.application['room-port-offset'] + i,
         KKUTU_CHANNEL: i
       }));
       runAsLobby(CLUSTER, channels);
@@ -51,7 +50,7 @@ Logger.initialize(isNaN(CHANNEL) ? `game-${CLUSTER}` : `game-${CLUSTER}-${CHANNE
       }
       Logger.error("Lobby").put(`Worker #${index} died`).out();
       channels[index] = Cluster.fork({
-        KKUTU_PORT   : PORT + ROOM_PORT_OFFSET + index,
+        KKUTU_PORT   : PORT + SETTINGS.application['room-port-offset'] + index,
         KKUTU_CHANNEL: index
       });
     });

@@ -63,6 +63,7 @@ module.exports = {
       "after": false,
       "overrides": {
         "const": { "before": true, "after": true },
+        "case": { "before": true, "after": true },
         "from": { "before": true, "after": true },
         "import": { "before": true, "after": true },
         "let": { "before": true, "after": true },

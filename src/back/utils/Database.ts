@@ -71,8 +71,15 @@ export function connectDatabase():Promise<void>{
  * @param parameters 추가 정보 객체.
  */
 export function query(sql:string, parameters?:Table<unknown>):Promise<unknown>{
+  const list:unknown[] = [];
+  const processedSQL = sql.replace(/:(\S+)/g, (_, p1) => {
+    list.push(parameters[p1]);
+
+    return "?";
+  });
+
   return new Promise((res, rej) => {
-    db.query(sql, parameters, (err, data) => {
+    db.query(processedSQL, list, (err, data) => {
       if(err){
         Logger.error("Query").next("SQL").put(sql).next("Error").put(err.stack).out();
         rej(err);

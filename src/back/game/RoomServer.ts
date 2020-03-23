@@ -59,7 +59,7 @@ let server:WS.Server;
  * @param cluster 이 슬레이브를 거느리는 로비 프로세스의 순번.
  */
 export async function main(cluster:number):Promise<void>{
-  Logger.info(`Room #${cluster}-${CHANNEL}`).out();
+  Logger.info(`Room #${cluster}-${CHANNEL}`).next("Port").put(PORT).out();
   await connectDatabase();
 
   if(SETTINGS.https){
@@ -83,7 +83,7 @@ export async function main(cluster:number):Promise<void>{
       Logger.warning("Client").put(key).next("Error").put(err.stack).out();
     });
     if(CHANNEL !== Number(channel)){
-      Logger.warning("Client").put(key).next(`Wrong channel value ${channel} (expected ${CHANNEL})`).out();
+      Logger.warning("Client").put(key).next("Error").put(`Wrong channel value ${channel} (expected ${CHANNEL})`).out();
       socket.close(WebSocketCloseCode.INVALID_CHANNEL);
 
       return;
@@ -92,10 +92,13 @@ export async function main(cluster:number):Promise<void>{
       Logger.warning("Client").put(key).next(`Not reserved: ${key}`);
       socket.close(WebSocketCloseCode.NOT_RESERVED);
     }
-    session = await query("SELECT profile FROM session WHERE _id = :key", { key });
-    console.log(session);
+    global.clearTimeout(reservation.timer);
+    delete reservations[key];
 
-    client = new Client(Client.generateId(key), socket);
+    session = await query("SELECT profile FROM session WHERE _id = :key", { key });
+    console.log("session", session);
+
+    client = new Client(Client.generateId(key), socket, key);
     if(clients[client.id]){
       clients[client.id].close(WebSocketCloseCode.MULTI_CONNECTION);
     }
@@ -110,8 +113,14 @@ export async function main(cluster:number):Promise<void>{
 
       return;
     }
+    client.socket.on('close', () => {
+      delete clients[client.id];
+      delete clientNames[client.whisperName];
+      Client.publish('disconnected-room', { id: client.id });
+    });
     clients[client.id] = client;
     clientNames[client.whisperName] = client.id;
+    client.response('welcome');
   });
   server.on('error', err => {
     Logger.error("Server").next("Error").put(err.stack).out();

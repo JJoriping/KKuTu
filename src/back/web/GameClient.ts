@@ -56,7 +56,6 @@ export class GameClient extends WSClient{
   protected responseHandlerTable:KKuTu.Packet.ResponseHandlerTable = {
     seek: ({ value }) => {
       this.seek = value;
-      Logger.log("Seek").put(this.seek).out();
     }
   };
   public seek:number;
