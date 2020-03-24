@@ -219,9 +219,21 @@ declare namespace KKuTu{
        */
       'players':KKuTu.Game.User[];
       /**
+       * 참여자별 준비 상태 객체.
+       */
+      'readies':Table<{
+        'r':KKuTu.Game.Status['ready'];
+        'f':KKuTu.Game.Status['form'];
+        't':KKuTu.Game.Status['team'];
+      }>;
+      /**
        * 최대 인원.
        */
       'limit':number;
+      /**
+       * 연습 방 여부.
+       */
+      'practice':boolean;
     };
     /**
      * 특수 규칙 객체.
@@ -396,6 +408,21 @@ declare namespace KKuTu{
            */
           'playtime':number;
         }>;
+      };
+      /**
+       * 게임 진행 정보.
+       */
+      'status':{
+        /**
+         * 준비 여부.
+         */
+        'ready':boolean;
+        /**
+         * 팀 번호.
+         *
+         * 0은 개인전을 나타낸다.
+         */
+        'team':number;
       };
       /**
        * 방 번호. 0인 경우 로비를 가리킨다.

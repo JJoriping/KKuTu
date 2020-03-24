@@ -21,7 +21,7 @@ import { notice, replaceInsults, sendWhisper } from "./Chat";
 import { UIPhase } from "./enums/UIPhase";
 import { G, L } from "./Global";
 import { Iterator } from "back/utils/Utility";
-import { JTImage, LevelImage, UserListBar } from "./PlayComponent";
+import { JTImage, LevelImage, RoomListBar, UserListBar } from "./PlayComponent";
 import { send } from "./GameClient";
 import { moremiImage } from "./Moremi";
 import { ItemGroup } from "back/utils/enums/ItemGroup";
@@ -62,6 +62,9 @@ export const $stage:Partial<{
     'here-text':JQuery;
   };
   'lobby':{
+    'room-create':JQuery;
+    'room-list':JQuery;
+    'room-list-title':JQuery;
     'user-list':JQuery;
     'user-list-title':JQuery;
   };
@@ -114,6 +117,10 @@ export const $data:Partial<{
    */
   'id':string;
   /**
+   * 현재 방의 방장 여부.
+   */
+  'master':boolean;
+  /**
    * 최근 설정된 배경 음악 음소거 여부.
    */
   'mutedBGM':boolean;
@@ -133,6 +140,10 @@ export const $data:Partial<{
    * 현재 UI에서 보여줘야 할 화면.
    */
   'phase':UIPhase;
+  /**
+   * 현재 내 위치.
+   */
+  'place':number;
   /**
    * 프로필 창에 나타난 정보의 주체 식별자.
    */
@@ -160,6 +171,10 @@ export const $data:Partial<{
    */
   'recentFrom':string;
   /**
+   * 게임 결과 화면 표시 여부.
+   */
+  'resulting':boolean;
+  /**
    * 게임 방에 입장한 끄투 봇 목록 객체.
    */
   'robots':Table<KKuTu.Game.User>;
@@ -170,7 +185,7 @@ export const $data:Partial<{
   /**
    * 이 서버의 방 목록.
    */
-  'rooms':KKuTu.Game.Room[];
+  'rooms':Table<KKuTu.Game.Room>;
   /**
    * 최근 연 방 설정 대화상자의 목적.
    *
@@ -448,6 +463,14 @@ export function requestProfile(target:string):void{
   $stage.dialog.profile.show();
 }
 /**
+ * 주어진 방의 정보 창을 띄운다.
+ *
+ * @param roomId 방 번호.
+ */
+export function requestRoomInfo(roomId:number):void{
+  // TODO
+}
+/**
  * 채팅으로 입력한 명령어를 실행한다.
  *
  * @param chunk 명령 내용.
@@ -463,6 +486,38 @@ export function runCommand(chunk:string[]):void{
       notice(L(`command-${k}`), k);
     }
   }
+}
+/**
+ * 방 목록 객체를 갱신한다.
+ *
+ * @param id 방 식별자.
+ * @param data 방 객체. Falsy한 경우 목록에서 뺀다.
+ */
+export function setRoom(id:number, data:KKuTu.Game.Room):void{
+  const isLobby = $data.phase === UIPhase.LOBBY;
+
+  if(data){
+    if(isLobby && !$data.rooms[id]){
+      $stage.lobby['room-list'].append($("<div>").attr('id', `room-${id}`).data('id', id));
+    }
+    $data.rooms[id] = data;
+    if(isLobby){
+      $(`#room-${id}`).replaceWith(RoomListBar(data));
+    }
+  }else{
+    delete $data.rooms[id];
+    if(isLobby){
+      $(`#room-${id}`).remove();
+    }
+  }
+}
+/**
+ * 주어진 방으로 입장을 시도한다.
+ *
+ * @param roomId 방 번호.
+ */
+export function tryJoin(roomId:number):void{
+  // TODO
 }
 /**
  * 주어진 특수 규칙 목록에 맞게 객체의 표시 여부를 전환한다.
@@ -504,7 +559,15 @@ export function updateLoading(html?:string):void{
  * UI 페이즈는 `UIPhase`의 한 값으로 결정된다.
  */
 export function updatePhase():void{
-  $data.phase = UIPhase.LOBBY;
+  if(!$data.place){
+    $data.phase = UIPhase.LOBBY;
+  }else if($data.room.gaming || $data.resulting){
+    $data.phase = UIPhase.GAMING;
+  }else if($data.master){
+    $data.phase = UIPhase.MASTER;
+  }else{
+    $data.phase = UIPhase.NORMAL;
+  }
 }
 /**
  * UI를 갱신한다.
@@ -527,6 +590,7 @@ export function updateUI():void{
     case UIPhase.LOBBY:
       $stage.box.user.show();
       updateUserList();
+      updateRoomList();
       break;
     default:
       break;
@@ -553,5 +617,31 @@ export function updateUserList():void{
     if(!v.place){
       $stage.dialog['invite-list'].append(UserListBar(v, true));
     }
+  }
+}
+/**
+ * 개설된 방 목록을 갱신한다.
+ */
+export function updateRoomList():void{
+  const list = Object.values($data.rooms);
+
+  $(".rooms-create").remove();
+
+  $stage.lobby['room-list'].empty();
+  for(const v of list){
+    $stage.lobby['room-list'].append(RoomListBar(v));
+  }
+  console.log(list.length);
+  $stage.lobby['room-list-title'].html(L(
+    'room-list-n',
+    list.length
+  ));
+  if(list.length){
+    $(".rooms-gaming").css('display', $data.settings?.ow ? "none" : "");
+    $(".rooms-locked").css('display', $data.settings?.ou ? "none" : "");
+  }else{
+    $stage.lobby['room-list'].append($stage.lobby['room-create'].clone().on('click', () => {
+      $stage.menu['room-new'].trigger('click');
+    }));
   }
 }

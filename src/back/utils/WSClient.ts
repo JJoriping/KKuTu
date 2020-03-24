@@ -98,6 +98,11 @@ export abstract class WSClient{
    * @param code 종료 코드.
    */
   public close(code?:WebSocketCloseCode):void{
+    if(!this.socket){
+      Logger.warning("close").put("Already closed").out();
+
+      return;
+    }
     this.socket.close(code);
   }
   /**

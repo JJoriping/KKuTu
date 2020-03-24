@@ -73,6 +73,9 @@ $(document).ready(async() => {
     'here-text': $("#game-input")
   };
   $stage.lobby = {
+    'room-create'    : $("<div>").addClass("rooms-item rooms-create").append($("<div>").html(L('new-room'))),
+    'room-list'      : $(".room-list-box>.product-body"),
+    'room-list-title': $(".room-list-box>.product-title"),
     'user-list'      : $(".user-list-box>.product-body"),
     'user-list-title': $(".user-list-box>.product-title")
   };
@@ -97,9 +100,10 @@ $(document).ready(async() => {
 
   $data.options = Object.values(RuleOption).filter(w => w.length === RuleOption.EXTENDED.length);
   $data.robots = {};
-  $data.rooms = [];
+  $data.rooms = {};
   $data.shop = {};
   $data.users = {};
+  $data.place = 0;
   $data.url = $("#url").text();
 
   await loadShop();
@@ -276,7 +280,7 @@ $(document).ready(async() => {
         return;
       }
       $("#quick-queue").html(L('quick-queue', prettyTime($data.quick.tick++ * DateUnit.SECOND)));
-      for(const v of $data.rooms){
+      for(const v of Object.values($data.rooms)){
         if(isRoomMatched(v, rule, options)){
           candidates.push(v.id);
         }
@@ -297,7 +301,7 @@ $(document).ready(async() => {
     }
     options = getGameOptions('quick');
     updateGameOptions(RULE_TABLE[value].options, 'quick');
-    for(const v of $data.rooms){
+    for(const v of Object.values($data.rooms)){
       if(isRoomMatched(v, value, options, true)){
         counter++;
       }

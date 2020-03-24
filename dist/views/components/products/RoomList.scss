@@ -16,7 +16,117 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+$c-channel-colors: (
+  0: #F99,
+  1: #FF7,
+  2: #7C7,
+  3: #99F
+);
+
 .room-list-box{
   width: 790px;
   height: 360px;
+  >.product-body{
+    width: 780px;
+    height: 330px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
+  div{
+    float: left;
+  }
+}
+.rooms-item{
+  width: 364px;
+  height: 64px;
+  padding: 5px;
+  border-radius: 10px;
+  margin: 3px;
+  box-shadow: 0px 1px 1px #777777;
+  cursor: pointer;
+  background-color: #E4E4E4;
+  transition: all 300ms ease;
+  &:hover{
+    background-color: #F4F4F4;
+  }
+}
+.rooms-create{
+  background-color: #8EC0F3;
+  &:hover{
+    background-color: #ADF;
+  }
+  >div{
+    float: none;
+    padding: 20px 0;
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+  }
+}
+.rooms-channel{
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  margin-right: -10px;
+  &:hover{
+    width: 8px;
+    height: 8px;
+    border: 1px solid black;
+  }
+}
+.rooms-number{
+  width: 49px;
+  height: 46px;
+  padding-top: 18px;
+  border-right: 1px solid #CCC;
+  margin-right: 4px;
+  font-size: 24px;
+}
+.rooms-title{
+  width: 270px;
+  height: 20px;
+  padding-top: 4px;
+  font-size: 16px;
+  font-weight: bold;
+}
+.rooms-limit{
+  width: 39px;
+  height: 17px;
+  padding-top: 7px;
+  text-align: center;
+}
+.rooms-mode{
+  width: 270px;
+  padding-top: 5px;
+}
+.rooms-info{
+  width: 270px;
+}
+.rooms-round{
+  padding-top: 5px;
+  margin-right: 10px;
+}
+.rooms-time{
+  padding-top: 5px;
+}
+.rooms-lock{
+  width: 39px;
+  padding-top: 8px;
+  font-size: 24px;
+  text-align: center;
+}
+.rooms-gaming{
+  background-color: #FBB;
+  &:hover{
+    background-color: #FCC;
+  }
+  .rooms-number{
+    border-color: #C99;
+  }
+}
+@each $k, $v in $c-channel-colors{
+  .channel-#{$k}{
+    background-color: $v;
+  }
 }

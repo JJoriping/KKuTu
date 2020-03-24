@@ -95,6 +95,9 @@
 		"user-list-n": "FA{users}<b><{#0}></b> 접속자 목록 ({#1}명)",
 
 		"room-list": "FA{bars}방 목록",
+		"new-room": "방 만들기",
+		"rounds": "{#0} 라운드",
+		"room-list-n": "FA{bars}방 목록 [{#0}개]",
 
 		"me": "FA{user}내 정보",
 		"okg-x": "<h4><label style='color: #FFFF44;'>오늘도 끄투를 이용해 주셔서 감사합니다!</label></h4>끄투에서 사람들과 함께 게임 플레이 시간 10분을 달성할 때마다<br>경험치와 핑을 더욱 많이 얻을 수 있는 <label style='color: #FFFF44;'>오끄감 버프</label>를 획득할 수 있습니다!",

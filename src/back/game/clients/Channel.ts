@@ -109,13 +109,40 @@ export class Channel{
       }
       delete rooms[data.id];
     },
+    'room-go': data => {
+      if(rooms[data.id] && clients[data.target]){
+        rooms[data.id].go(clients[data.target]);
+      }else{
+        // 나가기 말고 연결 자체가 끊겼을 때 생기는 듯 하다.
+        const logger = Logger.warning("room-go").put("Invalid room-go")
+          .next("Room").put(data.id)
+          .next("User").put(data.target)
+        ;
+
+        if(rooms[data.id]?.players){
+          // 이 때 수동으로 지워준다.
+          const index = rooms[data.id].players.indexOf(data.target);
+
+          if(index !== -1){
+            rooms[data.id].players.splice(index, 1);
+            logger.next("Resolved").put("true");
+          }
+        }
+        if(data.removed){
+          logger.next("Removed").put("true");
+          delete rooms[data.id];
+        }
+        logger.out();
+      }
+    },
     'room-publish': data => {
       const room = rooms[data.room.id];
 
-      if(!room){
-        return;
+      if(room){
+        Object.assign(room, data.room);
+      }else{
+        Logger.log("room-publish").put(`No such room: ${data.room.id}`).out();
       }
-      Object.assign(room, data.room);
       Client.publish('room', data);
     },
     'room-reserve': ({ master, room }) => {
@@ -141,7 +168,7 @@ export class Channel{
    */
   constructor(worker:Cluster.Worker){
     this.worker = worker;
-    worker.on('message', message => {
+    this.worker.on('message', message => {
       const { type, ...data } = message;
       const handler = (this.responseHandlerTable as any)[type];
 

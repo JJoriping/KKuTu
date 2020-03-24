@@ -16,8 +16,60 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getLevel, requestInvite, requestProfile } from "./PlayUtility";
+import { getGameOptions, getLevel, requestInvite, requestProfile, requestRoomInfo, tryJoin } from "./PlayUtility";
+import { RULE_TABLE, Rule } from "back/utils/Rule";
+import { L } from "./Global";
+import { replaceInsults } from "./Chat";
 
+const ROOM_METADATA_WIDTH = 270;
+
+function getOptionText(rule:Rule, options:KKuTu.Game.RoomOptions):string[]{
+  const R = [
+    L(`mode-${rule}`)
+  ];
+
+  for(const v of RULE_TABLE[rule].options){
+    if(v in options){
+      R.push(L(`option-${v}`));
+    }
+  }
+
+  return R;
+}
+/**
+ * 방 목록의 개별 게임 방 JQuery 객체를 만들어 반환한다.
+ *
+ * @param room 방 객체.
+ */
+export function RoomListBar(room:KKuTu.Game.Room):JQuery{
+  const options = getOptionText(room.rule as Rule, room.options);
+  let $R:JQuery = null;
+  let $channel:JQuery = null;
+
+  $R = $("<div>").attr('id', `room-${room.id}`).data('id', room.id).addClass("rooms-item")
+    .append($channel = $("<div>").addClass(`rooms-channel channel-${room.channel}`)
+      .on('click', () => requestRoomInfo(room.id)))
+    .append($("<div>").addClass("rooms-number").html(String(room.id)))
+    .append($("<div>").addClass("rooms-title ellipse").text(replaceInsults(room.title)))
+    .append($("<div>").addClass("rooms-limit").html(`${room.players.length} / ${room.limit}`))
+    .append($("<div>").width(ROOM_METADATA_WIDTH)
+      .append($("<div>").addClass("rooms-mode").html(options.join(' / ')))
+      .append($("<div>").addClass("rooms-round").html(L('rounds', room.round)))
+      .append($("<div>").addClass("rooms-time").html(room.time + L('SECOND'))))
+    .append($("<div>").addClass("rooms-lock")
+      .html(room.password ? "<i class='fa fa-lock'></i>" : "<i class='fa fa-unlock'></i>"))
+    .on('click', e => {
+      if(e.target === $channel.get(0)){
+        return;
+      }
+      tryJoin($(e.currentTarget).data('id'));
+    })
+  ;
+  if(room.gaming) $R.addClass("rooms-gaming");
+  if(room.password) $R.addClass("rooms-locked");
+
+  return $R;
+}
 /**
  * 접속자 목록 및 초대 가능 사용자 목록의 개별 사용자 JQuery 객체를 만들어 반환한다.
  *

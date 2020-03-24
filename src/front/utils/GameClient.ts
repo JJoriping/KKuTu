@@ -20,7 +20,7 @@ import { Logger } from "back/utils/Logger";
 import { Sound, playSound, stopAllSounds } from "./Audio";
 import { chat, notice } from "./Chat";
 import { L } from "./Global";
-import { $data, $stage, updateLoading, updateUI } from "./PlayUtility";
+import { $data, $stage, setRoom, updateLoading, updateRoomList, updateUI } from "./PlayUtility";
 import { reduceToTable } from "back/utils/Utility";
 import { WebSocketCloseCode } from "back/utils/enums/StatusCode";
 
@@ -45,6 +45,7 @@ const handlerTable:KKuTu.Packet.ResponseHandlerTable = {
       $stage.introText.text(L('welcome'));
       $data.server = data.server;
       $data.users = reduceToTable(data.users, v => v, v => v.id);
+      $data.rooms = reduceToTable(data.rooms, v => v, v => v.id);
       updateUI();
       Logger.success("Lobby").next("Administrator").put(data.administrator).out();
     }
@@ -57,6 +58,32 @@ const handlerTable:KKuTu.Packet.ResponseHandlerTable = {
   },
   'pre-room': ({ channel, id }) => {
     connectRoom(channel, id);
+  },
+  'room': ({ room, target }) => {
+    const isMyRoom = $data.place === room.id || $data.id === target;
+
+    if(isMyRoom){
+      // TODO
+    }
+    if(target && $data.users[target]){
+      // TODO
+    }
+    if(room.practice){
+      return;
+    }
+    if(room.players.length){
+      setRoom(room.id, room);
+      for(const k in room.readies){
+        if(!$data.users[k]){
+          continue;
+        }
+        $data.users[k].status.ready = room.readies[k].r;
+        $data.users[k].status.team = room.readies[k].t;
+      }
+    }else{
+      setRoom(room.id, null);
+    }
+    updateRoomList();
   }
 };
 

@@ -60,6 +60,7 @@ export class Client extends WSClient{
    * @param data 추가 정보 객체.
    */
   public static publish<T extends KKuTu.Packet.ResponseType>(type:T, data?:KKuTu.Packet.ResponseData<T>):void{
+    Logger.log("publish").put(type).next("Data").put(JSON.stringify(data)).out();
     for(const v of Object.values(clients)){
       v.response(type, data);
     }
@@ -174,6 +175,7 @@ export class Client extends WSClient{
           master: this.id,
           room  : data
         });
+        rooms[room.id] = room;
       }
       room.come(this);
     }
@@ -319,7 +321,11 @@ export class Client extends WSClient{
       profile : this.profile,
       place   : this.place,
       data    : this.data,
-      equip   : {}
+      status  : {
+        ready: this.status.ready,
+        team : this.status.team
+      },
+      equip: {}
     };
   }
 }
