@@ -1,0 +1,174 @@
+/*
+ * Rule the words! KKuTu Online
+ * Copyright (C) 2020  JJoriping(op@jjo.kr)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+$b-team-colors: (
+  0: #D0D0D0,
+  1: #FF5555,
+  2: #FFBF30,
+  3: #88C525,
+  4: #4A90D6
+);
+
+.room-box{
+  width: 1000px;
+  height: 360px;
+  >.product-title{
+    height: 12px;
+    h5{
+      float: left;
+    }
+    .room-head-modified{
+      animation: ModifiedBlink 1s ease 3;
+    }
+    .room-head-number{
+      width: 35px;
+      text-align: center;
+    }
+    .room-head-title{
+      width: 505px;
+      font-weight: bold;
+    }
+    .room-head-mode{
+      width: 255px;
+      margin-right: 5px;
+      text-align: right;
+    }
+    .room-head-limit{
+      width: 70px;
+      text-align: center;
+    }
+    .room-head-round{
+      width: 70px;
+      text-align: center;
+    }
+    .room-head-time{
+      width: 54px;
+      text-align: center;
+    }
+  }
+}
+.team-selector{
+  float: left;
+  width: 40px;
+  height: 320px;
+  padding-right: 3px;
+  border-right: 1px solid #CCC;
+  margin: 0 2px 0 -5px;
+}
+.team-button{
+  float: left;
+  width: 100%;
+  height: 40px;
+  padding-top: 20px;
+  border-radius: 10px;
+  margin: 2px 0;
+  text-align: center;
+  font-size: 13px;
+  cursor: pointer;
+  &:hover{
+    border-bottom: 4px solid rgba(0, 0, 0, 0.5);
+    margin-top: -2px;
+  }
+  &.team-chosen{
+    font-weight: bold;
+  }
+  @each $k, $v in $b-team-colors{
+    &.team-#{$k}{
+      background-color: $v;
+    }
+  }
+}
+.team-unable div{
+  cursor: not-allowed;
+  background-color: #BBB;
+}
+.room-user{
+  float: left;
+  width: 224px;
+  height: 151px;
+  padding: 3px;
+  border-radius: 10px;
+  margin: 3px;
+  box-shadow: 0 1px 1px #777;
+  background-color: #E4E4E4;
+  &:hover{
+    cursor: pointer;
+    background-color: #EEE;
+  }
+  &-image{
+    width: 100px;
+    height: 100px;
+    margin: 3px;
+  }
+  &-stat{
+    width: 112px;
+    height: 100px;
+    padding: 3px;
+    font-size: 15px;
+    div{
+      margin-bottom: 4px;
+    }
+  }
+  &-ready{
+    width: 100%;
+    font-weight: bold;
+    text-align: right;
+  }
+  &-readied{
+    color: #3A8BDf;
+  }
+  &-spectate{
+    color: #8160FF;
+  }
+  &-practice{
+    color: #E1BA2D;
+  }
+  &-master{
+    color: #E14E2D;
+  }
+  &-team{
+    width: 40%;
+    margin-left: 60%;
+    text-align: center;
+  }
+  &-title{
+    width: 216px;
+    padding: 6px 4px;
+    font-size: 15px;
+  }
+  &-level{
+    width: 30px;
+    height: 30px;
+  }
+  &-name{
+    padding: 9px 0 0 4px;
+    font-weight: bold;
+  }
+  div{
+    float: left;
+  }
+}
+
+@keyframes ModifiedBlink{
+  0%{
+    background-color: #FF4;
+  }
+	100%{
+    background-color: #DDD;
+  }
+}

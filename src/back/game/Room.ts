@@ -147,6 +147,7 @@ export class Room{
       Client.publish('room', data);
     }else{
       Channel.responseToMaster('room-publish', {
+        target,
         room: this
       });
     }
@@ -242,21 +243,18 @@ export class Room{
    * 이 클라이언트의 통신용 객체를 만들어 반환한다.
    */
   public sessionize():KKuTu.Game.Room{
-    const players:KKuTu.Game.User[] = [];
     const readies:KKuTu.Game.Room['readies'] = {};
 
     for(const v of this.players){
       const client = Room.clients[v];
 
       if(!client){
-        players.push(null);
         continue;
       }
-      players.push(client.sessionize());
       readies[client.id] = {
-        r: client.status.ready,
-        f: client.status.form,
-        t: client.status.team
+        r: client.status?.ready,
+        f: client.status?.form,
+        t: client.status?.team
       };
     }
 
@@ -271,7 +269,7 @@ export class Room{
       time    : this.time,
       gaming  : this.gaming,
       password: Boolean(this.password),
-      players,
+      players : this.players,
       readies,
       limit   : this.limit,
       practice: this.forPractice

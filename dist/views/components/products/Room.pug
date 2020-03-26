@@ -15,21 +15,13 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-include ../Graph
 include ../Product
 
-+Product('me')
-  div.moremi.my-image
-  div.my-status
-    div.jt-image.my-status-level
-    div.my-status-name.ellipse
-    div.my-status-record
-    div.my-status-ping
-    div
-      +Graph('my-okg')
-      div.bar-text.my-okg-text
-      +Tooltip(true)
-        div(style=`color: #CCC;`)!= L('okg-x')
-  div.my-level
-  +Graph('my-gauge')
-  div.bar-text.my-gauge-text
++Product('room')
+  div.team-selector
+    div.team-button#team-0.team-0= L('team-solo')
+    div.team-button#team-1.team-1= A
+    div.team-button#team-2.team-2= B
+    div.team-button#team-3.team-3= C
+    div.team-button#team-4.team-4= D
+  div.room-users

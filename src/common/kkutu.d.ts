@@ -217,7 +217,7 @@ declare namespace KKuTu{
       /**
        * 참여자 목록.
        */
-      'players':KKuTu.Game.User[];
+      'players':string[];
       /**
        * 참여자별 준비 상태 객체.
        */
@@ -340,7 +340,7 @@ declare namespace KKuTu{
       /**
        * 게임 중 방에 입장 여부.
        */
-      'cameWhenGaming':boolean;
+      'cameWhenGaming'?:boolean;
       /**
        * 참여 유형.
        *
@@ -353,7 +353,7 @@ declare namespace KKuTu{
       /**
        * 획득 점수.
        */
-      'score':number;
+      'score'?:number;
     };
     /**
      * 사용자 객체.
@@ -412,18 +412,7 @@ declare namespace KKuTu{
       /**
        * 게임 진행 정보.
        */
-      'status':{
-        /**
-         * 준비 여부.
-         */
-        'ready':boolean;
-        /**
-         * 팀 번호.
-         *
-         * 0은 개인전을 나타낸다.
-         */
-        'team':number;
-      };
+      'status':KKuTu.Game.Status;
       /**
        * 방 번호. 0인 경우 로비를 가리킨다.
        */
@@ -432,6 +421,10 @@ declare namespace KKuTu{
        * 장착 아이템 목록 객체.
        */
       'equip':Table<string>;
+      /**
+       * 보유 핑.
+       */
+      'money':number;
     };
   }
   namespace Packet{
@@ -638,6 +631,10 @@ declare namespace KKuTu{
        */
       'room':{
         /**
+         * 방 정보 수정 여부.
+         */
+        'modify'?:boolean;
+        /**
          * 대상 사용자 식별자.
          */
         'target'?:string;
@@ -730,6 +727,10 @@ declare namespace KKuTu{
        */
       'room-publish':{
         /**
+         * 주체 사용자 식별자.
+         */
+        'target':string;
+        /**
          * 방 인스턴스.
          */
         'room':any;
@@ -795,6 +796,10 @@ declare namespace KKuTu{
          */
         'administrator':boolean;
         /**
+         * 내 식별자.
+         */
+        'id':string;
+        /**
          * 접속한 서버 번호.
          */
         'server':number;
@@ -806,6 +811,10 @@ declare namespace KKuTu{
          * 개설된 방 목록.
          */
         'rooms':KKuTu.Game.Room[];
+        /**
+         * 오늘 총 플레이 시간(㎳).
+         */
+        'playTime':number;
       };
     };
   }

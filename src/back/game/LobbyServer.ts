@@ -121,9 +121,11 @@ export async function main(cluster:number, channelList:Cluster.Worker[]):Promise
     clients[client.id] = client;
     client.response('welcome', {
       administrator: Boolean(SETTINGS.administrators.find(v => v.id === client.id)),
+      id           : client.id,
       server       : cluster,
       users        : Object.values(clients).map(v => v.sessionize()),
-      rooms        : Object.values(rooms).map(v => v.sessionize())
+      rooms        : Object.values(rooms).map(v => v.sessionize()),
+      playTime     : 0 // TODO
     });
   });
   server.on('error', err => {

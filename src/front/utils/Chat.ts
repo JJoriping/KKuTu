@@ -121,6 +121,19 @@ export function chat(profile:KKuTu.Game.Profile, message:string, from?:string, t
   $stage.chat.append($baby).scrollTop(Number.MAX_SAFE_INTEGER);
 }
 /**
+ * 채팅 창에 구분자를 추가한다. 이미 가장 마지막에 구분자가 들어가 있다면 생략한다.
+ */
+export function forkChat():void{
+  const $board = $("#chat,#chat-log-board");
+  const $last = $board.children(".chat-item").last().get(0);
+
+  if($last?.tagName === "HR"){
+    return;
+  }
+  $board.append($("<hr>").addClass("chat-item"));
+  $stage.chat.scrollTop(Number.MAX_SAFE_INTEGER);
+}
+/**
  * 주어진 내용을 공지 형태로 채팅 창에 출력한다.
  *
  * @param message HTML 내용.

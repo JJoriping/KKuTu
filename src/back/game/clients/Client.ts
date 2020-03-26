@@ -205,6 +205,11 @@ export class Client extends WSClient{
     this.profile = profile || Client.generateProfile(id);
     this.place = 0;
     this.subplace = 0;
+    this.status = {
+      form : null,
+      team : 0,
+      ready: false
+    };
     this.socket.on('close', () => {
       if(rooms[this.place]){
         rooms[this.place].go(this);
@@ -321,11 +326,9 @@ export class Client extends WSClient{
       profile : this.profile,
       place   : this.place,
       data    : this.data,
-      status  : {
-        ready: this.status.ready,
-        team : this.status.team
-      },
-      equip: {}
+      status  : this.status,
+      equip   : {},
+      money   : this.money
     };
   }
 }

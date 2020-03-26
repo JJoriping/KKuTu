@@ -16,14 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getGameOptions, getLevel, requestInvite, requestProfile, requestRoomInfo, tryJoin } from "./PlayUtility";
+import { getLevel, requestInvite, requestProfile, requestRoomInfo, tryJoin } from "./PlayUtility";
 import { RULE_TABLE, Rule } from "back/utils/Rule";
 import { L } from "./Global";
 import { replaceInsults } from "./Chat";
 
 const ROOM_METADATA_WIDTH = 270;
 
-function getOptionText(rule:Rule, options:KKuTu.Game.RoomOptions):string[]{
+/**
+ * 주어진 특수 규칙들로부터 문자열 표현을 구해 반환한다.
+ *
+ * @param rule 게임 유형.
+ * @param options 특수 규칙 객체.
+ * @param includeExtensions 주제 포함 여부.
+ */
+export function getOptionText(rule:Rule, options:KKuTu.Game.RoomOptions, includeExtensions = false):string[]{
   const R = [
     L(`mode-${rule}`)
   ];
@@ -32,6 +39,9 @@ function getOptionText(rule:Rule, options:KKuTu.Game.RoomOptions):string[]{
     if(v in options){
       R.push(L(`option-${v}`));
     }
+  }
+  if(includeExtensions){
+    R.push(options.extensions.join('|'));
   }
 
   return R;

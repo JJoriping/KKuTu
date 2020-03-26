@@ -27,7 +27,7 @@ import { connectLobby, loadShop, send } from "./utils/GameClient";
 import { L, initialize } from "./utils/Global";
 import {
   $data, $stage,
-  getGameOptions, runCommand, showDialog, updateGameOptions, updateLoading
+  getGameOptions, requestProfile, runCommand, showDialog, updateGameOptions, updateLoading
 } from "./utils/PlayUtility";
 import { isRoomMatched } from "./utils/Room";
 import { applySettings, checkCompatibility } from "./utils/Utility";
@@ -48,8 +48,12 @@ $(document).ready(async() => {
   $stage.introText = $("#intro-text");
   $stage.loading = $("#loading");
   $stage.box = {
-    chat: $(".chat-box"),
-    user: $(".user-list-box")
+    'me'       : $(".me-box"),
+    'chat'     : $(".chat-box"),
+    'room'     : $(".room-box"),
+    'room-list': $(".room-list-box"),
+    'user-list': $(".user-list-box"),
+    'shop'     : $(".shop-box")
   };
   $stage.balloons = $("#balloons");
   $stage.dialog = {
@@ -307,6 +311,10 @@ $(document).ready(async() => {
       }
     }
     $("#quick-status").html(L('quick-status', counter));
+  });
+  // 제품 - 나
+  $stage.box.me.on('click', () => {
+    requestProfile($data.id);
   });
   // 제품 - 채팅
   $("#chat-send").on('click', () => {

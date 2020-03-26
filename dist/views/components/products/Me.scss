@@ -20,29 +20,29 @@
   width: 200px;
   height: 190px;
   cursor: pointer;
-  >.my-image{
+  .my-image{
     width: 80px;
     height: 80px;
   }
-  >.my-status{
+  .my-status{
     width: 105px;
     padding-left: 5px;
-    >&-level{
+    &-level{
       width: 18px;
       height: 18px;
       margin: 1px;
     }
-    >&-name{
+    &-name{
       width: 76px;
       height: 17px;
       padding: 3px 0 0 4px;
       font-weight: bold;
     }
-    >&-record{
+    &-record{
       width: 100%;
       margin-top: 3px;
     }
-    >&-ping{
+    &-ping{
       width: 100%;
       margin-top: 3px;
     }
@@ -54,41 +54,41 @@
       overflow: hidden;
       background-color: #951;
       &-text{
-        width: 190px;
+        width: 100px;
         margin-top: -15px;
       }
       .graph-bar{
         background-color: #FB4;
       }
     }
-    .my-level{
-      width: 190px;
-      margin: 13px 0;
-      font-size: 15px;
-      text-align: center;
-    }
-    .my-gauge{
-      width: 190px;
-      height: 30px;
-      border-radius: 10px;
-      margin: 3px 0;
-      overflow: hidden;
-      background-color: #333;
-      &-text{
-        width: 190px;
-        margin-top: -25px;
-      }
-      .graph-bar{
-        background-image: url('/media/images/gauge-score.png');
-      }
-    }
   }
   div{
     float: left;
   }
-  .bar-text{
-    color: #EEE;
-    text-align: center;
-    text-shadow: 0 1px 1px #141414;
+}
+.my-level{
+  width: 190px;
+  margin: 10px 0;
+  font-size: 15px;
+  text-align: center;
+}
+.my-gauge{
+  width: 190px;
+  height: 30px;
+  border-radius: 10px;
+  margin: 3px 0;
+  overflow: hidden;
+  background-color: #333;
+  &-text{
+    width: 190px;
+    margin-top: -25px;
   }
+  .graph-bar{
+    background-image: url('/media/images/gauge-score.png');
+  }
+}
+.bar-text{
+  color: #EEE;
+  text-align: center;
+  text-shadow: 0 1px 1px #141414;
 }

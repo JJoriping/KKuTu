@@ -16,15 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { RuleOption } from "back/utils/Rule";
-import { notice, replaceInsults, sendWhisper } from "./Chat";
+import { Rule, RuleOption } from "back/utils/Rule";
+import { forkChat, notice, replaceInsults, sendWhisper } from "./Chat";
 import { UIPhase } from "./enums/UIPhase";
 import { G, L } from "./Global";
 import { Iterator } from "back/utils/Utility";
-import { JTImage, LevelImage, RoomListBar, UserListBar } from "./PlayComponent";
+import { JTImage, LevelImage, RoomListBar, UserListBar, getOptionText } from "./PlayComponent";
 import { send } from "./GameClient";
 import { moremiImage } from "./Moremi";
 import { ItemGroup } from "back/utils/enums/ItemGroup";
+import { Sound, playSound, stopAllSounds } from "./Audio";
+import { prettyTime } from "./Format";
+import { Logger } from "back/utils/Logger";
 
 /**
  * 자주 쓰이는 JQuery 객체를 담은 객체.
@@ -38,8 +41,12 @@ export const $stage:Partial<{
   'loading':JQuery;
   'balloons':JQuery;
   'box':{
+    'me':JQuery;
     'chat':JQuery;
-    'user':JQuery;
+    'room':JQuery;
+    'room-list':JQuery;
+    'user-list':JQuery;
+    'shop':JQuery;
   };
   'dialog':{
     'chat-log':JQuery;
@@ -113,11 +120,21 @@ export const $data:Partial<{
    */
   'extensionPrefix':string;
   /**
+   * 자동 준비를 활성화한 상태에서 자동 준비 완료 여부.
+   *
+   * 방에 입장 후 최초 1번만 자동 준비가 활성화되어야 하기 때문에 필요하다.
+   */
+  'firstAutoReady':boolean;
+  /**
+   * 게임 중 상태 여부.
+   */
+  'gaming':boolean;
+  /**
    * 현재 접속한 계정의 식별자.
    */
   'id':string;
   /**
-   * 현재 방의 방장 여부.
+   * 현재 방의 방장 식별자.
    */
   'master':boolean;
   /**
@@ -145,6 +162,18 @@ export const $data:Partial<{
    */
   'place':number;
   /**
+   * 현재 방 참여자 식별자 배열의 문자열 표현.
+   */
+  'players':string;
+  /**
+   * 오늘 총 플레이 시간(㎳).
+   */
+  'playTime':number;
+  /**
+   * 연습 상태 여부.
+   */
+  'practicing':boolean;
+  /**
    * 프로필 창에 나타난 정보의 주체 식별자.
    */
   'profiledUser':string;
@@ -170,6 +199,20 @@ export const $data:Partial<{
    * 최근 이 클라이언트로 귓속말을 보낸 계정 식별자.
    */
   'recentFrom':string;
+  /**
+   * 연습 모드를 위해 방이 새로 만들어질 때, 기존 방의 정보를 담은 객체.
+   */
+  'recentRoomData':{
+    'room':KKuTu.Game.Room;
+    'place':number;
+    'master':boolean;
+    'players':string;
+    'title':string;
+    'mode':string;
+    'limit':number;
+    'round':number;
+    'time':number;
+  };
   /**
    * 게임 결과 화면 표시 여부.
    */
@@ -205,6 +248,10 @@ export const $data:Partial<{
    */
   'shop':Table<KKuTu.Game.Item>;
   /**
+   * 상점 표출 여부.
+   */
+  'shopping':boolean;
+  /**
    * 접속할 게임 로비 서버의 주소.
    */
   'url':string;
@@ -221,6 +268,7 @@ export const $data:Partial<{
 const SIZE_CHAT_WIDTH = 790;
 const SIZE_CHAT_HEIGHT = 190;
 const SIZE_INNER_CHAT_HEIGHT = 120;
+const SIZE_ROOM_HEIGHT = 360;
 const COMMAND_TABLE:Table<(chunk:string[])=>void> = {
   ㄱ: () => {
     if(!$data.room){
@@ -325,6 +373,106 @@ export function getRequiredScore(level:number):number{
       120 + Math.floor(level / 5) * 60 + Math.floor(level * level / 225) * 120 + Math.floor(level * level / 2025) * 180
     )
   );
+}
+/**
+ * `room` 응답을 처리한다.
+ *
+ * @param data `room` 응답 정보.
+ */
+export function processRoom({ modify, room, target, 'kick-vote': kickVote }:KKuTu.Packet.ResponseData<'room'>):void{
+  const isMyRoom = $data.place === room.id || $data.id === target;
+  let $target:KKuTu.Game.User = null;
+
+  if(isMyRoom){
+    $target = $data.users[target];
+    if(kickVote){
+      notice(L(
+        kickVote.Y >= kickVote.N ? "kicked" : "kick-denied",
+        kickVote.Y,
+        kickVote.N,
+        $target.profile.title || $target.profile.name
+      ));
+      if($target.id === $data.id){
+        alert(L('has-kicked'));
+      }
+    }
+    if(room.players.indexOf($data.id) === -1){
+      if($data.room?.gaming){
+        stopAllSounds();
+        $data.practicing = false;
+        $data.gaming = false;
+        $stage.box.room.height(SIZE_ROOM_HEIGHT);
+        playSound(Sound.BGM_LOBBY, true);
+      }
+      $data.users[$data.id].status = {
+        ready: false,
+        team : 0,
+        form : "J"
+      };
+      $stage.menu.spectate.removeClass("toggled");
+      $stage.menu.ready.removeClass("toggled");
+      $data.room = null;
+      $data.resulting = false;
+      $data.players = null;
+      $data.place = 0;
+      if(room.practice){
+        delete $data.users[0];
+        $data.room = $data.recentRoomData.room;
+        $data.place = $data.recentRoomData.place;
+        $data.master = $data.recentRoomData.master;
+        $data.players = $data.recentRoomData.players;
+      }
+    }else{
+      if(room.practice && !$data.practicing){
+        $data.practicing = true;
+        Object.assign($data.recentRoomData, {
+          room   : $data.room,
+          place  : $data.place,
+          master : $data.master,
+          players: $data.players
+        });
+      }
+      if($data.room){
+        $data.players = $data.room.players.toString();
+        Object.assign(
+          $data.recentRoomData, {
+            master : $data.master,
+            players: $data.players,
+            title  : $data.room.title,
+            mode   : getOptionText($data.room.rule as Rule, $data.room.options, true).join(','),
+            limit  : $data.room.limit,
+            round  : $data.room.round,
+            time   : $data.room.time
+          }
+        );
+      }
+      $data.room = room;
+      $data.place = $data.room.id;
+      $data.master = $data.room.master === $data.id;
+      // TODO if(data.spec && data.target == $data.id){ ... }
+    }
+    if(!modify && target === $data.id){
+      forkChat();
+    }
+  }
+  if(target && $data.users[target]){
+    // TODO
+  }
+  if(room.practice){
+    return;
+  }
+  if(room.players.length){
+    setRoom(room.id, room);
+    for(const k in room.readies){
+      if(!$data.users[k]){
+        continue;
+      }
+      $data.users[k].status.ready = room.readies[k].r;
+      $data.users[k].status.team = room.readies[k].t;
+    }
+  }else{
+    setRoom(room.id, null);
+  }
 }
 /**
  * 주어진 JQuery 객체에 모레미를 그린다.
@@ -554,6 +702,32 @@ export function updateLoading(html?:string):void{
   }
 }
 /**
+ * 내 정보 화면을 갱신한다.
+ */
+export function updateMe():void{
+  const GAUGE_WIDTH = 190;
+  const my = $data.users[$data.id];
+  const level = getLevel(my.data.score);
+  const prevScore = EXP_TABLE[level - 2] || 0;
+  const nextScore = EXP_TABLE[level - 1];
+  let totalWins = 0;
+
+  for(const k in my.data.record){
+    totalWins += my.data.record[k].wins;
+  }
+  renderMoremi($(".my-image"), my.equip);
+  $(".my-status-level").replaceWith(LevelImage(my.data.score).addClass("my-status-level"));
+  $(".my-status-name").html(my.profile.title || my.profile.name);
+  $(".my-status-record").html(L('total-wins', totalWins.toLocaleString()));
+  $(".my-status-ping").html(my.money.toLocaleString() + L('ping'));
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  $(".my-okg .graph-bar").width($data.playTime % 600000 / 6000 + "%");
+  $(".my-okg-text").html(prettyTime($data.playTime));
+  $(".my-level").html(L('LEVEL', level));
+  $(".my-gauge .graph-bar").width((my.data.score - prevScore) / (nextScore - prevScore) * GAUGE_WIDTH);
+  $(".my-gauge-text").html(`${my.data.score.toLocaleString()} / ${nextScore.toLocaleString()}`);
+}
+/**
  * UI 페이즈를 갱신한다.
  *
  * UI 페이즈는 `UIPhase`의 한 값으로 결정된다.
@@ -583,18 +757,58 @@ export function updateUI():void{
   for(const $v of Object.values($stage.box)){
     $v.hide();
   }
+  $stage.box.me.show();
   $stage.box.chat.show().width(SIZE_CHAT_WIDTH).height(SIZE_CHAT_HEIGHT);
   $stage.chat.height(SIZE_INNER_CHAT_HEIGHT);
 
+  Logger.log("phase").put($data.phase).out();
   switch($data.phase){
     case UIPhase.LOBBY:
-      $stage.box.user.show();
+      $data.firstAutoReady = true;
+      $stage.box['user-list'].show();
+      if($data.shopping){
+        $stage.box['room-list'].hide();
+        $stage.box['shop'].show();
+      }else{
+        $stage.box['room-list'].show();
+        $stage.box['shop'].hide();
+      }
       updateUserList();
       updateRoomList();
+      updateMe();
+      break;
+    case UIPhase.MASTER:
+    case UIPhase.NORMAL:
+      $(".team-chosen").removeClass("team-chosen");
+      if($data.users[$data.id].status.ready || $data.users[$data.id].status.form === "S"){
+        $stage.menu.ready.addClass("toggled");
+        $(".team-selector").addClass("team-unable");
+      }else{
+        $stage.menu.ready.removeClass("toggled");
+        $(".team-selector").removeClass("team-unable");
+        $(`#team-${$data.users[$data.id].status.team}`).addClass("team-chosen");
+        if($data.settings?.ar && $data.firstAutoReady){
+          $stage.menu.ready.addClass("toggled").trigger('click');
+          $data.firstAutoReady = false;
+        }
+      }
+      $data.shopping = false;
+      $stage.box.room.show().height(SIZE_ROOM_HEIGHT);
+      if($data.phase === UIPhase.MASTER && $stage.dialog['invite-list'].is(':visible')){
+        updateUserList();
+      }
+      updateRoom();
+      updateMe();
       break;
     default:
       break;
   }
+}
+/**
+ * 현재 방 UI를 갱신한다.
+ */
+export function updateRoom():void{
+  // TODO
 }
 /**
  * 접속자 목록을 갱신한다.
@@ -631,7 +845,6 @@ export function updateRoomList():void{
   for(const v of list){
     $stage.lobby['room-list'].append(RoomListBar(v));
   }
-  console.log(list.length);
   $stage.lobby['room-list-title'].html(L(
     'room-list-n',
     list.length
