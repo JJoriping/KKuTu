@@ -1,6 +1,7 @@
 {
-	"server-name": "My KKuTu Server",
+	"server-name": "행성끄투",
 	"web-num-cpu": 1,
 	"game-num-cpu": 1,
-	"game-num-inst": 1
+	"game-num-inst": 3
+
 }
