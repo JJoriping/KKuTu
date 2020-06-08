@@ -175,6 +175,8 @@ KKuTu.onClientMessage = function($c, msg){
 	if(!msg) return;
 	
 	switch(msg.type){
+		case 'drawingCanvas':
+			$c.drawingCanvas(msg)
 		case 'yell':
 			if(!msg.value) return;
 			if(!$c.admin) return;

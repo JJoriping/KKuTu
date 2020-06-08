@@ -42,6 +42,7 @@ block Subject
 	
 block JS
 	script(type='text/javascript', src='/js/in_game_kkutu.min.js')
+	script(type='text/javascript', src='/js/fabric.min.js')
 	script(src='https://www.google.com/recaptcha/api.js')
 	
 block CSS
@@ -369,6 +370,45 @@ block Middle
 					+GraphBar('jjo-round-time')
 			div.items
 			div.hints(style='display: none;')
+			div.tools(style='display: none;')
+				div(style="width: 100%")
+					div(style="float: left; width: 35%;")
+						span#themeis= L('themeis')
+					div(style="float: left; width: 65%;")
+						span#themeis-title
+				div(style="width: 100%")
+					div(style="float: left; width: 35%;")
+						span#drawing= L('wordis')
+					div(style="float: left; width: 65%;")
+						span#drawing-title
+				div(style="width: 100%")
+					label(for="drawing-line-width")= L('drawingLineWidth')
+					input#drawing-line-width(type="range", value="1", min="1", max="40")
+				.palette
+					div
+						button.button-color#color-red
+					div
+						button.button-color#color-orange
+					div
+						button.button-color#color-yellow
+					div
+						button.button-color#color-green
+					div
+						button.button-color#color-blue
+					div
+						button.button-color#color-indigo
+					div
+						button.button-color#color-violet
+					div
+						button.button-color#color-black
+					div
+						button.button-color#color-white
+				div(style="width: 100%")
+					div(style="float: left; width: 60%;")
+						label(for="drawing-color")= L('drawingColor')
+						input#drawing-color(type="color", value="#000000")
+					div(style="float: left; width: 40%;")
+						button#drawing-clear= L('drawingClear')
 			div.chain
 			div.rounds
 			div.history-holder

@@ -42,6 +42,7 @@ block Subject
 
 block JS
 	script(type='text/javascript', src='/js/in_game_kkutu.min.js')
+	script(type='text/javascript', src='/js/fabric.min.js')
 	script(src='https://www.google.com/recaptcha/api.js')
 
 block CSS
@@ -173,12 +174,14 @@ block Middle
 					option(value=12)= L('modeKSS')
 					option(value=4)= L('modeCSQ')
 					option(value=9)= L('modeHUN')
+					option(value=14)= L('modeKDG')
 				optgroup(label=L('mcEnglish'))
 					option(value=1)= L('modeESH')
 					option(value=0)= L('modeEKT')
 					option(value=7)= L('modeETY')
 					option(value=11)= L('modeEDA')
 					option(value=13)= L('modeESS')
+					option(value=15)= L('modeEDG')
 		div.dialog-bar(style='margin-top: -5px; height: 50px;')
 			h4
 			h4#game-mode-expl.dialog-bar-value(style='width: 100%; font-size: 11px;')
@@ -412,6 +415,45 @@ block Middle
 		div.game-head
 			div.items
 			div.hints(style='display: none;')
+			div.tools(style='display: none;')
+				div(style="width: 100%")
+					div(style="float: left; width: 35%;")
+						span#themeis= L('themeis')
+					div(style="float: left; width: 65%;")
+						span#themeis-title
+				div(style="width: 100%")
+					div(style="float: left; width: 35%;")
+						span#drawing= L('wordis')
+					div(style="float: left; width: 65%;")
+						span#drawing-title
+				div(style="width: 100%")
+					label(for="drawing-line-width")= L('drawingLineWidth')
+					input#drawing-line-width(type="range", value="1", min="1", max="40")
+				.palette
+					div
+						button.button-color#color-red
+					div
+						button.button-color#color-orange
+					div
+						button.button-color#color-yellow
+					div
+						button.button-color#color-green
+					div
+						button.button-color#color-blue
+					div
+						button.button-color#color-indigo
+					div
+						button.button-color#color-violet
+					div
+						button.button-color#color-black
+					div
+						button.button-color#color-white
+				div(style="width: 100%")
+					div(style="float: left; width: 60%;")
+						label(for="drawing-color")= L('drawingColor')
+						input#drawing-color(type="color", value="#000000")
+					div(style="float: left; width: 40%;")
+						button#drawing-clear= L('drawingClear')
 			div.b-left.cwcmd(style='display: none;')
 				div.cw-q-head
 				input#cw-q-input(placeholder=L('inputHere'), style='width: 313px; height: 20px; font-size: 15px;')

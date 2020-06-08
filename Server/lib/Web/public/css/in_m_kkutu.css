@@ -353,6 +353,87 @@ iframe{
 		width: 100%;
 		height: 30px;
 	}
+	.tools {
+		margin: 20px 5em 0px 5em;
+		width: 225px;
+		display: none;
+		background-color: #eeeeee;
+		border: 1px solid #000;
+		border-radius: 10px;
+		padding: 5px;
+		box-shadow: 0px 1px 1px #141414;
+	}
+	#drawing {
+		font-size: 14px;
+		width: 40%;
+		margin-bottom: 10px;
+		display: block;
+	}
+	#drawing-title {
+		font-size: 14px;
+		width: 60%;
+		margin-bottom: 10px;
+		display: block;
+		overflow-x: scroll;
+		height: 34px;
+		white-space: nowrap;
+	}
+	#themeis {
+		font-size: 14px;
+		width: 40%;
+		margin-bottom: 10px;
+		display: block;
+	}
+	#themeis-title {
+		font-size: 14px;
+		width: 60%;
+		margin-bottom: 10px;
+		display: block;
+	}
+	.button-color {
+		border: none;
+		width: 50px;
+		height: 30px;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+	.palette {
+		width: 100%;
+		background-color: #DEB887;
+		border: 1px solid #000;
+		border-radius: 10px;
+		box-shadow: 0px 1px 1px #141414;
+		padding: 5px 5px 5px 5px;
+		margin-top: 0x;
+		margin-bottom: 10px;
+	}
+	.button-color#color-red {
+		background: #DEB887 url('/img/kkutu/paint_red.png') no-repeat center;
+	}
+	.button-color#color-orange {
+		background: #DEB887 url('/img/kkutu/paint_orange.png') no-repeat center;
+	}
+	.button-color#color-yellow {
+		background: #DEB887 url('/img/kkutu/paint_yellow.png') no-repeat center;
+	}
+	.button-color#color-green {
+		background: #DEB887 url('/img/kkutu/paint_green.png') no-repeat center;
+	}
+	.button-color#color-blue {
+		background: #DEB887 url('/img/kkutu/paint_blue.png') no-repeat center;
+	}
+	.button-color#color-indigo {
+		background: #DEB887 url('/img/kkutu/paint_indigo.png') no-repeat center;
+	}
+	.button-color#color-violet {
+		background: #DEB887 url('/img/kkutu/paint_violet.png') no-repeat center;
+	}
+	.button-color#color-black {
+		background: #DEB887 url('/img/kkutu/paint_black.png') no-repeat center;
+	}
+	.button-color#color-white {
+		background: #DEB887 url('/img/kkutu/paint_white.png') no-repeat center;
+	}
 		.hint-item{
 			width: calc(50% - 4px);
 			padding: 2px;
@@ -406,6 +487,10 @@ iframe{
 		}
 	.jjoriping{ width: 100%; }
 	.cw.jjoriping{ margin-top: -10px; }
+	.dg.jjoriping{
+		margin-left: 1.5em;
+		width: 325px;
+	 }
 		.jjoObj{ position: relative; }
 		.jjoEyeL{ top: 11px; left: 0px; }
 		.jjoNose{ top: 9px; left: calc(50% - 70px); }
@@ -509,7 +594,12 @@ iframe{
 		text-align: center;
 		text-shadow: 0px 1px 1px #141414;
 	}
-	.cw.rounds{ margin-top: -380px; }
+	.cw.rounds{ margin-top: -415px; }
+	.dg.rounds{ margin-left: 0em !important; }
+	.painter.rounds{
+		margin-left: 0em !important;
+		margin-top: -55em !important;
+	}
 		.rounds label{ margin: 0px 3px; }
 		.rounds-current{ color: #FFFF3B; font-size: 16px; }
 	.history-holder{
@@ -596,6 +686,10 @@ iframe{
 		.game-user-current{
 			animation: CurrentBlink 2s linear infinite;
 			background-color: #DDFFDD;
+		}
+		.game-user-drawing{
+			animation: CurrentBlink 2s linear infinite;
+			background-color: #9fd1f1;
 		}
 		.game-user-bomb{ border-color: #FF6666; }
 			.game-user-image{ margin: 3px 5px; width: 100px; height: 100px; }
