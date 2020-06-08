@@ -284,6 +284,9 @@ exports.Client = function(socket, profile, sid){
 	});
 	socket.on('message', function(msg){
 		var data, room = ROOM[my.place];
+		if(!my) return;
+		if(!channel) return;
+		if(!msg) return;
 		
 		JLog.log(`Chan @${channel} Msg #${my.id}: ${msg}`);
 		try{ data = JSON.parse(msg); }catch(e){ data = { error: 400 }; }
