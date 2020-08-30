@@ -383,6 +383,7 @@ function joinNewUser($c) {
 		users: KKuTu.getUserList(),
 		rooms: KKuTu.getRoomList(),
 		friends: $c.friends,
+		nickname: $c.nickname,
 		admin: $c.admin,
 		test: global.test,
 		caj: $c._checkAjae ? true : false
