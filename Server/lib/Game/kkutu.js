@@ -174,6 +174,7 @@ exports.Data = function(data){
 	this.playTime = data.playTime || 0;
 	this.connectDate = data.connectDate || 0;
 	this.record = {};
+	this.nickname = data.nickname || null;
 	for(i in Const.GAME_TYPE){
 		this.record[j = Const.GAME_TYPE[i]] = data.record ? (data.record[Const.GAME_TYPE[i]] || [0, 0, 0, 0]) : [0, 0, 0, 0];
 		if(!this.record[j][3]) this.record[j][3] = 0;
@@ -243,6 +244,7 @@ exports.Client = function(socket, profile, sid){
 	}
 	my.socket = socket;
 	my.place = 0;
+	my.nickname = null
 	my.team = 0;
 	my.ready = false;
 	my.game = {};
@@ -323,6 +325,7 @@ exports.Client = function(socket, profile, sid){
 			o.profile = my.profile;
 			o.place = my.place;
 			o.data = my.data;
+			o.nickname = my.nickname;
 			o.money = my.money;
 			o.equip = my.equip;
 			o.exordial = my.exordial;
@@ -443,6 +446,8 @@ exports.Client = function(socket, profile, sid){
 			my.box = $user.box || {};
 			my.data = new exports.Data($user.kkutu);
 			my.money = Number($user.money);
+			my.nickname = $user.nickname || undefined;
+			if(my.nickname) my.profile.title = my.nickname;
 			my.friends = $user.friends || {};
 			if(first) my.flush();
 			else{
