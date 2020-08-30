@@ -253,7 +253,7 @@
 		"changeServer": "서버 이동",
 		"friend": "친구",
 		"myNickname": "나의 닉네임",
-		"myNicknameX": "20글자 이내 특수문자 및 공백 금지",
+		"myNicknameX": "10글자 이내 특수문자 및 공백 금지",
 		"fstat_on": "님이 접속했습니다.",
 		"fstat_off": "님이 접속을 종료했습니다.",
 		
