@@ -786,8 +786,16 @@ $(document).ready(function(){
 		});
 	});
 	$stage.dialog.dressOK.on('click', function(e){
+		if($("#dress-nickname").val() == $data.nickname) return //alert("닉네임에 변경 사항이 없습니다.");
+		// TODO: 운영 정책에 위배되는 닉네임 걸러내기. (닉네임 필터링 구현)
 		$(e.currentTarget).attr('disabled', true);
-		$.post("/exordial", { data: $("#dress-exordial").val() }, function(res){
+		$.post("/nickname", { data: badWords($("#dress-nickname").val()) }, function(res){
+			$stage.dialog.dressOK.attr('disabled', false);
+			if(res.error) return fail(res.error);
+
+			$stage.dialog.dress.hide();
+		})
+		$.post("/exordial", { data: badWords($("#dress-exordial").val()) }, function(res){
 			$stage.dialog.dressOK.attr('disabled', false);
 			if(res.error) return fail(res.error);
 			
