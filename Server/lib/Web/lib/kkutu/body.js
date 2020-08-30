@@ -233,6 +233,7 @@ function onMessage(data){
 			$data.place = 0;
 			$data.friends = data.friends;
 			$data._friends = {};
+		        $data.nickname = data.nickname;
 			$data._playTime = data.playTime;
 			$data._okg = data.okg;
 			$data._gaming = false;
