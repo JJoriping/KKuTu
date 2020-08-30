@@ -229,6 +229,8 @@
 		"Chat": "FA{comment}채팅",
 		"Room": "방",
 		"Game": "게임",
+		"myNickname": "나의 닉네임",
+		"myNicknameX": "20글자 이내 특수문자 및 공백 금지",
 		"Me": "FA{user}내 정보",
 		"globalWin": "통산",
 		"whisper": "귓속말",
