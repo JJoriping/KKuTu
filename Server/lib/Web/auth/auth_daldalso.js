@@ -1,7 +1,7 @@
 const config = require('../../sub/auth.json');
 
 module.exports.config = {
-    strategy: require('passport-daldalso'),
+    strategy: require('passport-daldalso').Strategy,
     color: '#0F132F',
     fontColor: '#FFFFFF',
     vendor: 'daldalso',
