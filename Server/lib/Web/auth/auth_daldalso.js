@@ -18,6 +18,12 @@ module.exports.strategy = (strategyProcess, MainDB, Ajae) => {
     return (req, accessToken, refreshToken, profile, done) => {
         const $p = {};
 		
-		// this part will be public later
+		$p.authType = "daldalso";
+		$p.id = profile.id;
+		$p.name = profile.displayName;
+		$p.title = profile.displayName;
+		$p.image = profile.image == '' ? '/img/auth/def/daldalso.png' : profile.image;
+		$p.exordial = profile.exordial;
+		strategyProcess(req, accessToken, MainDB, $p, done);
     }
 }
