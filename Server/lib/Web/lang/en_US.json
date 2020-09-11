@@ -326,6 +326,8 @@
 		"explNo2": "두 글자 단어의 사용을 막습니다.",
 		"optUnlimited": "무한정",
 		"explUnlimited": "그림퀴즈에서 나오는 단어의 길이를 무한정으로 조절합니다.",
+		"optShort": "짧음",
+		"explShort": "그림퀴즈에서 나오는 단어의 길이를 최대 4글자로 조절합니다.",
 		"hidden": "(미공개)",
 		"pickInjeong": "주제 선택",
 		"explInjPick": "게임에서 사용할 주제를 선택하세요.",
