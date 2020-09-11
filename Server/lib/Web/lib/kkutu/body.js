@@ -298,6 +298,10 @@ function onMessage(data){
 				drawCanvas(data);
 			}
 			break;
+		case 'diffNotValid':
+			if ($stage.game.canvas) {
+				diffNotValid(data);
+			}
 		case 'roomStuck':
 			rws.close();
 			break;
@@ -2727,6 +2731,9 @@ function chat(profile, msg, from, timestamp){
 }
 function drawCanvas (data) {
 	route('drawCanvas', data);
+}
+function diffNotValid(data) {
+	route('diffNotValid', data);
 }
 function notice(msg, head){
 	var time = new Date();

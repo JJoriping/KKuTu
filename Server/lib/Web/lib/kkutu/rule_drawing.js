@@ -27,6 +27,7 @@ $lib.Drawing.roundReady = function (data, spec) {
   $data._relay = false
   $data._roundTime = $data.room.time * 1000
   $data._fastTime = 10000
+  $data._fullImageString = ""
   $stage.game.items.hide()
   $stage.game.hints.show()
   $stage.game.cwcmd.show().css('opacity', 0)
@@ -198,8 +199,14 @@ $lib.Drawing.drawDisplay = function () {
 
   if ($data._isPainter) {
     canvas.on('mouse:up', function (e) {
+      // $data._fullImageString -> old canvas data
       var canvasStr = JSON.stringify(canvas)
-      send('drawingCanvas', {data: canvasStr}, false)
+      var diffRes= diff.patch_make($data._fullImageString, canvasStr)
+      diffRes = diff.patch_toText(diffRes)
+
+      // { type: "drawingCanvas", diffed: Boolean, data: String }
+      send('drawingCanvas', {diffed: true, data: diffRes}, false)
+      $data._fullImageString = canvasStr
     })
   }
   canvas.renderAll()
@@ -229,8 +236,31 @@ $lib.Drawing.turnGoing = function () {
   }
 }
 $lib.Drawing.drawCanvas = function (msg) {
+  // { type: "drawCanvas", diffed: Boolean, data: String }
   if (!$data._isPainter) {
+    var data = ""
+    if(diffed) {
+      var diff = differ.patch_fromText(msg.data)
+			var diffResult = differ.patch_apply(diff, $data._fullImageString)
+
+			if(diffResult[1]) {
+				data = diffResult[0]
+			} else {
+				send('canvasNotValid', {}, false)
+			}
+    } else {
+      data = msg.data
+    }
+
     $stage.game.canvas.clear()
-    $stage.game.canvas.loadFromJSON(msg.data, $stage.game.canvas.renderAll.bind($stage.game.canvas))
+    $stage.game.canvas.loadFromJSON(data, $stage.game.canvas.renderAll.bind($stage.game.canvas))
+    $data._fullImageString = data
+  }
+}
+
+$lib.Drawing.diffNotValid = function (msg) {
+  // msg -> {}
+  if ($data._isPainter) {
+    send('drawingCanvas', {diffed: false, data: $data._fullImageString}, false)
   }
 }

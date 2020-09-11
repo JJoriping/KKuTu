@@ -1792,6 +1792,7 @@ $lib.Drawing.roundReady = function (data, spec) {
   $data._relay = false
   $data._roundTime = $data.room.time * 1000
   $data._fastTime = 10000
+  $data._fullImageString = ""
   $stage.game.items.hide()
   $stage.game.hints.show()
   $stage.game.cwcmd.show().css('opacity', 0)
@@ -1921,6 +1922,7 @@ $lib.Drawing.turnEnd = function (id, data) {
   if (data.giveup) {
     $uc.addClass('game-user-bomb')
     $data._relay = false
+    $data._fullImageString = ""
   } else if (data.answer) {
     $stage.game.here.hide()
     $stage.game.display.html($('<label>').css('color', '#FFFF44').html(data.answer))
@@ -1963,8 +1965,14 @@ $lib.Drawing.drawDisplay = function () {
 
   if ($data._isPainter) {
     canvas.on('mouse:up', function (e) {
+      // $data._fullImageString -> old canvas data
       var canvasStr = JSON.stringify(canvas)
-      send('drawingCanvas', {data: canvasStr}, false)
+      var diffRes= diff.patch_make($data._fullImageString, canvasStr)
+      diffRes = diff.patch_toText(diffRes)
+
+      // { type: "drawingCanvas", diffed: Boolean, data: String }
+      send('drawingCanvas', {diffed: true, data: diffRes}, false)
+      $data._fullImageString = canvasStr
     })
   }
   canvas.renderAll()
@@ -1994,12 +2002,34 @@ $lib.Drawing.turnGoing = function () {
   }
 }
 $lib.Drawing.drawCanvas = function (msg) {
+  // { type: "drawCanvas", diffed: Boolean, data: String }
   if (!$data._isPainter) {
+    var data = ""
+    if(diffed) {
+      var diff = differ.patch_fromText(msg.data)
+			var diffResult = differ.patch_apply(diff, $data._fullImageString)
+
+			if(diffResult[1]) {
+				data = diffResult[0]
+			} else {
+				send('canvasNotValid', {}, false)
+			}
+    } else {
+      data = msg.data
+    }
+
     $stage.game.canvas.clear()
-    $stage.game.canvas.loadFromJSON(msg.data, $stage.game.canvas.renderAll.bind($stage.game.canvas))
+    $stage.game.canvas.loadFromJSON(data, $stage.game.canvas.renderAll.bind($stage.game.canvas))
+    $data._fullImageString = data
   }
 }
 
+$lib.Drawing.diffNotValid = function (msg) {
+  // msg -> {}
+  if ($data._isPainter) {
+    send('drawingCanvas', {diffed: false, data: $data._fullImageString}, false)
+  }
+}
 /**
  * Rule the words! KKuTu Online
  * Copyright (C) 2017 JJoriping(op@jjo.kr)
@@ -2411,6 +2441,10 @@ function onMessage(data){
 				drawCanvas(data);
 			}
 			break;
+		case 'diffNotValid':
+			if ($stage.game.canvas) {
+				diffNotValid(data);
+			}
 		case 'roomStuck':
 			rws.close();
 			break;
@@ -4840,6 +4874,9 @@ function chat(profile, msg, from, timestamp){
 }
 function drawCanvas (data) {
 	route('drawCanvas', data);
+}
+function diffNotValid(data) {
+	route('diffNotValid', data);
 }
 function notice(msg, head){
 	var time = new Date();

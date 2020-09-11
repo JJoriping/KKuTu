@@ -16,12 +16,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * 볕뉘 수정사항:
- * var 에서 let/const 로 변수 변경
- * kkutu-lib 모듈에 호환되도록 수정
- */
-
 const Const = require('../../const');
 const Lizard = require('../../sub/lizard');
 
@@ -60,6 +54,7 @@ exports.roundReady = function(){
 	my.game.giveup = [];
 	my.game.round++;
 	my.game.roundTime = my.time * 1000;
+	my.game.fullImageString = ""
 	if(my.game.round <= my.round){
 		my.game.theme = my.opts.injpick[Math.floor(Math.random() * ijl)];
 		getAnswer.call(my, my.game.theme).then(function($ans){
@@ -176,6 +171,7 @@ exports.submit = function(client, text){
 		clearTimeout(my.game.hintTimer3);
 		clearTimeout(my.game.hintTimer4);
 		clearTimeout(my.game.qTimer);
+		my.game.fullImageString = ""
 		my.turnEnd();
 	}
 };

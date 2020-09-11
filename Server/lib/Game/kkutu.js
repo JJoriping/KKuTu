@@ -21,6 +21,7 @@ var Cluster = require("cluster");
 var Const = require('../const');
 var Lizard = require('../sub/lizard');
 var JLog = require('../sub/jjlog');
+const DiffMatchPatch = require("diff-match-patch")
 // 망할 셧다운제 var Ajae = require("../sub/ajae");
 var DB;
 var SHOP;
@@ -36,6 +37,8 @@ const NUM_SLAVES = 4;
 const GUEST_IMAGE = "/img/kkutu/guest.png";
 const MAX_OKG = 18;
 const PER_OKG = 600000;
+
+const differ = new DiffMatchPatch()
 
 exports.NIGHT = false;
 exports.init = function(_DB, _DIC, _ROOM, _GUEST_PERMISSION, _CHAN){
@@ -284,12 +287,20 @@ exports.Client = function(socket, profile, sid){
 	});
 	socket.on('message', function(msg){
 		var data, room = ROOM[my.place];
-		
-		JLog.log(`Chan @${channel} Msg #${my.id}: ${(JSON.parse(msg).type === 'drawingCanvas' ? 'is drawing data' : msg)}`);
-		try{ data = JSON.parse(msg); }catch(e){ data = { error: 400 }; }
-		if(Cluster.isWorker) process.send({ type: "tail-report", id: my.id, chan: channel, place: my.place, msg: data.error ? msg : data });
-		
-		exports.onClientMessage(my, data);
+
+		var logMessage = ""
+
+		try {
+			logMessage = JSON.parse(msg).type === 'drawingCanvas' ? 'is drawing data' : msg
+		} catch(error) {
+			logMessage = msg
+		} finally {
+			JLog.log(`Chan @${channel} Msg #${my.id}: ${msg}`);
+			try{ data = JSON.parse(msg); }catch(e){ data = { error: 400 }; }
+			if(Cluster.isWorker) process.send({ type: "tail-report", id: my.id, chan: channel, place: my.place, msg: data.error ? msg : data });
+			
+			exports.onClientMessage(my, data);
+		}
 	});
 	/* 망할 셧다운제
 	my.confirmAjae = function(input){
@@ -313,6 +324,15 @@ exports.Client = function(socket, profile, sid){
 		
 		$room.drawingCanvas(msg);
 	};
+	my.canvasNotValid = function(msg) {
+		let $room = ROOM[my.place];
+		
+		if(!$room) return;
+		if(!$room.gaming) return;
+		if($room.rule.rule != 'Drawing') return;
+
+		my.send('drawCanvas', { diffed: false, data: $room.fullImageString })
+	}
 	my.getData = function(gaming){
 		var o = {
 			id: my.id,
@@ -1051,7 +1071,26 @@ exports.Room = function(room, channel){
 		return false;
 	};
 	my.drawingCanvas = function(msg) {
-		my.byMaster('drawCanvas', { data: msg.data }, true);
+		if(my.game.painter == my.id) { // verify this data sended by painter
+			let diffed = true
+
+			// { type: "drawingCanvas", diffed: Boolean, data: String }
+			if (msg.diffed) {
+				diff = differ.patch_fromText(msg.data)
+				const diffResult = differ.patch_apply(diff, my.game.fullImageString)
+
+				if(diffResult[1]) {
+					my.game.fullImageString = diffResult[0]
+				} else {
+					my.byMaster('diffNotValid', {}, true)
+				}
+			} else {
+				diffResult = msg.data
+				diffed = false
+			}
+
+			my.byMaster('drawCanvas', { diffed, data: msg.data }, true);
+		}
 	};
 	my.ready = function(){
 		var i, all = true;
