@@ -288,19 +288,12 @@ exports.Client = function(socket, profile, sid){
 	socket.on('message', function(msg){
 		var data, room = ROOM[my.place];
 
-		var logMessage = ""
+		try{ data = JSON.parse(msg); }catch(e){ data = { error: 400 }; }
 
-		try {
-			logMessage = JSON.parse(msg).type === 'drawingCanvas' ? 'is drawing data' : msg
-		} catch(error) {
-			logMessage = msg
-		} finally {
-			JLog.log(`Chan @${channel} Msg #${my.id}: ${msg}`);
-			try{ data = JSON.parse(msg); }catch(e){ data = { error: 400 }; }
-			if(Cluster.isWorker) process.send({ type: "tail-report", id: my.id, chan: channel, place: my.place, msg: data.error ? msg : data });
-			
-			exports.onClientMessage(my, data);
-		}
+		JLog.log(`Chan @${channel} Msg #${my.id}: ${data.type == 'drawingCanvas' ? JSON.stringify({type: data.type, diffed: data.diffed}) : msg}`);
+		if(Cluster.isWorker) process.send({ type: "tail-report", id: my.id, chan: channel, place: my.place, msg: data.error ? msg : data });
+		
+		exports.onClientMessage(my, data);
 	});
 	/* 망할 셧다운제
 	my.confirmAjae = function(input){
@@ -322,7 +315,7 @@ exports.Client = function(socket, profile, sid){
 		if(!$room.gaming) return;
 		if($room.rule.rule != 'Drawing') return;
 		
-		$room.drawingCanvas(msg);
+		$room.drawingCanvas(msg, my.id);
 	};
 	my.canvasNotValid = function(msg) {
 		let $room = ROOM[my.place];
@@ -1070,8 +1063,8 @@ exports.Room = function(room, channel){
 		}
 		return false;
 	};
-	my.drawingCanvas = function(msg) {
-		if(my.game.painter == my.id) { // verify this data sended by painter
+	my.drawingCanvas = function(msg, userid) { //msg -> Message, userid -> sender ID
+		if(my.game.painter == userid) { // verify this data sended by painter
 			let diffed = true
 
 			// { type: "drawingCanvas", diffed: Boolean, data: String }

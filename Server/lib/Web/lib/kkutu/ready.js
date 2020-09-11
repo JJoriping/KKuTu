@@ -17,6 +17,8 @@
  */
 
 $(document).ready(function(){
+	window.differ = new diff_match_patch()
+
 	var i;
 	
 	$data.PUBLIC = $("#PUBLIC").html() == "true";

@@ -201,8 +201,8 @@ $lib.Drawing.drawDisplay = function () {
     canvas.on('mouse:up', function (e) {
       // $data._fullImageString -> old canvas data
       var canvasStr = JSON.stringify(canvas)
-      var diffRes= diff.patch_make($data._fullImageString, canvasStr)
-      diffRes = diff.patch_toText(diffRes)
+      var diffRes= window.differ.patch_make($data._fullImageString, canvasStr)
+      diffRes = window.differ.patch_toText(diffRes)
 
       // { type: "drawingCanvas", diffed: Boolean, data: String }
       send('drawingCanvas', {diffed: true, data: diffRes}, false)
@@ -239,9 +239,9 @@ $lib.Drawing.drawCanvas = function (msg) {
   // { type: "drawCanvas", diffed: Boolean, data: String }
   if (!$data._isPainter) {
     var data = ""
-    if(diffed) {
-      var diff = differ.patch_fromText(msg.data)
-			var diffResult = differ.patch_apply(diff, $data._fullImageString)
+    if(msg.diffed) {
+      var diff = window.differ.patch_fromText(msg.data)
+			var diffResult = window.differ.patch_apply(diff, $data._fullImageString)
 
 			if(diffResult[1]) {
 				data = diffResult[0]

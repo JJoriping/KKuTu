@@ -72,6 +72,8 @@ var _setTimeout = setTimeout;
  */
 
 $(document).ready(function(){
+	window.differ = new diff_match_patch()
+
 	var i;
 	
 	$data.PUBLIC = $("#PUBLIC").html() == "true";
@@ -1922,7 +1924,6 @@ $lib.Drawing.turnEnd = function (id, data) {
   if (data.giveup) {
     $uc.addClass('game-user-bomb')
     $data._relay = false
-    $data._fullImageString = ""
   } else if (data.answer) {
     $stage.game.here.hide()
     $stage.game.display.html($('<label>').css('color', '#FFFF44').html(data.answer))
@@ -1967,8 +1968,8 @@ $lib.Drawing.drawDisplay = function () {
     canvas.on('mouse:up', function (e) {
       // $data._fullImageString -> old canvas data
       var canvasStr = JSON.stringify(canvas)
-      var diffRes= diff.patch_make($data._fullImageString, canvasStr)
-      diffRes = diff.patch_toText(diffRes)
+      var diffRes= window.differ.patch_make($data._fullImageString, canvasStr)
+      diffRes = window.differ.patch_toText(diffRes)
 
       // { type: "drawingCanvas", diffed: Boolean, data: String }
       send('drawingCanvas', {diffed: true, data: diffRes}, false)
@@ -2005,9 +2006,9 @@ $lib.Drawing.drawCanvas = function (msg) {
   // { type: "drawCanvas", diffed: Boolean, data: String }
   if (!$data._isPainter) {
     var data = ""
-    if(diffed) {
-      var diff = differ.patch_fromText(msg.data)
-			var diffResult = differ.patch_apply(diff, $data._fullImageString)
+    if(msg.diffed) {
+      var diff = window.differ.patch_fromText(msg.data)
+			var diffResult = window.differ.patch_apply(diff, $data._fullImageString)
 
 			if(diffResult[1]) {
 				data = diffResult[0]
