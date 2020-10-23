@@ -19,7 +19,7 @@ module.exports.strategy = (strategyProcess, MainDB, Ajae) => {
 		
 		$p.authType = "daldalso";
 		$p.title = $p.name;
-		$p.image = $p.profile.image
+		$p.image = $p.profile.image;
 		$p.exordial = $p.profile.text;
 		delete $p.profile;
 		strategyProcess(req, accessToken, MainDB, $p, done);
