@@ -15,13 +15,16 @@ module.exports.strategyConfig = {
 }
 
 module.exports.strategy = (strategyProcess, MainDB, Ajae) => {
-    return (req, accessToken, refreshToken, $p, done) => {
+    return (req, accessToken, refreshToken, o, done) => {
+		const $p = {};
 		
 		$p.authType = "daldalso";
-		$p.title = $p.name;
-		$p.image = $p.profile.image;
-		$p.exordial = $p.profile.text;
-		delete $p.profile;
+		$p.id = o.id;
+		$p.name = o.name;
+		$p.title = o.name;
+		$p.image = o.profile.image;
+		$p.exordial = o.profile.text;
+		
 		strategyProcess(req, accessToken, MainDB, $p, done);
     }
 }
