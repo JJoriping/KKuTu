@@ -21,7 +21,7 @@
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-uglify": "^2.1.0",
     "passport": "^0.4.0",
-	"passport-daldalso": "^1.0.6",
+	"passport-daldalso": "^1.0.7",
     "passport-facebook": "^2.1.1",
     "passport-google-oauth2": "^0.1.6",
     "passport-kakao": "0.0.5",
