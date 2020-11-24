@@ -16,17 +16,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@font-face {
-	font-family: 'NBGothic';
-	src: url('../media/NanumBarunGothicLight.woff') format('woff');
-}
+ @import url(https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css);
 
 body{
 	color: #EEEEEE;
 	padding: 0px;
 	margin: 0px;
 	min-width: 480px;
-	font-family: NBGothic, 돋움;
+	font-family: 'NanumSquare', sans-serif;
 }
 a{
 	color: inherit;
@@ -128,7 +125,7 @@ span{
 }
 	.autocomp-item{ margin: 1px 0px; }
 	.autocomp-item:hover, .autocomp-select{ color: #FFFFFF; background-color: rgba(50, 50, 50, 0.8); }
-#account{ float: right; margin: 1px; font-size: 11px; color: #444444; }
+#account{ float: right; margin: 8px; font-size: 16px; color: #ffffff; margin-right: 200px; }
 #account-setting{
 	float: left;
 	padding-top: 8px;
@@ -268,12 +265,10 @@ span{
 .auto-item:hover{ background-color: #333333; }
 .auto-selected{ color: #EEEE44; background-color: #3B3B3B; }
 
-#Top{
+#Top {
 	position: fixed;
 	width: 100%;
-	height: 30px;
-	box-shadow: 0px 2px 2px #111111;
-	background-image: url('/img/topbg.png');
+	height: 50px;
 	z-index: 5;
 }
 #Middle{
@@ -281,19 +276,34 @@ span{
 	margin-top: 50px;
 	width: 1010px;
 }
-#Bottom{
+#Bottom {
 	float: left;
 	width: 1000px;
 	color: #444444;
-	font-size: 11px;
+	font-size: 12px;
 	text-align: center;
 }
-.bottom-legal{
-	margin-top: 10px;
-	color: #CCCCCC;
+.bottom-legal {
+	background: #2F4858;
+	width: 100%;
+	height: 50px;
+	-webkit-box-pack: center;
+	justify-content: center;
+	display: flex;
+	float: left;
+	color: #b1b1b1;
+	padding: 12px 0px;
+	background-color: rgba(107, 14, 68, 0.975);
+	bottom: 0;
+	position: absolute;
 }
-	.bottom-legal a{ padding: 0px 5px; }
-.bottom-contact{
+.bottom-legal a {
+	padding: 0px 5px;
+}
+.bottom-legal a {
+	padding: 0px 5px;
+}
+.bottom-contact {
 	color: #777777;
 	font-weight: bold;
 }

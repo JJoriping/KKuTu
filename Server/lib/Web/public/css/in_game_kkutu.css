@@ -55,7 +55,7 @@ equ{
 	z-index: 5;
 }
 #Top{
-	background-color: #7CC4F8;
+	background-color: rgba(83, 11, 53, 0.975);
 	background-image: none;
 }
 #Top .menu-btn{

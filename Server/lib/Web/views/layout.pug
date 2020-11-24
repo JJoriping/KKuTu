@@ -62,13 +62,15 @@ html
 			block Jungle
 		div#Middle
 			block Middle
-		div#Bottom
-			block Bottom
+		div#Bottom(style='width: 100%;')
+			+separator(70)
 			div.bottom-legal
-				if locals.as_pc
-					a(href='?')= L('AS_MOBILE')
-				br
-				a.bottom-contact(href='http://blog.jjo.kr/', target='_blank')= L('CREATOR')
-				a.bottom-contact(href='mailto:op@jjo.kr', target='_blank') Contact op@jjo.kr
-			div.bottom-legal!= L('GPL')
-			+separator(10)
+				div.left(style='text-align: left;')
+					div.l1(style='color: #b1b1b1; letter-spacing: -1px;') 몬스터끄투 / 개발, 서비스: Acuesoft / 대표: 김현준, 김규산, 황하늘
+					div.l2(style='color: #b1b1b1; letter-spacing: -1px;') 전화번호: 010-4343-5216 / 이메일: help@kkutu.monster / 호스트서버소재지: Acuesoft
+					div.l4(style='color: #b1b1b1; letter-spacing: -1px;') © 몬스터끄투 / 어인정 © 끄투몬스터 /<a href='http://wordnet.princeton.edu' target='_blank'>WordNet</a>3.0 © Princeton University / Korean © 국립국어원
+				div.right(style='text-align: right;')
+					div.c1(style='color: #b1b1b1; letter-spacing: -1px;') <a target='_blank' href='#'>공식카페</a> · <a target='_blank' href='#'>디스코드</a> / <a target='_blank' href='#'>서비스 이용약관</a> · <a target='_blank' href='#'>개인정보처리방침</a>
+					div.c2(style='color: #b1b1b1; letter-spacing: -1px;') 본 제품은 어떠한 형태의 보증도 제공되지 않으며 배포 규정을 만족시키는 조건 하에 자유롭게 재배포할 수 있습니다.
+					div.c3(style='color: #b1b1b1; letter-spacing: -1px;') 이에 대한 자세한 사항은 다음 레포지토리에서 확인하십시오: <a target='_blank' href='https://github.com/khjkr/KKuTu/tree/production'>https://github.com/khjkr/KKuTu</a>
+			block Bottom

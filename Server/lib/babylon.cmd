@@ -9,7 +9,7 @@ IF EXIST "%dp0%\node.exe" (
   SET PATHEXT=%PATHEXT:;.JS;=;%
 )
 
-"%_prog%"  "%dp0%\node_modules\grunt\bin\grunt" %*
+"%_prog%"  "%dp0%\node_modules\babylon\bin\babylon.js" %*
 ENDLOCAL
 EXIT /b %errorlevel%
 :find_dp0

@@ -41,7 +41,7 @@ if(Cluster.isMaster){
 	
 	for(i=0; i<CPU; i++){
 		chan = i + 1;
-		channels[chan] = Cluster.fork({ SERVER_NO_FORK: true, KKUTU_PORT: Const.MAIN_PORTS[SID] + 416 + (chan - 1), CHANNEL: chan });
+		channels[chan] = Cluster.fork({ SERVER_NO_FORK: true, KKUTU_PORT: Const.MAIN_PORTS[SID] + 416 + i, CHANNEL: chan });
 	}
 	Cluster.on('exit', function(w){
 		for(i in channels){
