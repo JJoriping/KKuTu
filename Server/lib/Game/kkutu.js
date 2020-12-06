@@ -236,7 +236,7 @@ exports.Client = function(socket, profile, sid){
 		my.guest = true;
 		my.isAjae = false;
 		my.profile = {
-			id: sid,
+			id: "guest__" + sid,
 			title: getGuestName(sid),
 			image: GUEST_IMAGE
 		};
