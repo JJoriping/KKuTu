@@ -4,7 +4,6 @@
 	"GAME_SERVER_HOST": "127.0.0.2",
 	"KKUTUHOT_PATH": "/kkutu/data/kkutuhot.json",
 	"PASS":"Your password for management Here",
-	"PG_HOST": "127.0.0.1",
 	"PG_USER": "postgres",
 	"PG_PASSWORD": "Your PostgreSQL Password Here",
 	"PG_PORT": 5432,
