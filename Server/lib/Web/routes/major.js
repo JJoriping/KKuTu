@@ -121,7 +121,19 @@ Server.get("/shop", function(req, res){
 });
 
 // POST
-Server.post("/exordial", function(req, res){
+Server.post("/updateMe", function(req, res){
+	var nick = req.body.nickname || "",
+		exor = req.body.exordial || "";
+
+	if(req.session.profile){
+		nick = nick.slice(0, 10);
+		exor = exor.slice(0, 100);
+		MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'nickname', nick ]).on();
+		MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'exordial', exor ]).on();
+		return res.send({ result: 200 });
+	}else res.send({ error: 400 });
+});
+/*Server.post("/exordial", function(req, res){
 	var text = req.body.data || "";
 	
 	if(req.session.profile){
@@ -130,7 +142,7 @@ Server.post("/exordial", function(req, res){
 			res.send({ text: text });
 		});
 	}else res.send({ error: 400 });
-});
+});*/
 Server.post("/buy/:id", function(req, res){
 	if(req.session.profile){
 		var uid = req.session.profile.id;

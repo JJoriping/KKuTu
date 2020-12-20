@@ -55,6 +55,8 @@
 		"LOADING":	"불러오는 중",
 		"TEAM_100":	"파랑 팀",
 		"TEAM_200":	"빨강 팀",
+		"myNickname": "나의 닉네임",
+		"myNicknameX": "10글자 이내 특수문자 및 공백 금지",
 		
 		"SEARCH": "검색",
 		"TOTAL": "총",
