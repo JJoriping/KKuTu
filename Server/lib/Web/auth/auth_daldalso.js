@@ -22,8 +22,8 @@ module.exports.strategy = (strategyProcess, MainDB, Ajae) => {
 		$p.id = o.id;
 		$p.name = o.name;
 		$p.title = o.name;
-		$p.image = o.profile.image;
-		$p.exordial = o.profile.text;
+		$p.image = o.profile.image || 'https://daldal.so/anonymous.png';
+		$p.exordial = o.profile.text || '';
 		
 		strategyProcess(req, accessToken, MainDB, $p, done);
     }
