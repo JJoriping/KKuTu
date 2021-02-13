@@ -293,7 +293,7 @@ exports.init = function(_SID, CHAN){
 				JLog.warn("Error on #" + key + " on ws: " + err.toString());
 			});
 			// 웹 서버
-			if(info.headers.host === "game:8080"){
+			if(info.headers.host.match(/^127\.0\.0\.2:/)){
 				if(WDIC[key]) WDIC[key].socket.close();
 				WDIC[key] = new KKuTu.WebServer(socket);
 				JLog.info(`New web server #${key}`);
