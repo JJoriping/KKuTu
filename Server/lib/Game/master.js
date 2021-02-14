@@ -525,7 +525,7 @@ function processClientRequest($c, msg) {
 					stable = false;
 				}*/
 				if (msg.mode < 0 || msg.mode >= MODE_LENGTH) stable = false;
-				if (msg.round < 1 || msg.round > 10) {
+				if (msg.round < 1 || msg.round > 20) {
 					msg.code = 433;
 					stable = false;
 				}

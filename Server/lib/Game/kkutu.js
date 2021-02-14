@@ -667,7 +667,7 @@ exports.Client = function(socket, profile, sid){
 		
 		if(!$room) return;
 		if($room.master != my.id) return;
-		if($room.players.length < 2) return my.sendError(411);
+		//if($room.players.length < 2) return my.sendError(411);
 		
 		$room.ready();
 	};
@@ -1067,7 +1067,7 @@ exports.Room = function(room, channel){
 			}
 		}
 		if(!DIC[my.master]) return;
-		if(len < 2) return DIC[my.master].sendError(411);
+		//if(len < 2) return DIC[my.master].sendError(411);
 		if(i = my.preReady(teams)) return DIC[my.master].sendError(i);
 		if(all){
 			my._teams = teams;
