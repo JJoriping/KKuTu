@@ -106,7 +106,7 @@ Server.use((req, res, next) => {
 Server.use(function(request, response, next){
 	let blockFinder;
 
-	if( blockFinder = require(__dirname+"/black.json").find(value=> value.ip==getIP(request)) )
+	if( blockFinder = require(__dirname+"/dddos.json").find(value=> value.ip==getIP(request)) )
 		page(request, response, {
 			"ip": blockFinder["ip"],
 			"reason": blockFinder["reason"]
