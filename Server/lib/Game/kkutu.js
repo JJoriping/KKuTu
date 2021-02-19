@@ -1383,7 +1383,11 @@ function shuffle(arr){
 	
 	return r;
 }
-function getRewards(mode, score, bonus, rank, all, ss){
+function getRewards(mode, score, bonus, rank, all, ss, opts){
+    /*언노운워드 보상 비활성화 여부
+    if (opts.unknownword) {
+		return { score: 0, money: 0 }
+	}*/
 	var rw = { score: 0, money: 0 };
 	var sr = score / ss;
 	
