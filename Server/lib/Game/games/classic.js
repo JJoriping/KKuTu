@@ -264,7 +264,7 @@ exports.submit = function(client, text){
 					DB.kkutu[l].update([ '_id', text ]).set([ 'hit', $doc.hit + 1 ]).on();
 				}
 			}
-			if(firstMove || my.opts.manner) getAuto.call(my, preChar, preSubChar, 1).then(function(w){
+			if((firstMove || my.opts.manner) && !my.opts.unknownword) getAuto.call(my, preChar, preSubChar, 1).then(function(w){
 				if(w) approved();
 				else{
 					my.game.loading = false;
@@ -284,8 +284,13 @@ exports.submit = function(client, text){
 			if(!my.opts.injeong && ($doc.flag & Const.KOR_FLAG.INJEONG)) denied();
 			else if(my.opts.strict && (!$doc.type.match(Const.KOR_STRICT) || $doc.flag >= 4)) denied(406);
 			else if(my.opts.loanword && ($doc.flag & Const.KOR_FLAG.LOANWORD)) denied(405);
-			else preApproved();
+            else {
+					if(my.opts.unknownword) denied(410)
+					else preApproved();
+			}
 		}else{
+				if(my.opts.unknownword) preApproved();
+				else denied();
 			denied();
 		}
 	}
