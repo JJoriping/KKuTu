@@ -187,13 +187,7 @@ block Middle
 			input#room-round(type='number', min=1, max=10, step=1, value=5)
 		div.dialog-bar
 			h4= L('roundTime')
-			select#room-time
-				option(value=10, style='color: #FF4444')
-				option(value=30)
-				option(value=60, selected)
-				option(value=90)
-				option(value=120)
-				option(value=150)
+			input#room-time(type='number', min=10, max=450, step=1, value=60)
 		div.dialog-bar(style='height: 59px;')
 			h4(style='height: 45px;')= L('misc')
 			- for(var i in locals.OPTIONS)
