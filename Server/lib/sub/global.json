@@ -1,0 +1,9 @@
+{
+	"ADMIN": [ "   " ],
+	"MAIN_PORTS": [ 8080 ],
+	"KKUTUHOT_PATH": "<PATH>",
+	"PG_PASS": "<PG PASS>",
+	"PG_PORT": <PG PORT>,
+	"PASS" : "<PASS>",
+	"WEB_PORT" :    80
+}
