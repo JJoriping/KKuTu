@@ -1,4 +1,4 @@
-
+!
 
 # KKuTu
 - Made by [JJoriping](http://blog.jjo.kr/)
