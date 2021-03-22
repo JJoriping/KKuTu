@@ -1,3 +1,7 @@
+앞서 안내
+*끄투의 원작자님은 쪼리핑님입니다*
+*GO BY HANTTU.KRO.KR
+
 # KKuTu
 - Made by [JJoriping](http://blog.jjo.kr/)
 - Special thanks to
