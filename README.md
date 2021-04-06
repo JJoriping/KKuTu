@@ -1,4 +1,4 @@
-!
+저희 릴리끄투 (한투) 는 GPL 라이선스에 따라 소스 사용이 가능하나, 어느 정도까지만 사용을 부탁드리길 바랍니다.
 
 # KKuTu
 - Made by [JJoriping](http://blog.jjo.kr/)
