@@ -146,7 +146,7 @@ span{
 #account-info:hover{ color: #EEEEEE; }
 #global-notice{
 	padding: 3px 0px;
-	margin-top: 30px;
+/*	margin-top: 30px; */
 	color: #111111;
 	text-align: center;
 	font-weight: bold;
@@ -278,7 +278,7 @@ span{
 }
 #Middle{
 	float: left;
-	margin-top: 50px;
+	margin-top: 78px;
 	width: 1010px;
 }
 #Bottom{

@@ -277,7 +277,7 @@ exports.init = function(_SID, CHAN){
 		if(Const.IS_SECURED) {
 			const options = Secure();
 			HTTPS_Server = https.createServer(options)
-				.listen(global.test ? (Const.TEST_PORT + 416) : process.env['KKUTU_PORT']);
+				.listen(global.test ? (Const.TEST_PORT + 9) : process.env['KKUTU_PORT']);
 			Server = new WebSocket.Server({server: HTTPS_Server});
 		} else {
 			Server = new WebSocket.Server({

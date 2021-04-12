@@ -1,0 +1,100 @@
+/**
+ * Rule the words! KKuTu Online
+ * Copyright (C) 2017 JJoriping(op@jjo.kr)
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+.expls div{ float: left; }
+
+.e-head{ width: 100%; }
+	.e-main-image{ border: 1px solid #444444; margin: 2px; width: 44px; height: 44px; }
+	.e-main-title{ margin: 0px 0px 3px 3px; padding-top: 7px; width: 247px; }
+	.e-sub-title{ padding-top: 3px; width: 230px; }
+	.e-sub-image{ margin: 0px 3px 0px 1px; width: 15px; height: 15px; }
+.e-ear{ padding-top: 15px; width: 70px; text-align: right; }
+.e-body{ width: 100%; }
+.e-separator{ border-bottom: 1px dashed #333333; margin: 2px 0px 1px 0px; width: 100%; }
+
+.e-champ{
+	width: 320px;
+}
+	.e-champ-sub-title{ margin-top: 2px; color: #BBBBBB; }
+	.e-champ-title{ padding-top: 1px; margin: 0px 0px 1px 3px; }
+	.e-champ-role{ padding-top: 1px; width: 100%; color: #BBBBBB; }
+	.e-champ-info{ width: 100%; }
+		.e-champ-info-item{ margin: 2px 0px; width: 160px; }
+			.e-champ-info-head{ padding-top: 2px; width: 60px; font-size: 11px; text-align: center; }
+			.e-champ-info-body{ border-radius: 5px; width: 100px; height: 15px; background-color: #232323; }
+				.e-champ-info-body .graph-bar{ border-radius: 5px; }
+	.e-champ-skill{ margin-top: 4px; width: 100%; }
+		.e-champ-skill-item{ margin: 2px 0px; width: 320px; font-size: 11px; }
+			.e-champ-skill-image{ margin: 2px; width: 26px; height: 26px; }
+			.e-champ-skill-title{ width: 290px; }
+			.e-champ-skill-desc{ width: 290px; color: #BBBBBB; }
+.e-item{
+	width: 300px;
+}
+	.e-item-head{ margin-bottom: 5px; width: 100%; }
+		.e-item-gold{ color: #EEEE44; }
+	.e-item-body{ width: 100%; }
+	.e-item-from{ padding-top: 3px; border-top: 1px dashed #333333; margin-top: 3px; width: 100%; }
+		.e-item-from-image{ margin: 2px; width: 26px; height: 26px; }
+.e-spell{
+	width: 300px;
+}
+	.e-spell-head{ margin-bottom: 5px; width: 100%; }
+	.e-spell-body{ width: 100%; }
+.e-rune-page{
+	width: 355px;
+}
+	.e-rune-bg{ padding: 1px 0px; border-top: 1px dashed #333333; margin: 1px 0px; width: 200px; }
+	.e-rune-bg:first-child{ border-top: none; }
+		.e-rune-bar{ margin: 2px 0px; width: 200px; }
+			.e-rune-image{ margin: 2px; width: 26px; height: 26px; }
+			.e-rune-bar-title{ padding: 4px 0px 0px 2px; width: 138px; text-align: left; }
+			.e-rune-bar-value{ padding-top: 8px; width: 30px; text-align: center; }
+	.e-rune-sum{ margin: 4px 0px; width: 150px; font-size: 11px; }
+		.e-rune-sum-title{ width: 100px; text-align: center; }
+		.e-rune-sum-value{ width: 50px; text-align: center; }
+.e-rune{
+	width: 300px;
+}
+	.e-rune-head{ margin-bottom: 5px; width: 100%; }
+	.e-rune-body{ width: 100%; }
+.e-mastery-page{
+	width: 291px;
+}
+	.e-mastery-bg{ border-left: 1px dashed #333333; margin: 2px; width: 92px; }
+	.e-mastery-bg:first-child{ border-left: none; }
+		.e-mastery-bar{ margin: 1px; width: 90px; }
+			.e-mastery-image{ margin: 1px; width: 28px; height: 28px; }
+				.e-mastery-image-final{ border: 1px solid #777777; margin: 0px; }
+			.e-mastery-else{ opacity: 0.1; }
+.e-mastery{
+	width: 300px;
+}
+	.e-mastery-level-item{ margin: 3px 0px; }
+		.e-mastery-level-item h4{ float: left; width: 20px; text-align: center; color: #FFFF77; }
+		.e-mastery-level-item h5{ float: left; padding-top: 1px; width: 280px; }
+
+stats{ color: #AAEECC; }
+passive, active, unique, consumable{ color: #CC9955; }
+groupLimit{ color: #EEEEEE; }
+aura{ color: #DD99DD; }
+
+#eQuintessence .eRuneCaseTitle{ color: #FFAAFF; }
+#eMark .eRuneCaseTitle{ color: #FFBBBB; }
+#eSeal .eRuneCaseTitle{ color: #FFFFAA; }
+#eGlyph .eRuneCaseTitle{ color: #BBBBFF; }

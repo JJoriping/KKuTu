@@ -7,3 +7,9 @@ Server/lib/Web/public/js/**
 Server/lib/sub/auth.json
 Server/lib/sub/global.json
 .vscode
+proxy/var/www/kkutu/html/admin/php??admin # Install these yourself if you want
+
+# vim temp files
+*~
+*.swp
+*.swo

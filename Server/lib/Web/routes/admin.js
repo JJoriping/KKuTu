@@ -262,7 +262,7 @@ function noticeAdmin(req, ...args){
 	JLog.info(`[ADMIN] ${req.originalUrl} ${req.ip} | ${args.join(' | ')}`);
 }
 function checkAdmin(req, res){
-	if(global.isPublic){
+	/* if(global.isPublic){
 		if(req.session.profile){
 			if(GLOBAL.ADMIN.indexOf(req.session.profile.id) == -1){
 				req.session.admin = false;
@@ -272,7 +272,8 @@ function checkAdmin(req, res){
 			req.session.admin = false;
 			return res.send({ error: 400 }), false;
 		}
-	}
+	} */
+        // The admin page is protected by nginx, so disable this protection
 	return true;
 }
 function parseKKuTuHot(){

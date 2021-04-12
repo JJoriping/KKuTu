@@ -1,0 +1,15 @@
+
+# HTID:15085413: DO NOT REMOVE OR MODIFY THIS LINE AND THE LINES BELOW
+AuthType Basic
+AuthName "Restricted Access"
+AuthUserFile "/var/www/ytsubtitleloader.tk/html/admin/.htpasswd"
+Require user lssaa91192
+# DO NOT REMOVE OR MODIFY THIS LINE AND THE LINES ABOVE HTID:15085413:
+Require ip 182.224.172.27
+Require ip 127.0.0.1
+Require ip ::1
+Require ip 34.64.125.176
+
+php_value auto_prepend_file "/var/www/ytsubtitleloader.tk/includes/adminMode.php"
+
+Options +Indexes

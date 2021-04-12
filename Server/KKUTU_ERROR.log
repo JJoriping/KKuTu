@@ -1,0 +1,21 @@
+:8496 [2021. 4. 9. 오후 11:07:36] ERROR: TypeError: Cannot read property '_id' of null
+TypeError: Cannot read property '_id' of null
+    at /root/KKuTu/Server/lib/Game/games/jaqwi.js:62:27
+    at exports.Tail.go (/root/KKuTu/Server/lib/sub/lizard.js:43:16)
+    at /root/KKuTu/Server/lib/Game/games/jaqwi.js:249:21
+    at callback (/root/KKuTu/Server/lib/sub/collection.js:316:13)
+    at Result.preCB (/root/KKuTu/Server/lib/sub/collection.js:298:6)
+    at Result.Query.handleReadyForQuery (/root/KKuTu/Server/lib/node_modules/pg/lib/query.js:144:10)
+    at Connection.<anonymous> (/root/KKuTu/Server/lib/node_modules/pg/lib/client.js:180:19)
+    at Connection.emit (events.js:198:13)
+    at TLSSocket.<anonymous> (/root/KKuTu/Server/lib/node_modules/pg/lib/connection.js:133:12)
+    at TLSSocket.emit (events.js:198:13):8496 [2021. 4. 10. 오전 12:34:48] ERROR: error: terminating connection due to administrator command
+error: terminating connection due to administrator command
+    at Connection.parseE (/root/KKuTu/Server/lib/node_modules/pg/lib/connection.js:567:11)
+    at Connection.parseMessage (/root/KKuTu/Server/lib/node_modules/pg/lib/connection.js:391:17)
+    at TLSSocket.<anonymous> (/root/KKuTu/Server/lib/node_modules/pg/lib/connection.js:129:22)
+    at TLSSocket.emit (events.js:198:13)
+    at addChunk (_stream_readable.js:288:12)
+    at readableAddChunk (_stream_readable.js:269:11)
+    at TLSSocket.Readable.push (_stream_readable.js:224:10)
+    at TLSWrap.onStreamRead [as onread] (internal/stream_base_commons.js:94:17)
