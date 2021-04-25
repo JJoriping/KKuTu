@@ -43,6 +43,7 @@
 
 #### 공통
 - PostgreSQL 데이터베이스 서버에 접속하기 위해 설정 파일(`./Server/lib/sub/global.json`)에서 `PG_PASS` 값을 **반드시** 수정해야 합니다.
+- Linux에서, server-flush.bat 실행이 안되어, flush를 하실려면, **server-flush.sh**를 사용해주세요.
 - 폴더 `./Server/lib/sub`에 oAuth 설정 파일(`auth.json`)과 전역 설정 파일(`global.json`)을 **반드시** 만들어 주세요. 본 레포지토리에는 각 파일의 양식이 들어가 있습니다.
 - 본 레포지토리에는 [WordNet](https://wordnet.princeton.edu/) 자료가 포함되어 있습니다. 서버를 운영할 때 반드시 사용자에게 이에 대한 라이선스를 안내해야 합니다.
 - 호스트 `127.0.0.2`는 웹 서버와 게임 서버 사이의 연결을 위해 예약된 주소이므로 이 주소를 사용하지 말아야 합니다.
@@ -89,6 +90,7 @@ This repository provides you what you have to prepare to play **KKuTu**.
 
 #### Common
 - You MUST edit the file(`./Server/lib/sub/global.json`) to connect to your PostgreSQL database server.
+- In Linux, server-flush.bat cannot be executed. To flush, use **server-flush.sh**.
 - You MUST create two files(`./Server/lib/sub/auth.json`, `./Server/lib/sub/global.json`) to turn on this server.
 - This repository contains some data from [WordNet](https://wordnet.princeton.edu/). Please provide users the license of WordNet when you operate this server.
 - The host `127.0.0.2` is reserved for connections between your web server and game server.
