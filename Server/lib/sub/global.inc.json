@@ -20,5 +20,12 @@
 		"PFX": "Your PFX Bundle Here",
 		"isPFX": false,
 		"isCA": false
+	},
+	"USER_BLOCK_OPTIONS": {
+		"USE_MODULE": false,
+		"USE_X_FORWARDED_FOR": false,
+		"BLOCK_IP_ONLY_FOR_GUEST": true,
+		"DEFAULT_BLOCKED_TEXT": "관리자에 의해 서비스 이용이 제한되었습니다.",
+		"BLOCKED_FOREVER": "영구 이용제한"
 	}
 }

@@ -116,9 +116,70 @@ function processAdmin(id, value){
 				JLog.success("Dumping success.");
 			});*/
 			return null;
+		/* Enhanced User Block System [S] */
+		case 'ban':
+			try {
+				var args = value.split(",");
+				if(args.length == 2){
+					MainDB.users.update([ '_id', args[0] ]).set([ 'black', args[1] ]).on();
+				}else if(args.length == 3){
+					MainDB.users.update([ '_id', args[0] ]).set([ 'black', args[1] ], [ 'blockedUntil', addDate(parseInt(args[2])) ]).on();				
+				}else return null;
+				
+				JLog.info(`[Block] 사용자 #${args[0]}(이)가 이용제한 처리되었습니다.`);
+				
+				if(temp = DIC[args[0]]){
+					temp.socket.send('{"type":"error","code":410}');
+					temp.socket.close();
+				}
+			}catch(e){
+				DIC[id].send('notice', { value: `명령을 처리하는 도중 오류가 발생하였습니다: ${e}` });
+				JLog.warn(`[Block] 명령을 처리하는 도중 오류가 발생하였습니다: ${e}`);
+			}
+			return null;
+		case 'ipban':
+			try {
+				var args = value.split(",");
+				if(args.length == 2){
+					MainDB.ip_block.update([ '_id', args[0] ]).set([ 'reasonBlocked', args[1] ]).on();
+				}else if(args.length == 3){
+					MainDB.ip_block.update([ '_id', args[0] ]).set([ 'reasonBlocked', args[1] ], [ 'ipBlockedUntil', addDate(parseInt(args[2])) ]).on();				
+				}else return null;
+				
+				JLog.info(`[Block] IP 주소 ${args[0]}(이)가 이용제한 처리되었습니다.`);
+			}catch(e){
+				DIC[id].send('notice', { value: `명령을 처리하는 도중 오류가 발생하였습니다: ${e}` });
+				JLog.warn(`[Block] 명령을 처리하는 도중 오류가 발생하였습니다: ${e}`);
+			}
+			return null;
+		case 'unban':
+			try {
+				MainDB.users.update([ '_id', value ]).set([ 'black', null ], [ 'blockedUntil', 0 ]).on();								
+				JLog.info(`[Block] 사용자 #${value}(이)가 이용제한 해제 처리되었습니다.`);
+			}catch(e){
+				DIC[id].send('notice', { value: `명령을 처리하는 도중 오류가 발생하였습니다: ${e}` });
+				JLog.warn(`[Block] 명령을 처리하는 도중 오류가 발생하였습니다: ${e}`);
+			}
+			return null;
+		case 'ipunban':
+			try {
+				MainDB.ip_block.update([ '_id', value ]).set([ 'reasonBlocked', null ], [ 'ipBlockedUntil', 0 ]).on();								
+				JLog.info(`[Block] IP 주소 ${value}(이)가 이용제한 해제 처리되었습니다.`);
+			}catch(e){
+				DIC[id].send('notice', { value: `명령을 처리하는 도중 오류가 발생하였습니다: ${e}` });
+				JLog.warn(`[Block] 명령을 처리하는 도중 오류가 발생하였습니다: ${e}`);
+			}
+			return null;
+		/* Enhanced User Block System [E] */
 	}
 	return value;
 }
+/* Enhanced User Block System [S] */
+function addDate(num){
+	if(isNaN(num)) return;
+	return Date.now() + num * 24 * 60 * 60 * 1000;
+}
+/* Enhanced User Block System [E] */
 function checkTailUser(id, place, msg){
 	var temp;
 	
@@ -311,7 +372,9 @@ exports.init = function(_SID, CHAN){
 			MainDB.session.findOne([ '_id', key ]).limit([ 'profile', true ]).on(function($body){
 				$c = new KKuTu.Client(socket, $body ? $body.profile : null, key);
 				$c.admin = GLOBAL.ADMIN.indexOf($c.id) != -1;
-				$c.remoteAddress = info.connection.remoteAddress;
+				/* Enhanced User Block System [S] */
+				$c.remoteAddress = GLOBAL.USER_BLOCK_OPTIONS.USE_X_FORWARDED_FOR ? info.connection.remoteAddress : (info.headers['x-forwarded-for'] || info.connection.remoteAddress);
+				/* Enhanced User Block System [E] */
 				
 				if(DIC[$c.id]){
 					DIC[$c.id].sendError(408);
@@ -334,13 +397,48 @@ exports.init = function(_SID, CHAN){
 						return;
 					}
 				}
+				/* Enhanced User Block System [S] */
+				if(GLOBAL.USER_BLOCK_OPTIONS.USE_MODULE && ((GLOBAL.USER_BLOCK_OPTIONS.BLOCK_IP_ONLY_FOR_GUEST && $c.guest) || !GLOBAL.USER_BLOCK_OPTIONS.BLOCK_IP_ONLY_FOR_GUEST)){
+					MainDB.ip_block.findOne([ '_id', $c.remoteAddress ]).on(function($body){
+						if ($body.reasonBlocked) {
+							if($body.ipBlockedUntil < Date.now()) {
+								MainDB.ip_block.update([ '_id', $c.remoteAddress ]).set([ 'ipBlockedUntil', 0 ], [ 'reasonBlocked', null ]).on();
+								JLog.info(`IP 주소 ${$c.remoteAddress}의 이용제한이 해제되었습니다.`);
+							}
+							else {
+								$c.socket.send(JSON.stringify({
+									type: 'error',
+									code: 446,
+									reasonBlocked: !$body.reasonBlocked ? GLOBAL.USER_BLOCK_OPTIONS.DEFAULT_BLOCKED_TEXT : $body.reasonBlocked,
+									ipBlockedUntil: !$body.ipBlockedUntil ? GLOBAL.USER_BLOCK_OPTIONS.BLOCKED_FOREVER : $body.ipBlockedUntil
+								}));
+								$c.socket.close();
+								return;
+							}
+						}
+					});
+				}
+				/* Enhanced User Block System [E] */
 				if($c.isAjae === null){
 					$c.sendError(441);
 					$c.socket.close();
 					return;
 				}
 				$c.refresh().then(function(ref){
-					if(ref.result == 200){
+					/* Enhanced User Block System [S] */
+					let isBlockRelease = false;
+					
+					if(ref.blockedUntil < Date.now()) {
+						DIC[$c.id] = $c;
+						MainDB.users.update([ '_id', $c.id ]).set([ 'blockedUntil', 0 ], [ 'black', null ]).on();
+						JLog.info(`사용자 #${$c.id}의 이용제한이 해제되었습니다.`);
+						isBlockRelease = true;
+					}
+					/* Enhanced User Block System [E] */						
+					
+					/* Enhanced User Block System [S] */
+					if(ref.result == 200 || isBlockRelease){
+					/* Enhanced User Block System [E] */
 						DIC[$c.id] = $c;
 						DNAME[($c.profile.title || $c.profile.name).replace(/\s/g, "")] = $c.id;
 						MainDB.users.update([ '_id', $c.id ]).set([ 'server', SID ]).on();
@@ -356,9 +454,15 @@ exports.init = function(_SID, CHAN){
 							joinNewUser($c);
 						}
 					} else {
-						$c.send('error', {
+						/* Enhanced User Block System [S] */
+						if(ref.blockedUntil) $c.send('error', {
+							code: ref.result, message: ref.black, blockedUntil: ref.blockedUntil
+						});
+						else $c.send('error', {
 							code: ref.result, message: ref.black
 						});
+						/* Enhanced User Block System [E] */
+						
 						$c._error = ref.result;
 						$c.socket.close();
 						// JLog.info("Black user #" + $c.id);
