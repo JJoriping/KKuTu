@@ -141,8 +141,8 @@ Server.on('connection', function(socket, info){
 					$c.socket.send(JSON.stringify({
 						type: 'error',
 						code: 446,
-						reasonBlocked: !$body.reasonBlocked ? GLOBAL.USER_BLOCK_OPTIONS.DEFAULT_BLOCKED_TEXT || $body.reasonBlocked,
-						ipBlockedUntil: !$body.ipBlockedUntil ? GLOBAL.USER_BLOCK_OPTIONS.BLOCKED_FOREVER || $body.ipBlockedUntil
+						reasonBlocked: !$body.reasonBlocked ? GLOBAL.USER_BLOCK_OPTIONS.DEFAULT_BLOCKED_TEXT : $body.reasonBlocked,
+						ipBlockedUntil: !$body.ipBlockedUntil ? GLOBAL.USER_BLOCK_OPTIONS.BLOCKED_FOREVER : $body.ipBlockedUntil
 					}));
 					$c.socket.close();
 					return;
