@@ -209,7 +209,10 @@
 					server: $data.get(6).value,
 					lastLogin: $data.get(7).value,
 					black: $data.get(8).value,
-					friends: $data.get(9).value
+					/* Enhanced User Block System [S] */
+					blockedUntil: $data.get(9).value,
+					friends: $data.get(10).value
+					/* Enhanced User Block System [E] */
 				});
 			});
 			$.post("/gwalli/users", {
