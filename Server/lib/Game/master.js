@@ -121,14 +121,14 @@ function processAdmin(id, value){
 			try {
 				var args = value.split(",");
 				if(args.length == 2){
-					MainDB.users.update([ '_id', args[0] ]).set([ 'black', args[1] ]).on();
+					MainDB.users.update([ '_id', args[0].trim() ]).set([ 'black', args[1].trim() ]).on();
 				}else if(args.length == 3){
-					MainDB.users.update([ '_id', args[0] ]).set([ 'black', args[1] ], [ 'blockedUntil', addDate(parseInt(args[2])) ]).on();				
+					MainDB.users.update([ '_id', args[0].trim() ]).set([ 'black', args[1].trim() ], [ 'blockedUntil', addDate(parseInt(args[2].trim())) ]).on();				
 				}else return null;
 				
-				JLog.info(`[Block] 사용자 #${args[0]}(이)가 이용제한 처리되었습니다.`);
+				JLog.info(`[Block] 사용자 #${args[0].trim()}(이)가 이용제한 처리되었습니다.`);
 				
-				if(temp = DIC[args[0]]){
+				if(temp = DIC[args[0].trim()]){
 					temp.socket.send('{"type":"error","code":410}');
 					temp.socket.close();
 				}
@@ -141,12 +141,12 @@ function processAdmin(id, value){
 			try {
 				var args = value.split(",");
 				if(args.length == 2){
-					MainDB.ip_block.update([ '_id', args[0] ]).set([ 'reasonBlocked', args[1] ]).on();
+					MainDB.ip_block.update([ '_id', args[0].trim() ]).set([ 'reasonBlocked', args[1].trim() ]).on();
 				}else if(args.length == 3){
-					MainDB.ip_block.update([ '_id', args[0] ]).set([ 'reasonBlocked', args[1] ], [ 'ipBlockedUntil', addDate(parseInt(args[2])) ]).on();				
+					MainDB.ip_block.update([ '_id', args[0].trim() ]).set([ 'reasonBlocked', args[1].trim() ], [ 'ipBlockedUntil', addDate(parseInt(args[2].trim())) ]).on();				
 				}else return null;
 				
-				JLog.info(`[Block] IP 주소 ${args[0]}(이)가 이용제한 처리되었습니다.`);
+				JLog.info(`[Block] IP 주소 ${args[0].trim()}(이)가 이용제한 처리되었습니다.`);
 			}catch(e){
 				DIC[id].send('notice', { value: `명령을 처리하는 도중 오류가 발생하였습니다: ${e}` });
 				JLog.warn(`[Block] 명령을 처리하는 도중 오류가 발생하였습니다: ${e}`);
