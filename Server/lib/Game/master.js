@@ -133,8 +133,7 @@ function processAdmin(id, value){
 					temp.socket.close();
 				}
 			}catch(e){
-				DIC[id].send('notice', { value: `명령을 처리하는 도중 오류가 발생하였습니다: ${e}` });
-				JLog.warn(`[Block] 명령을 처리하는 도중 오류가 발생하였습니다: ${e}`);
+				processAdminErrorCallback(e, id);
 			}
 			return null;
 		case 'ipban':
@@ -148,8 +147,7 @@ function processAdmin(id, value){
 				
 				JLog.info(`[Block] IP 주소 ${args[0].trim()}(이)가 이용제한 처리되었습니다.`);
 			}catch(e){
-				DIC[id].send('notice', { value: `명령을 처리하는 도중 오류가 발생하였습니다: ${e}` });
-				JLog.warn(`[Block] 명령을 처리하는 도중 오류가 발생하였습니다: ${e}`);
+				processAdminErrorCallback(e, id);
 			}
 			return null;
 		case 'unban':
@@ -157,8 +155,7 @@ function processAdmin(id, value){
 				MainDB.users.update([ '_id', value ]).set([ 'black', null ], [ 'blockedUntil', 0 ]).on();								
 				JLog.info(`[Block] 사용자 #${value}(이)가 이용제한 해제 처리되었습니다.`);
 			}catch(e){
-				DIC[id].send('notice', { value: `명령을 처리하는 도중 오류가 발생하였습니다: ${e}` });
-				JLog.warn(`[Block] 명령을 처리하는 도중 오류가 발생하였습니다: ${e}`);
+				processAdminErrorCallback(e, id);
 			}
 			return null;
 		case 'ipunban':
@@ -166,8 +163,7 @@ function processAdmin(id, value){
 				MainDB.ip_block.update([ '_id', value ]).set([ 'reasonBlocked', null ], [ 'ipBlockedUntil', 0 ]).on();								
 				JLog.info(`[Block] IP 주소 ${value}(이)가 이용제한 해제 처리되었습니다.`);
 			}catch(e){
-				DIC[id].send('notice', { value: `명령을 처리하는 도중 오류가 발생하였습니다: ${e}` });
-				JLog.warn(`[Block] 명령을 처리하는 도중 오류가 발생하였습니다: ${e}`);
+				processAdminErrorCallback(e, id);
 			}
 			return null;
 		/* Enhanced User Block System [E] */
@@ -178,6 +174,11 @@ function processAdmin(id, value){
 function addDate(num){
 	if(isNaN(num)) return;
 	return Date.now() + num * 24 * 60 * 60 * 1000;
+}
+
+function processAdminErrorCallback(error, id){
+	DIC[id].send('notice', { value: `명령을 처리하는 도중 오류가 발생하였습니다: ${error}` });
+	JLog.warn(`[Block] 명령을 처리하는 도중 오류가 발생하였습니다: ${error}`);
 }
 /* Enhanced User Block System [E] */
 function checkTailUser(id, place, msg){

@@ -496,24 +496,24 @@ function onMessage(data){
 					break;
 				}
 			/* Enhanced User Block System [S] */
-				if(data.blockedUntil) {
-					var blockedUntil = new Date(parseInt(data.blockedUntil));
-					var block = "\n제한 시점: " + blockedUntil.getFullYear() + "년 " + blockedUntil.getMonth() + 1 + "월 " +
-					blockedUntil.getDate() + "일 " + blockedUntil.getHours() + "시 " + blockedUntil.getMinutes() + "분까지";
-					
-					alert("[#444] " + L['error_444'] + i + block);
-					break;
-				}
+				if(!data.blockedUntil) break;
+				
+				var blockedUntil = new Date(parseInt(data.blockedUntil));
+				var block = "\n제한 시점: " + blockedUntil.getFullYear() + "년 " + blockedUntil.getMonth() + 1 + "월 " +
+				blockedUntil.getDate() + "일 " + blockedUntil.getHours() + "시 " + blockedUntil.getMinutes() + "분까지";
+				
+				alert("[#444] " + L['error_444'] + i + block);
+				break;
 			}else if(data.code == 446){
 				i = data.reasonBlocked;
-				if(data.ipBlockedUntil) {
-					var blockedUntil = new Date(parseInt(data.ipBlockedUntil));
-					var block = "\n제한 시점: " + blockedUntil.getFullYear() + "년 " + blockedUntil.getMonth() + 1 + "월 " +
-					blockedUntil.getDate() + "일 " + blockedUntil.getHours() + "시 " + blockedUntil.getMinutes() + "분까지";
-					
-					alert("[#446] " + L['error_446'] + i + block);
-					break;
-				}
+				if(!data.ipBlockedUntil) break;
+				
+				var blockedUntil = new Date(parseInt(data.ipBlockedUntil));
+				var block = "\n제한 시점: " + blockedUntil.getFullYear() + "년 " + blockedUntil.getMonth() + 1 + "월 " +
+				blockedUntil.getDate() + "일 " + blockedUntil.getHours() + "시 " + blockedUntil.getMinutes() + "분까지";
+				
+				alert("[#446] " + L['error_446'] + i + block);
+				break;
 			/* Enhanced User Block System [E] */
 			} else if (data.code === 447) {
 				alert("자동화 봇 방지를 위한 캡챠 인증에 실패했습니다. 메인 화면에서 다시 시도해 주세요.");
