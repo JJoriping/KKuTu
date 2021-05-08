@@ -182,6 +182,8 @@
 						.append($("<td>").append(putter("ud-" + item._id + "-kkutu", 'l', JSON.stringify(item.kkutu || {}))))
 						.append($("<td>").append(putter("ud-" + item._id + "-box", 'l', JSON.stringify(item.box || {}))))
 						.append($("<td>").append(putter("ud-" + item._id + "-equip", 'l', JSON.stringify(item.equip || {}))))
+						.append($("<td>").append(putter("ud-" + item._id + "-nickname", 'g', item.nickname)))
+						.append($("<td>").append(putter("ud-" + item._id + "-nickChanged", 'g', item.nickChanged)))
 						.append($("<td>").append(putter("ud-" + item._id + "-exordial", 'g', item.exordial)))
 						.append($("<td>").append(putter("ud-" + item._id + "-server", 't', item.server)))
 						.append($("<td>").append(putter("ud-" + item._id + "-lastLogin", 't', item.lastLogin)))
@@ -205,13 +207,15 @@
 					kkutu: $data.get(2).value,
 					box: $data.get(3).value,
 					equip: $data.get(4).value,
-					exordial: $data.get(5).value,
-					server: $data.get(6).value,
-					lastLogin: $data.get(7).value,
-					black: $data.get(8).value,
+					nickname: $data.get(5).value,
+					nickChanged: $data.get(6).value,
+					exordial: $data.get(7).value,
+					server: $data.get(8).value,
+					lastLogin: $data.get(9).value,
+					black: $data.get(10).value,
 					/* Enhanced User Block System [S] */
-					blockedUntil: $data.get(9).value,
-					friends: $data.get(10).value
+					blockedUntil: $data.get(11).value,
+					friends: $data.get(12).value
 					/* Enhanced User Block System [E] */
 				});
 			});
