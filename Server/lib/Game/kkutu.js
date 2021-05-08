@@ -416,7 +416,10 @@ exports.Client = function(socket, profile, sid){
 		}else DB.users.findOne([ '_id', my.id ]).on(function($user){
 			var first = !$user;
 			var black = first ? "" : $user.black;
-			
+			/* Enhanced User Block System [S] */
+			const blockedUntil = (first || !$user.blockedUntil) ? null : $user.blockedUntil;
+			/* Enhanced User Block System [E] */
+
 			if(first) $user = { money: 0 };
 			if(black == "null") black = false;
 			if(black == "chat"){
@@ -449,7 +452,12 @@ exports.Client = function(socket, profile, sid){
 				my.checkExpire();
 				my.okgCount = Math.floor((my.data.playTime || 0) / PER_OKG);
 			}
-			if(black) R.go({ result: 444, black: black });
+			/* Enhanced User Block System [S] */
+			if(black){
+				if(blockedUntil) R.go({ result: 444, black: black, blockedUntil: blockedUntil });
+				else R.go({ result: 444, black: black });
+			}
+			/* Enhanced User Block System [E] */
 			else if(Cluster.isMaster && $user.server) R.go({ result: 409, black: $user.server });
 			else if(exports.NIGHT && my.isAjae === false) R.go({ result: 440 });
 			else R.go({ result: 200 });

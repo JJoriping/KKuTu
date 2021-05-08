@@ -133,6 +133,23 @@ Server.on('connection', function(socket, info){
 		$c = new KKuTu.Client(socket, $body ? $body.profile : null, key);
 		$c.admin = GLOBAL.ADMIN.indexOf($c.id) != -1;
 		
+		/* Enhanced User Block System [S] */
+		$c.remoteAddress = GLOBAL.USER_BLOCK_OPTIONS.USE_X_FORWARDED_FOR ? info.connection.remoteAddress : (info.headers['x-forwarded-for'] || info.connection.remoteAddress);
+		if(GLOBAL.USER_BLOCK_OPTIONS.USE_MODULE && ((GLOBAL.USER_BLOCK_OPTIONS.BLOCK_IP_ONLY_FOR_GUEST && $c.guest) || !GLOBAL.USER_BLOCK_OPTIONS.BLOCK_IP_ONLY_FOR_GUEST)){
+			MainDB.ip_block.findOne([ '_id', $c.remoteAddress ]).on(function($body){
+				if ($body.reasonBlocked) {
+					$c.socket.send(JSON.stringify({
+						type: 'error',
+						code: 446,
+						reasonBlocked: !$body.reasonBlocked ? GLOBAL.USER_BLOCK_OPTIONS.DEFAULT_BLOCKED_TEXT : $body.reasonBlocked,
+						ipBlockedUntil: !$body.ipBlockedUntil ? GLOBAL.USER_BLOCK_OPTIONS.BLOCKED_FOREVER : $body.ipBlockedUntil
+					}));
+					$c.socket.close();
+					return;
+				}
+			});
+		}
+		/* Enhanced User Block System [E] */
 		if(DIC[$c.id]){
 			DIC[$c.id].send('error', { code: 408 });
 			DIC[$c.id].socket.close();
