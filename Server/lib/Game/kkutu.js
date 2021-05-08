@@ -325,6 +325,7 @@ exports.Client = function(socket, profile, sid){
 			o.data = my.data;
 			o.money = my.money;
 			o.equip = my.equip;
+			o.nickname = my.nickname;
 			o.exordial = my.exordial;
 		}
 		return o;
@@ -420,7 +421,7 @@ exports.Client = function(socket, profile, sid){
 			const blockedUntil = (first || !$user.blockedUntil) ? null : $user.blockedUntil;
 			/* Enhanced User Block System [E] */
 
-			if(first) $user = { money: 0 };
+			if(first) $user = { nickname: my.profile.title || my.profile.name || "닉네임 없음", money: 0 };
 			if(black == "null") black = false;
 			if(black == "chat"){
 				black = false;
@@ -441,6 +442,7 @@ exports.Client = function(socket, profile, sid){
 					}
 				}
 			}*/
+			my.nickname = $user.nickname;
 			my.exordial = $user.exordial || "";
 			my.equip = $user.equip || {};
 			my.box = $user.box || {};

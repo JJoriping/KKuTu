@@ -121,15 +121,32 @@ Server.get("/shop", function(req, res){
 });
 
 // POST
-Server.post("/exordial", function(req, res){
-	var text = req.body.data || "";
+Server.post("/profile", function(req, res){
+	var nickname = req.body.nickname;
+	var exordial = req.body.exordial;
 	
 	if(req.session.profile){
-		text = text.slice(0, 100);
-		MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'exordial', text ]).on(function($res){
-			res.send({ text: text });
-		});
-	}else res.send({ error: 400 });
+		if(exordial || exordial === ""){
+			if(exordial.length > 100) exordial = exordial.slice(0, 100);
+			MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'exordial', exordial ]).on();
+		}
+		
+		if(nickname){
+			if(nickname.length > 12) nickname = nickname.slice(0, 12);
+			MainDB.users.findOne([ 'nickname', nickname ]).on(function(data){
+				var changedDate = new Date(data.nickChanged);
+				var unavailable = new Date() < new Date(changedDate.setDate(changedDate.getDate() + 7));
+				
+				if(unavailable) return res.send({ error: 457 });
+				if(data) return res.send({ error: 456 });
+				
+				MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'nickname', nickname ]).on();
+				return res.send({ result: 200 });
+			});
+		}
+		
+		if(!nickname) return res.send({ result: 200 });
+	}else return res.send({ error: 400 });
 });
 Server.post("/buy/:id", function(req, res){
 	if(req.session.profile){

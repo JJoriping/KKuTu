@@ -786,11 +786,21 @@ $(document).ready(function(){
 		});
 	});
 	$stage.dialog.dressOK.on('click', function(e){
+		var data = {};
+		
 		$(e.currentTarget).attr('disabled', true);
-		$.post("/exordial", { data: $("#dress-exordial").val() }, function(res){
+		
+		if($("#dress-nickname").val() != $data.nickname) data.nickname = $("#dress-nickname").val();
+		if($("#dress-exordial").val() != $data.exordial || ($("#dress-exordial").val() === "" && $data.exordial !== "")) data.exordial = $("#dress-exordial").val();
+		
+		if(confirm(L.sureChangeNick)) $.post("/profile", data, function(res){
 			$stage.dialog.dressOK.attr('disabled', false);
 			if(res.error) return fail(res.error);
+			if(data.nickname) $data.users[$data.id].nickname = $data.nickname = data.nickname;
+			if(data.exordial || data.exordial === "") $data.users[$data.id].exordial = $data.exordial = data.exordial;
 			
+			alert(`${data.nickname ? (data.exordial || data.exordial === "" ? L.nickChanged + $data.nickname + L.changed + " " + L.exorChanged + $data.exordial + L.changed : L.nickChanged + $data.nickname + L.changed) : L.exorChanged + $data.exordial + L.changed}`);
+			updateUserList(true);
 			$stage.dialog.dress.hide();
 		});
 	});
