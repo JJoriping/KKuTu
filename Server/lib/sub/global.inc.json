@@ -28,10 +28,8 @@
 		"DEFAULT_BLOCKED_TEXT": "관리자에 의해 서비스 이용이 제한되었습니다.",
 		"BLOCKED_FOREVER": "영구 이용제한"
 	},
-	"NICKNAME_POLICY": {
-		"LIMIT": {
-			"ENABLED": false,
-			"TERM": "7"
-		}
+	"NICKNAME_LIMIT": {
+		"ENABLED": false,
+		"TERM": "7"
 	}
 }

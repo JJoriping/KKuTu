@@ -445,6 +445,7 @@ exports.Client = function(socket, profile, sid){
 			}*/
 			my.nickname = $user.nickname;
 			my.exordial = $user.exordial || "";
+			if (my.nickname) my.profile.title = my.nickname;
 			my.equip = $user.equip || {};
 			my.box = $user.box || {};
 			my.data = new exports.Data($user.kkutu);

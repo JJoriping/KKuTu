@@ -493,7 +493,7 @@ function joinNewUser($c) {
 		admin: $c.admin,
 		test: global.test,
 		caj: $c._checkAjae ? true : false,
-		nicknamePolicy: GLOBAL.NICKNAME_POLICY
+		nickLimit: GLOBAL.NICKNAME_LIMIT
 	});
 	narrateFriends($c.id, $c.friends, "on");
 	KKuTu.publish('conn', {user: $c.getData()});
@@ -543,22 +543,6 @@ function processClientRequest($c, msg) {
 			$c.exordial = msg.exordial;
 			KKuTu.publish('updateProfile', msg);
 			$c.updateProfile(msg.nickname, msg.exordial);
-			$c.send('updateData', {
-				id: $c.id,
-				guest: $c.guest,
-				box: $c.box,
-				nickname: $c.nickname,
-				exordial: $c.exordial,
-				playTime: $c.data.playTime,
-				okg: $c.okgCount,
-				users: KKuTu.getUserList(),
-				rooms: KKuTu.getRoomList(),
-				friends: $c.friends,
-				admin: $c.admin,
-				test: global.test,
-				caj: $c._checkAjae ? true : false
-			});
-			break;
 		case 'updateData':
 			$c.send('updateData', {
 				id: $c.id,
@@ -575,7 +559,6 @@ function processClientRequest($c, msg) {
 				test: global.test,
 				caj: $c._checkAjae ? true : false
 			});
-			break;
 		case 'refresh':
 			$c.refresh();
 			break;

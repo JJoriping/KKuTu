@@ -239,6 +239,7 @@ function onMessage(data){
 			$data.nickname = data.nickname;
 			$data.exordial = data.exordial;
 			$data.box = data.box;
+			$data.nickLimit = data.nickLimit;
 			if(data.test) alert(L['welcomeTestServer']);
 			if(location.hash[1]) tryJoin(location.hash.slice(1));
 			updateUI(undefined, true);
