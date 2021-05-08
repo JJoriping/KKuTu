@@ -800,9 +800,9 @@ $(document).ready(function(){
 				$("#account-info").text(data.nickname);
 			}
 			if(data.exordial || data.exordial === "") $data.users[$data.id].exordial = $data.exordial = data.exordial;
-				
+			
 			send("updateProfile", { id: $data.id, nickname: $data.nickname, exordial: $data.exordial });
-			alert(`${data.nickname ? (data.exordial || data.exordial === "" ? L.nickChanged + $data.nickname + L.changed + " " + L.exorChanged + $data.exordial + L.changed : L.nickChanged + $data.nickname + L.changed) : L.exorChanged + $data.exordial + L.changed}`);
+			alert(data.nickname ? (data.exordial || data.exordial === "" ? L.nickChanged + $data.nickname + L.changed + " " + L.exorChanged + $data.exordial + L.changed : L.nickChanged + $data.nickname + L.changed) : L.exorChanged + $data.exordial + L.changed);
 			$stage.dialog.dressOK.attr("disabled", false);
 		});
 		$stage.dialog.dress.hide();
