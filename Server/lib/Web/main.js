@@ -225,6 +225,10 @@ Server.get("/", function(req, res){
 
 		if($doc){
 			req.session.profile = $doc.profile;
+			req.session.nickname = $doc.nickname || $p.title || $p.name;
+			if($doc){
+				if($doc.nickname && $doc.nickname != null) req.session.profile.title = req.session.profile.name = $doc.nickname;
+			};
 			id = $doc.profile.sid;
 		}else{
 			delete req.session.profile;
