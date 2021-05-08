@@ -140,7 +140,8 @@ Server.post("/profile", function(req, res){
 				if(unavailable) return res.send({ error: 457 });
 				if(data) return res.send({ error: 456 });
 				
-				MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'nickname', nickname ]).on();
+				MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'nickname', nickname ], [ 'nickChanged', new Date() ]).on();
+				MainDB.session.update([ '_id', req.session.id ]).set([ 'nickname', nickname ]).on();
 				return res.send({ result: 200 });
 			});
 		}

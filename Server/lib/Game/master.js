@@ -537,6 +537,44 @@ function processClientRequest($c, msg) {
 
 			$c.publish('yell', {value: msg.value});
 			break;
+		case 'updateProfile':
+			$c.nickname = msg.nickname;
+			$c.exordial = msg.exordial;
+			KKuTu.publish('updateProfile', msg);
+			$c.updateProfile(msg.nickname, msg.exordial);
+			$c.send('updateData', {
+				id: $c.id,
+				guest: $c.guest,
+				box: $c.box,
+				nickname: $c.nickname,
+				exordial: $c.exordial,
+				playTime: $c.data.playTime,
+				okg: $c.okgCount,
+				users: KKuTu.getUserList(),
+				rooms: KKuTu.getRoomList(),
+				friends: $c.friends,
+				admin: $c.admin,
+				test: global.test,
+				caj: $c._checkAjae ? true : false
+			});
+			break;
+		case 'updateData':
+			$c.send('updateData', {
+				id: $c.id,
+				guest: $c.guest,
+				box: $c.box,
+				nickname: $c.nickname,
+				exordial: $c.exordial,
+				playTime: $c.data.playTime,
+				okg: $c.okgCount,
+				users: KKuTu.getUserList(),
+				rooms: KKuTu.getRoomList(),
+				friends: $c.friends,
+				admin: $c.admin,
+				test: global.test,
+				caj: $c._checkAjae ? true : false
+			});
+			break;
 		case 'refresh':
 			$c.refresh();
 			break;

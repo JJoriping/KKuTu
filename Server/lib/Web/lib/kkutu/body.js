@@ -317,6 +317,25 @@ function onMessage(data){
 			$data.setUser(data.id, data);
 			if($data.room) updateUI($data.room.id == data.place);
 			break;
+		case 'updateProfile':
+			$data.users[data.id].nickname = data.nickname;
+			$data.users[data.id].exordial = data.exordial;
+			break;
+		case 'updateData':
+			$data.id = data.id;
+			$data.guest = data.guest;
+			$data.admin = data.admin;
+			$data.users = data.users;
+			$data.rooms = data.rooms;
+			$data.friends = data.friends;
+			$data._playTime = data.playTime;
+			$data._okg = data.okg;
+			$data.nickname = data.nickname;
+			$data.exordial = data.exordial;
+			$data.box = data.box;
+			updateUI(undefined, true);
+			updateCommunity();
+			break;
 		case 'friends':
 			$data._friends = {};
 			for(i in data.list){
@@ -541,6 +560,8 @@ function welcome(){
 	}, 2000);
 	
 	if($data.admin) console.log("관리자 모드");
+	
+	isWelcome = true;
 }
 function getKickText(profile, vote){
 	var vv = L['agree'] + " " + vote.Y + ", " + L['disagree'] + " " + vote.N + L['kickCon'];
