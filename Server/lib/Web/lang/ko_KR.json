@@ -540,7 +540,9 @@
 		"nickChanged": "별명이 ",
 		"exorChanged": "소개말이 ",
 		"changed": "(으)로 변경되었습니다.",
-		"sureChangeNick": "정말 닉네임을 변경합니까? 변경 후 7일 간 닉네임을 다시 변경할 수 없습니다.",
+		"sureChangeNickWithLimit1": "정말 닉네임을 변경합니까? 변경 후 ",
+		"sureChangeNickWithLimit2": "일 간 닉네임을 다시 변경할 수 없습니다.",
+		"sureChangeNickWithoutLimit": "정말 닉네임을 변경합니까?",
 		
 		"dress": "프로필 관리",
 		"myNickname": "별명",
