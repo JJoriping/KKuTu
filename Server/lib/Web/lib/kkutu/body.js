@@ -1272,6 +1272,7 @@ function drawMyDress(avGroup){
 	renderMoremi($view, my.equip);
 	$(".dress-type.selected").removeClass("selected");
 	$("#dress-type-all").addClass("selected");
+	$("#dress-nickname").val(my.nickname);
 	$("#dress-exordial").val(my.exordial);
 	drawMyGoods(avGroup || true);
 }
