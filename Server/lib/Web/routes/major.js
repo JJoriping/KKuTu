@@ -138,7 +138,7 @@ Server.post("/profile", function(req, res){
 				MainDB.users.findOne([ '_id', req.session.profile.id ]).on(function(requester){
 					var changedDate = new Date(requester.nickChanged || 0);
 					
-					if(GLOBAL.nickLimit.ENABLED && new Date() < new Date(changedDate.setDate(changedDate.getDate() + Number(GLOBAL.nickLimit.TERM)))) return res.send({ error: 457 });
+					if(GLOBAL.NICKNAME_LIMIT.ENABLED && new Date() < new Date(changedDate.setDate(changedDate.getDate() + Number(GLOBAL.NICKNAME_LIMIT.TERM)))) return res.send({ error: 457 });
 					if(data) return res.send({ error: 456 });
 					
 					MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'nickname', nickname ], [ 'nickChanged', new Date() ]).on();
