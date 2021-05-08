@@ -134,15 +134,16 @@ Server.post("/profile", function(req, res){
 		if(nickname){
 			if(nickname.length > 12) nickname = nickname.slice(0, 12);
 			MainDB.users.findOne([ 'nickname', nickname ]).on(function(data){
-				var changedDate = new Date(data.nickChanged);
-				var unavailable = new Date() < new Date(changedDate.setDate(changedDate.getDate() + 7));
-				
-				if(unavailable) return res.send({ error: 457 });
-				if(data) return res.send({ error: 456 });
-				
-				MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'nickname', nickname ], [ 'nickChanged', new Date() ]).on();
-				MainDB.session.update([ '_id', req.session.id ]).set([ 'nickname', nickname ]).on();
-				return res.send({ result: 200 });
+				MainDB.users.findOne([ '_id', req.session.profile.id ]).on(function(requester){
+					var changedDate = new Date(requester.nickChanged || 0);
+					
+					if(new Date() < new Date(changedDate.setDate(changedDate.getDate() + 7))) return res.send({ error: 457 });
+					if(data) return res.send({ error: 456 });
+					
+					MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'nickname', nickname ], [ 'nickChanged', new Date() ]).on();
+					MainDB.session.update([ '_id', req.session.id ]).set([ 'nickname', nickname ]).on();
+					return res.send({ result: 200 });
+				});
 			});
 		}
 		
