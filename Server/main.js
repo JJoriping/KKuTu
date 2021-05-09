@@ -54,7 +54,11 @@ function main(){
 		title: `${PKG['name']} ${PKG['version']} - Now loading`,
 		width: 800,
 		height: 600,
-		icon: __dirname + "/../logo.ico"
+		icon: __dirname + "/../logo.ico",
+		webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        }
 	});
 	mainWindow.loadURL(__dirname + "/views/index.pug");
 }
