@@ -30,6 +30,6 @@
 	},
 	"NICKNAME_LIMIT": {
 		"ENABLED": false,
-		"TERM": "7"
+		"TERM": 7
 	}
 }
