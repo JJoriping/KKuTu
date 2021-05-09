@@ -139,7 +139,7 @@ Server.post("/profile", function(req, res){
 					var changedDate = new Date(requester.nickChanged || 0);
 					var now = Number(new Date());
 					
-					changedDate.setDate(changedDate.getDate() + GLOBAL.NICKNAME_LIMIT.TERM)
+					changedDate.setDate(changedDate.getDate() + GLOBAL.NICKNAME_LIMIT.TERM);
 					if(GLOBAL.NICKNAME_LIMIT.ENABLED && now < Number(changedDate)) return res.send({ error: 457 });
 					if(data) return res.send({ error: 456 });
 					
