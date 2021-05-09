@@ -140,7 +140,7 @@ Server.post("/profile", function(req, res){
 					var now = Number(new Date());
 					
 					changedDate.setDate(changedDate.getDate() + GLOBAL.NICKNAME_LIMIT.TERM)
-					if(GLOBAL.NICKNAME_LIMIT.ENABLED && now < changedDate) return res.send({ error: 457 });
+					if(GLOBAL.NICKNAME_LIMIT.ENABLED && now < Number(changedDate)) return res.send({ error: 457 });
 					if(data) return res.send({ error: 456 });
 					
 					MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'nickname', nickname ], [ 'nickChanged', now ]).on();
