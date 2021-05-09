@@ -55,6 +55,7 @@
 - 모든 소스 코드에 대해: [GNU 일반 공중 사용 라이선스](https://github.com/JJoriping/KKuTu/blob/master/LICENSE)
 - 모든 이미지 및 소리에 대해: [크리에이티브 커먼즈 라이선스 CC BY](https://creativecommons.org/licenses/by/4.0/)
 	- 다만 본 레포지토리에서 제공하는 소스 코드로 끄투 서비스를 운영하기 위해 이들을 사용하는 경우 저작자 표시(BY)를 생략할 수 있습니다.
+- 끄투에 맞게 수정된 electron-pug 모듈에 대해: [MIT 라이선스](https://github.com/yan-foto/electron-pug/blob/master/LICENSE.md)
 
 ## English
 > Rule the words! KKuTu Online
@@ -101,5 +102,6 @@ This repository provides you what you have to prepare to play **KKuTu**.
 - [GNU General Public License](https://github.com/JJoriping/KKuTu/blob/master/LICENSE) for all source codes in this repository.
 - [Creative Commons License CC BY](https://creativecommons.org/licenses/by/4.0/) for all images and sounds in this repository.
 	- But if you use these for operating KKuTu service provided by this repository, you may omit the attribution(BY).
+- [MIT License](https://github.com/yan-foto/electron-pug/blob/master/LICENSE.md) for electron-pug that is modified to suit this repository.
 
 [dev-blog]: http://blog.jjo.kr/220935346136
