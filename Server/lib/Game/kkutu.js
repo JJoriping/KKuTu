@@ -793,10 +793,6 @@ exports.Client = function(socket, profile, sid){
 		my.flush(false, false, true);
 		my.send('friendEdit', { friends: my.friends });
 	};
-	my.updateProfile = (nickname, exordial) => {
-		my.nickname = nickname;
-		my.exordial = exordial;
-	};
 };
 exports.Room = function(room, channel){
 	var my = this;
