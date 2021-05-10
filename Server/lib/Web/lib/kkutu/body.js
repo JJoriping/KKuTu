@@ -318,10 +318,6 @@ function onMessage(data){
 			$data.setUser(data.id, data);
 			if($data.room) updateUI($data.room.id == data.place);
 			break;
-		case 'updateProfile':
-			$data.users[data.id].nickname = data.nickname;
-			$data.users[data.id].exordial = data.exordial;
-			break;
 		case 'reloadData':
 			$data.id = data.id;
 			$data.admin = data.admin;

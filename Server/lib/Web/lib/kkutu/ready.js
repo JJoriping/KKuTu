@@ -801,7 +801,7 @@ $(document).ready(function(){
 			}
 			if(data.exordial || data.exordial === "") $data.users[$data.id].exordial = $data.exordial = data.exordial;
 			
-			send("updateProfile", { id: $data.id, nickname: $data.nickname, exordial: $data.exordial });
+			send("reloadData");
 			alert(data.nickname ? (data.exordial || data.exordial === "" ? L.nickChanged + $data.nickname + L.changed + " " + L.exorChanged + $data.exordial + L.changed : L.nickChanged + $data.nickname + L.changed) : L.exorChanged + $data.exordial + L.changed);
 			$stage.dialog.dressOK.attr("disabled", false);
 		});
@@ -1004,9 +1004,4 @@ $(document).ready(function(){
 			isWelcome = false;
 		};
 	}
-	_setInterval(function() {
-		if (isWelcome && !$data.room && !$data._gaming) {
-			send('reloadData');
-		}
-	}, 18000);
 });
