@@ -1006,7 +1006,7 @@ $(document).ready(function(){
 	}
 	_setInterval(function() {
 		if (isWelcome && !$data.room && !$data._gaming) {
-			send('updateData');
+			send('reloadData');
 		}
 	}, 18000);
 });
