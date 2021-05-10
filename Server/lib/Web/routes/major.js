@@ -136,7 +136,7 @@ Server.post("/profile", function(req, res){
 			if(nickname.length > 12) nickname = nickname.slice(0, 12);
 			MainDB.users.findOne([ 'nickname', nickname ]).on(function(data){
 				MainDB.users.findOne([ '_id', req.session.profile.id ]).on(function(requester){
-					var changedDate = new Date(requester.nickChanged || 0);
+					var changedDate = new Date(Number(requester.nickChanged));
 					var now = Number(new Date());
 					
 					changedDate.setDate(changedDate.getDate() + GLOBAL.NICKNAME_LIMIT.TERM);

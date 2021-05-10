@@ -801,10 +801,10 @@ $(document).ready(function(){
 			}
 			if(data.exordial || data.exordial === "") $data.users[$data.id].exordial = $data.exordial = data.exordial;
 			
-			send("reloadData");
+			send("bulkRefresh");
 			alert(data.nickname ? (data.exordial || data.exordial === "" ? L.nickChanged + $data.nickname + L.changed + " " + L.exorChanged + $data.exordial + L.changed : L.nickChanged + $data.nickname + L.changed) : L.exorChanged + $data.exordial + L.changed);
-			$stage.dialog.dressOK.attr("disabled", false);
 		});
+		$stage.dialog.dressOK.attr("disabled", false);
 		$stage.dialog.dress.hide();
 	});
 	$("#DressDiag .dress-type").on('click', function(e){

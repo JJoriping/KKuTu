@@ -569,6 +569,9 @@ function processClientRequest($c, msg) {
 		case 'refresh':
 			$c.refresh();
 			break;
+		case 'bulkRefresh':
+			for(let i in DIC) DIC[i].refresh();
+			break;
 		case 'talk':
 			if (!msg.value) return;
 			if (!msg.value.substr) return;
