@@ -322,9 +322,8 @@ function onMessage(data){
 			$data.users[data.id].nickname = data.nickname;
 			$data.users[data.id].exordial = data.exordial;
 			break;
-		case 'updateData':
+		case 'reloadData':
 			$data.id = data.id;
-			$data.guest = data.guest;
 			$data.admin = data.admin;
 			$data.users = data.users;
 			$data.rooms = data.rooms;
