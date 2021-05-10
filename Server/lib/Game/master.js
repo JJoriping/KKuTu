@@ -542,7 +542,6 @@ function processClientRequest($c, msg) {
 			$c.nickname = msg.nickname;
 			$c.exordial = msg.exordial;
 			KKuTu.publish('updateProfile', msg);
-			$c.updateProfile(msg.nickname, msg.exordial);
 		case 'updateData':
 			$c.send('updateData', {
 				id: $c.id,
