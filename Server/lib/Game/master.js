@@ -542,10 +542,9 @@ function processClientRequest($c, msg) {
 			$c.nickname = msg.nickname;
 			$c.exordial = msg.exordial;
 			KKuTu.publish('updateProfile', msg);
-		case 'updateData':
-			$c.send('updateData', {
+		case 'reloadData':
+			$c.send('reloadData', {
 				id: $c.id,
-				guest: $c.guest,
 				box: $c.box,
 				nickname: $c.nickname,
 				exordial: $c.exordial,
@@ -554,9 +553,7 @@ function processClientRequest($c, msg) {
 				users: KKuTu.getUserList(),
 				rooms: KKuTu.getRoomList(),
 				friends: $c.friends,
-				admin: $c.admin,
-				test: global.test,
-				caj: $c._checkAjae ? true : false
+				admin: $c.admin
 			});
 		case 'refresh':
 			$c.refresh();
