@@ -321,7 +321,7 @@ function onMessage(data){
 		case 'reloadData':
 			$data.id = data.id;
 			$data.admin = data.admin;
-			$data.users = data.users;
+			if(!$data._gaming) $data.users = data.users;
 			$data.rooms = data.rooms;
 			$data.friends = data.friends;
 			$data._playTime = data.playTime;
