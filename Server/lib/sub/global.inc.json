@@ -12,7 +12,6 @@
 	"GOOGLE_RECAPTCHA_TO_USER": false,
 	"GOOGLE_RECAPTCHA_SITE_KEY": "Your Google Recaptcha site key Here",
 	"GOOGLE_RECAPTCHA_SECRET_KEY": "Your Google Recaptcha secret key Here",
-	"IS_CLOUDFLARE": false,
 	"CF_OPTIONS": {
 		"WEB": false,
 		"GAME": false,

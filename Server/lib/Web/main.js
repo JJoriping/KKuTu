@@ -86,7 +86,7 @@ Server.use((req, res, next) => {
 	next();
 });
 Server.use((req, res, next) => {
-	if(Const.IS_SECURED || Const.IS_CLOUDFLARE) {
+	if(Const.IS_SECURED || Const.CF_OPTIONS.WEB) {
 		if(req.protocol == 'http') {
 			let url = 'https://'+req.get('host')+req.path;
 			res.status(302).redirect(url);
@@ -146,7 +146,7 @@ DB.ready = function(){
 		}
 	});
 	Server.listen(80);
-	if(Const.IS_SECURED || Const.IS_CLOUDFLARE) {
+	if(Const.IS_SECURED || Const.CF_OPTIONS.WEB) {
 		const options = Secure();
 		https.createServer(options, Server).listen(443);
 	}
@@ -154,7 +154,7 @@ DB.ready = function(){
 Const.MAIN_PORTS.forEach(function(v, i){
 	var KEY = process.env['WS_KEY'];
 	var protocol;
-	if(Const.IS_SECURED || Const.IS_CLOUDFLARE) {
+	if(Const.IS_SECURED || Const.CF_OPTIONS.GAME) {
 		protocol = 'wss';
 	} else {
 		protocol = 'ws';
@@ -233,9 +233,9 @@ Server.get("/", function(req, res){
 			'_page': "kkutu",
 			'_id': id,
 			'PORT': Const.MAIN_PORTS[server],
-			'PORT_GAP': Const.IS_CLOUDFLARE ? Const.CF_OPTIONS.PORT_GAP : 416,
+			'PORT_GAP': Const.CF_OPTIONS.GAME ? Const.CF_OPTIONS.PORT_GAP : 416,
 			'HOST': req.hostname,
-			'PROTOCOL': Const.IS_SECURED || Const.IS_CLOUDFLARE ? 'wss' : 'ws',
+			'PROTOCOL': Const.IS_SECURED || Const.CF_OPTIONS.GAME ? 'wss' : 'ws',
 			'TEST': req.query.test,
 			'MOREMI_PART': Const.MOREMI_PART,
 			'AVAIL_EQUIP': Const.AVAIL_EQUIP,

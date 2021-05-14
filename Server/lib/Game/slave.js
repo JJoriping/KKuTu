@@ -27,11 +27,11 @@ var HTTPS_Server
 if(Const.IS_SECURED) {
 	const options = Secure();
 	HTTPS_Server = https.createServer(options)
-		.listen(global.test ? (Const.TEST_PORT + (Const.IS_CLOUDFLARE ? Const.CF_OPTIONS.PORT_GAP : 416)) : process.env['KKUTU_PORT']);
+		.listen(global.test ? (Const.TEST_PORT + (Const.CF_OPTIONS.GAME ? Const.CF_OPTIONS.PORT_GAP : 416)) : process.env['KKUTU_PORT']);
 	Server = new WebSocket.Server({server: HTTPS_Server});
 } else {
 	Server = new WebSocket.Server({
-		port: global.test ? (Const.TEST_PORT + (Const.IS_CLOUDFLARE ? Const.CF_OPTIONS.PORT_GAP : 416)) : process.env['KKUTU_PORT'],
+		port: global.test ? (Const.TEST_PORT + (Const.CF_OPTIONS.GAME ? Const.CF_OPTIONS.PORT_GAP : 416)) : process.env['KKUTU_PORT'],
 		perMessageDeflate: false
 	});
 }
