@@ -21,6 +21,7 @@ $(document).ready(function(){
 	
 	$data.PUBLIC = $("#PUBLIC").html() == "true";
 	$data.URL = $("#URL").html();
+	$data.NICKNAME_LIMIT = isNaN(Number($("#NICKNAME_LIMIT").html())) ? undefined : $("#NICKNAME_LIMIT").html();
 	$data.version = $("#version").html();
 	$data.server = location.href.match(/\?.*server=(\d+)/)[1];
 	$data.shop = {};
@@ -793,7 +794,7 @@ $(document).ready(function(){
 		if($("#dress-nickname").val() !== $data.nickname) data.nickname = $("#dress-nickname").val();
 		if($("#dress-exordial").val() !== $data.exordial) data.exordial = $("#dress-exordial").val();
 		
-		if(data.nickname ? confirm($data.nickLimit.ENABLED ? L.sureChangeNickLimit1 + $data.nickLimit.TERM + L.sureChangeNickLimit2 : L.sureChangeNickNoLimit) : data.exordial) $.post("/profile", data, function(res){
+		if(data.nickname ? confirm($data.NICKNAME_LIMIT ? L.sureChangeNickLimit1 + $data.NICKNAME_LIMIT + L.sureChangeNickLimit2 : L.sureChangeNickNoLimit) : data.exordial) $.post("/profile", data, function(res){
 			if(res.error) return fail(res.error);
 			if(data.nickname){
 				$data.users[$data.id].nickname = $data.nickname = data.nickname;

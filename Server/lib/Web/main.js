@@ -243,6 +243,7 @@ Server.get("/", function(req, res){
 			'MODE': Const.GAME_TYPE,
 			'RULE': Const.RULE,
 			'OPTIONS': Const.OPTIONS,
+			'NICKNAME_LIMIT': GLOBAL.NICKNAME_LIMIT,
 			'KO_INJEONG': Const.KO_INJEONG,
 			'EN_INJEONG': Const.EN_INJEONG,
 			'KO_THEME': Const.KO_THEME,

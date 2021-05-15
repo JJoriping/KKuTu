@@ -492,8 +492,7 @@ function joinNewUser($c) {
 		friends: $c.friends,
 		admin: $c.admin,
 		test: global.test,
-		caj: $c._checkAjae ? true : false,
-		nickLimit: GLOBAL.NICKNAME_LIMIT
+		caj: $c._checkAjae ? true : false
 	});
 	narrateFriends($c.id, $c.friends, "on");
 	KKuTu.publish('conn', {user: $c.getData()});
