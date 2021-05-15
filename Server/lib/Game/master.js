@@ -497,7 +497,7 @@ function joinNewUser($c) {
 
 	JLog.info("New user #" + $c.id);
 	
-	setInterval(() => {
+	if(GLOBAL.WAF.GAME) setInterval(() => {
 		$c.send('keepConnected');
 	}, 20000);
 }
