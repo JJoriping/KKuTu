@@ -145,25 +145,23 @@ DB.ready = function(){
 			}
 		}
 	});
+	Server.listen(80);
 	if(Const.IS_SECURED || Const.WAF.WEB) {
 		const options = Secure();
 		https.createServer(options, Server).listen(443);
-	}else Server.listen(80);
+	}
 };
 Const.MAIN_PORTS.forEach(function(v, i){
 	var KEY = process.env['WS_KEY'];
-	var protocol;
-	if(!Const.WAF.GAME){
-		if(Const.IS_SECURED) protocol = 'wss';
-		else protocol = 'ws';
-	}else protocol = 'ws';
+	var protocol = Const.IS_SECURED || Const.WAF.GAME ? 'wss' : 'ws';
+	
 	gameServers[i] = new GameClient(KEY, `${protocol}://${GLOBAL.GAME_SERVER_HOST}:${v}/${KEY}`);
 });
 function GameClient(id, url){
 	var my = this;
 
 	my.id = id;
-	my.socket = new WS(url, { perMessageDeflate: false, rejectUnauthorized: false});
+	my.socket = new WS(url, { perMessageDeflate: false, rejectUnauthorized: false });
 	
 	my.send = function(type, data){
 		if(!data) data = {};

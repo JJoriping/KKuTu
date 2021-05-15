@@ -146,7 +146,7 @@ function route(func, a0, a1, a2, a3, a4){
 }
 function connectToRoom(chan, rid){
 	var url = $data.URL.replace(/:(\d+)/, function(v, p1){
-		return ":" + (Number(p1) + $data.PORT_GAP + Number(chan) - 1);
+		return ":" + (Number(p1) + Number($data.PORT_GAP) + Number(chan) - 1);
 	}) + "&" + chan + "&" + rid;
 	
 	if(rws) return;
@@ -521,6 +521,7 @@ function onMessage(data){
 			}
 			alert("[#" + data.code + "] " + L['error_'+data.code] + i);
 			break;
+		case 'keepConnected':
 		default:
 			break;
 	}

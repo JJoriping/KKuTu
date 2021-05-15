@@ -336,14 +336,14 @@ exports.init = function(_SID, CHAN){
 		JLog.success("Master DB is ready.");
 		
 		MainDB.users.update([ 'server', SID ]).set([ 'server', "" ]).on();
-		if(Const.IS_SECURED) {
+		if(Const.IS_SECURED || Const.WAF.GAME) {
 			const options = Secure();
 			HTTPS_Server = https.createServer(options)
-				.listen(global.test ? (Const.TEST_PORT + (Const.WAF.GAME ? Const.WAF.PORT_GAP : 416)) : process.env['KKUTU_PORT']);
+				.listen(global.test ? Const.TEST_PORT + Const.WAF.PORT_GAP : process.env['KKUTU_PORT']);
 			Server = new WebSocket.Server({server: HTTPS_Server});
 		} else {
 			Server = new WebSocket.Server({
-				port: global.test ? (Const.TEST_PORT + (Const.WAF.GAME ? Const.WAF.PORT_GAP : 416)) : process.env['KKUTU_PORT'],
+				port: global.test ? Const.TEST_PORT + Const.WAF.PORT_GAP : process.env['KKUTU_PORT'],
 				perMessageDeflate: false
 			});
 		}
@@ -496,6 +496,10 @@ function joinNewUser($c) {
 	KKuTu.publish('conn', {user: $c.getData()});
 
 	JLog.info("New user #" + $c.id);
+	
+	setInterval(() => {
+		$c.send('keepConnected');
+	}, 20000);
 }
 
 KKuTu.onClientMessage = function ($c, msg) {

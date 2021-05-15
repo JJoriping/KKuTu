@@ -24,14 +24,14 @@ var Secure = require('../sub/secure');
 var Server;
 var HTTPS_Server
 
-if(Const.IS_SECURED) {
+if(Const.IS_SECURED || Const.WAF.GAME) {
 	const options = Secure();
 	HTTPS_Server = https.createServer(options)
-		.listen(global.test ? (Const.TEST_PORT + (Const.WAF.GAME ? Const.WAF.PORT_GAP : 416)) : process.env['KKUTU_PORT']);
+		.listen(global.test ? (Const.TEST_PORT + Const.WAF.PORT_GAP) : process.env['KKUTU_PORT']);
 	Server = new WebSocket.Server({server: HTTPS_Server});
 } else {
 	Server = new WebSocket.Server({
-		port: global.test ? (Const.TEST_PORT + (Const.WAF.GAME ? Const.WAF.PORT_GAP : 416)) : process.env['KKUTU_PORT'],
+		port: global.test ? Const.TEST_PORT + Const.WAF.PORT_GAP : process.env['KKUTU_PORT'],
 		perMessageDeflate: false
 	});
 }
