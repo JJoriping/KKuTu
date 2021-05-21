@@ -263,7 +263,10 @@ $(document).ready(function(){
 	});
 	$data.opts = $.cookie('kks');
 	if($data.opts){
-		applyOptions(JSON.parse($data.opts));
+		var opts = JSON.parse($data.opts);
+		opts.bv = $("#bgm-volume").val();
+		opts.ev = $("#effect-volume").val();
+		applyOptions(opts);
 	}
 	$(".dialog-head .dialog-title").on('mousedown', function(e){
 		var $pd = $(e.currentTarget).parents(".dialog");
@@ -621,8 +624,8 @@ $(document).ready(function(){
 	});
 	$stage.dialog.settingOK.on('click', function(e){
 		applyOptions({
-			mb: $("#mute-bgm").is(":checked"),
-			me: $("#mute-effect").is(":checked"),
+			bv: $("#bgm-volume").val(),
+			ev: $("#effect-volume").val(),
 			di: $("#deny-invite").is(":checked"),
 			dw: $("#deny-whisper").is(":checked"),
 			df: $("#deny-friend").is(":checked"),
