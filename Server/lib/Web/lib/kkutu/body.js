@@ -2624,7 +2624,7 @@ function playSound(key, loop){
 			gainNode.gain.value = 0;
 			src.buffer = audioContext.createBuffer(2, sound.length, audioContext.sampleRate);
 		}else{
-			gainNode.gain.value = loop ? $data.BGMVolume : $data.EffectVolume;
+			gainNode.gain.value = (loop ? $data.BGMVolume : $data.EffectVolume) || 0.5;
 			src.buffer = sound;
 		}
 		gainNode.connect(audioContext.destination);
@@ -2632,7 +2632,7 @@ function playSound(key, loop){
 	}else{
 		if(sound.readyState) sound.audio.currentTime = 0;
 		sound.audio.loop = loop || false;
-		sound.audio.volume = mute ? 0 : (loop ? $data.BGMVolume : $data.EffectVolume);
+		sound.audio.volume = mute ? 0 : ((loop ? $data.BGMVolume : $data.EffectVolume) || 0.5);
 		src = sound;
 	}
 	if($_sound[key]) $_sound[key].stop();
