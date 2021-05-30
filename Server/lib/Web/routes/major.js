@@ -127,7 +127,7 @@ Server.post("/profile", function(req, res){
 	var exordial = req.body.exordial;
 	
 	if(req.session.profile){
-		if(exordial || exordial === ""){
+		if(!Object.is(exordial, undefined)){
 			if(exordial.length > 100) exordial = exordial.slice(0, 100);
 			MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'exordial', exordial ]).on();
 		}
@@ -140,7 +140,7 @@ Server.post("/profile", function(req, res){
 					var now = Number(new Date());
 					
 					changedDate.setDate(changedDate.getDate() + GLOBAL.NICKNAME_LIMIT.TERM);
-					if(GLOBAL.NICKNAME_LIMIT.ENABLED && now < Number(changedDate)) return res.send({ error: 457 });
+					if(GLOBAL.NICKNAME_LIMIT.TERM > 0 && now < Number(changedDate)) return res.send({ error: 457 });
 					if(data) return res.send({ error: 456 });
 					
 					MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'nickname', nickname ], [ 'nickChanged', now ]).on();

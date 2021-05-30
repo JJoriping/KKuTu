@@ -53,7 +53,7 @@ block Jungle
 	span#URL= `${locals.PROTOCOL}://${locals.HOST}:${locals.PORT}/${locals._id}`
 	span#MOREMI_PART= locals.MOREMI_PART.join(',')
 	span#AVAIL_EQUIP= locals.AVAIL_EQUIP.join(',')
-	span#NICKNAME_LIMIT= locals.NICKNAME_LIMIT.ENABLED ? locals.NICKNAME_LIMIT.TERM : undefined
+	span#NICKNAME_LIMIT= locals.NICKNAME_LIMIT ? JSON.stringify(locals.NICKNAME_LIMIT) : "{}"
 	span#RULE= JSON.stringify(locals.RULE)
 	span#OPTIONS= JSON.stringify(locals.OPTIONS)
 	div#Yell

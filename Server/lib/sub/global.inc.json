@@ -29,7 +29,7 @@
 		"BLOCKED_FOREVER": "영구 이용제한"
 	},
 	"NICKNAME_LIMIT": {
-		"ENABLED": false,
-		"TERM": 7
+		"TERM": 0,
+		"REGEX": [ "[\\{\\}\\[\\]\\/?.,;:|\\)*~`!^\\-+<>@#$%&\\\\=\\(\\'\"]", "gi" ]
 	}
 }
