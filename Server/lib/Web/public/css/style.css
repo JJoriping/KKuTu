@@ -153,6 +153,12 @@ span{
 	background-color: #EEBB33;
 	cursor: pointer;
 	z-index: 5;
+	height: 20px;
+}
+#gn-content{
+	position: absolute;
+	left: 0;
+	right: 0;
 }
 .searching{
 	color: #EEEEEE;
