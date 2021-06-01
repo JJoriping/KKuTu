@@ -38,7 +38,7 @@ function process(req, accessToken, MainDB, $p, done) {
         req.session.profile = $p;
 		req.session.nickname = $body ? $body.nickname : ($p.title || $p.name);
 		if($body){
-			if($body.nickname && $body.nickname != null) $p.title = $p.name = $body.nickname;
+			if($body.nickname) $p.title = $p.name = $body.nickname;
 		};
 		MainDB.session.upsert([ '_id', req.session.id ]).set({
 			'nickname': req.session.nickname,
