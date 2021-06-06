@@ -52,6 +52,7 @@ block Jungle
 	span#URL= `${locals.PROTOCOL}://${locals.HOST}:${locals.PORT}/${locals._id}`
 	span#MOREMI_PART= locals.MOREMI_PART.join(',')
 	span#AVAIL_EQUIP= locals.AVAIL_EQUIP.join(',')
+	span#NICKNAME_LIMIT= locals.NICKNAME_LIMIT ? JSON.stringify(locals.NICKNAME_LIMIT) : "{}"
 	span#RULE= JSON.stringify(locals.RULE)
 	span#OPTIONS= JSON.stringify(locals.OPTIONS)
 	div#Yell
@@ -65,7 +66,7 @@ block Jungle
 	
 block Middle
 	- var VERSION = L('version') + " (모바일)";
-	- var nick = SESSION.profile ? (SESSION.profile.title || SESSION.profile.name) : null;
+	- var nick = SESSION.nickname;
 	div#Intro
 		img#intro(src='/img/kkutu/m_intro.png')
 		//- img#intro-start(src='/img/kkutu/intro_start.gif')
