@@ -132,19 +132,22 @@ DB.ready = function(){
 	}, 4000);
 	JLog.success("DB is ready.");
 
-	DB.kkutu_shop_desc.find().on(function($docs){
-		var i, j;
+	WebInit.flusherRegister(function(){
+		DB.kkutu_shop_desc.find().on(function($docs){
+			var i, j;
 
-		for(i in Language) flush(i);
-		function flush(lang){
-			var db;
+			for(i in Language) flush(i);
+			function flush(lang){
+				var db;
 
-			Language[lang].SHOP = db = {};
-			for(j in $docs){
-				db[$docs[j]._id] = [ $docs[j][`name_${lang}`], $docs[j][`desc_${lang}`] ];
+				Language[lang].SHOP = db = {};
+				for(j in $docs){
+					db[$docs[j]._id] = [ $docs[j][`name_${lang}`], $docs[j][`desc_${lang}`] ];
+				}
 			}
-		}
+		});
 	});
+	
 	Server.listen(80);
 	if(Const.IS_SECURED) {
 		const options = Secure();

@@ -22,6 +22,7 @@ var Language = {
 	'ko_KR': require("../Web/lang/ko_KR.json"),
 	'en_US': require("../Web/lang/en_US.json")
 };
+var shopFlusher;
 
 function updateLanguage(){
 	var i, src;
@@ -42,6 +43,7 @@ function getLanguage(locale, page, shop){
 	if(shop) for(i in L.SHOP) R[i] = L.SHOP[i];
 	for(i in L[page]) R[i] = L[page][i];
 	if(R['title']) R['title'] = `[${process.env['KKT_SV_NAME']}] ${R['title']}`;
+	shopFlusher();
 	
 	return R;
 }
@@ -102,5 +104,8 @@ exports.init = function(Server, shop){
 		updateLanguage();
 		res.sendStatus(200);
 	});
+};
+exports.flusherRegister = function(flusher){
+	shopFlusher = flusher;
 };
 exports.page = page;
