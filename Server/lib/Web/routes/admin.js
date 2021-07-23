@@ -21,6 +21,10 @@ var MainDB	 = require("../db");
 var GLOBAL	 = require("../../sub/global.json");
 var JLog	 = require("../../sub/jjlog");
 var Lizard	 = require("../../sub/lizard.js");
+var Language = {
+	'ko_KR': require("../lang/ko_KR.json"),
+	'en_US': require("../lang/en_US.json")
+};
 
 exports.run = function(Server, page){
 
@@ -254,10 +258,14 @@ Server.post("/gwalli/shop", function(req, res){
 		MainDB.kkutu_shop.upsert([ '_id', item._id ]).set(item.core).on();
 		MainDB.kkutu_shop_desc.upsert([ '_id', item._id ]).set(item.text).on();
 	});
+	flushShop();
 	res.sendStatus(200);
 });
 
 };
+
+exports.flushShop = flushShop;
+
 function noticeAdmin(req, ...args){
 	JLog.info(`[ADMIN] ${req.originalUrl} ${req.ip} | ${args.join(' | ')}`);
 }
@@ -296,4 +304,20 @@ function parseKKuTuHot(){
 		return R;
 	}
 	return R;
+}
+function flushShop(){
+	MainDB.kkutu_shop_desc.find().on(function($docs){
+		var i, j;
+		
+		for(i in Language) flush(i);
+		function flush(lang){
+			var db;
+			
+			Language[lang].SHOP = db = {};
+			for(j in $docs){
+				db[$docs[j]._id] = [ $docs[j][`name_${lang}`], $docs[j][`desc_${lang}`] ];
+			}
+		}
+	});
+	JLog.log("Flushed Shop DB!");
 }

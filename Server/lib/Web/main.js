@@ -118,6 +118,10 @@ DDDoS.rules[0].logFunction = DDDoS.rules[1].logFunction = function(ip, path){
 Server.use(DDDoS.express());*/
 
 WebInit.init(Server, true);
+ROUTES.forEach(function(v){
+	ROUTES[ROUTES.indexOf(v)] = require(`./routes/${v}`);
+});
+
 DB.ready = function(){
 	setInterval(function(){
 		var q = [ 'createdAt', { $lte: Date.now() - 3600000 * 12 } ];
@@ -132,21 +136,7 @@ DB.ready = function(){
 	}, 4000);
 	JLog.success("DB is ready.");
 
-	WebInit.flusherRegister(function(){
-		DB.kkutu_shop_desc.find().on(function($docs){
-			var i, j;
-
-			for(i in Language) flush(i);
-			function flush(lang){
-				var db;
-
-				Language[lang].SHOP = db = {};
-				for(j in $docs){
-					db[$docs[j]._id] = [ $docs[j][`name_${lang}`], $docs[j][`desc_${lang}`] ];
-				}
-			}
-		});
-	});
+	ROUTES[2].flushShop();
 	
 	Server.listen(80);
 	if(Const.IS_SECURED) {
@@ -207,7 +197,7 @@ function GameClient(id, url){
 	});
 }
 ROUTES.forEach(function(v){
-	require(`./routes/${v}`).run(Server, WebInit.page);
+	v.run(Server, WebInit.page);
 });
 Server.get("/", function(req, res){
 	var server = req.query.server;
