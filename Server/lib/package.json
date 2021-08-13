@@ -24,7 +24,7 @@
 	"passport-daldalso": "^1.0.8",
     "passport-facebook": "^2.1.1",
     "passport-google-oauth2": "^0.1.6",
-    "passport-kakao": "0.0.5",
+    "passport-kakao": "^1.0.1",
     "passport-naver": "^1.0.6",
     "passport-twitter": "^1.0.4",
 	"passport-discord": "^0.1.3",
