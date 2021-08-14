@@ -928,7 +928,7 @@ $(document).ready(function(){
 					var $p;
 					
 					$players.append($p = $("<div>").addClass("replay-player-bar ellipse")
-						.html(u.title)
+						.text(u.title)
 						.prepend(getLevelImage(u.data.score).addClass("users-level"))
 					);
 					if(u.id == data.me) $p.css('font-weight', "bold");
