@@ -1,5 +1,5 @@
 # KKuTu
-- Made by [JJoriping](http://blog.jjo.kr/)
+- Made by [JJoriping](http://blog.naver.com/dosel1005)
 - Special thanks to
 	* [샌드박스 :: SDBX](http://cafe.naver.com/sdbx)
 	* [SWMaestro](http://www.swmaestro.kr)
