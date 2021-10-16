@@ -24,7 +24,7 @@
 1. 명령 프롬프트에서 `npm install -g grunt grunt-cli`를 입력해 [grunt](https://gruntjs.com/)를 설치합니다.
 1. [PostgreSQL](https://www.postgresql.org/) 인스톨러(**버전 11 이하**)를 내려받아 *pgAdmin*(자동으로 설치됨)과 함께 설치합니다. (버전 13 이상 사용 시 authenticationok 문제가 발생합니다.)
 1. *pgAdmin*을 실행시키고 SQL 파일(`./db.sql`)을 데이터베이스에 입력시킵니다.
-	* 자세한 과정은 [개발자 블로그](https://blog.naver.com/dosel1005/220935346136)를 참고하세요.
+	* 자세한 과정은 [개발자 블로그][dev-blog]를 참고하세요.
 1. 배치 파일(`./server-setup.bat`)을 실행시킵니다.
 1. 배치 파일(`./Server/run.bat`)을 실행시킵니다.
 	* 되도록 이 배치 파일을 직접 종료하지 말고 이를 실행시켜 나타나는 창을 종료하세요.
@@ -102,4 +102,4 @@ This repository provides you what you have to prepare to play **KKuTu**.
 - [Creative Commons License CC BY](https://creativecommons.org/licenses/by/4.0/) for all images and sounds in this repository.
 	- But if you use these for operating KKuTu service provided by this repository, you may omit the attribution(BY).
 
-[dev-blog]: http://blog.jjo.kr/220935346136
+[dev-blog]: https://blog.naver.com/dosel1005/220935346136
