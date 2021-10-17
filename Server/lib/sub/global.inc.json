@@ -15,7 +15,7 @@
 	"WAF": {
 		"WEB": false,
 		"GAME": false,
-		"PORT_GAP": 30
+		"PORT": 2082
 	},
 	"IS_SECURED": false,
 	"SSL_OPTIONS": {

@@ -21,7 +21,7 @@ $(document).ready(function(){
 	
 	$data.PUBLIC = $("#PUBLIC").html() == "true";
 	$data.URL = $("#URL").html();
-	$data.PORT_GAP = $("#PORT_GAP").html();
+	$data.WAF_PORT = $("#WAF_PORT").html();
 	$data.version = $("#version").html();
 	$data.server = location.href.match(/\?.*server=(\d+)/)[1];
 	$data.shop = {};

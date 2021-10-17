@@ -229,7 +229,7 @@ Server.get("/", function(req, res){
 			'_page': "kkutu",
 			'_id': id,
 			'PORT': Const.MAIN_PORTS[server],
-			'PORT_GAP': Const.WAF.GAME ? Const.WAF.PORT_GAP : 416,
+			'WAF_PORT': Const.WAF.GAME ? Const.WAF.PORT : 0,
 			'HOST': req.hostname,
 			'PROTOCOL': Const.IS_SECURED || Const.WAF.GAME ? 'wss' : 'ws',
 			'TEST': req.query.test,
