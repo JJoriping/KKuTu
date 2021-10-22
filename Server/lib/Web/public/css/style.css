@@ -158,6 +158,7 @@ span{
 	right: 0;
 	background-color: #EEBB33;
 	padding: 3px 0px;
+	z-index: -1;
 }
 .searching{
 	color: #EEEEEE;
