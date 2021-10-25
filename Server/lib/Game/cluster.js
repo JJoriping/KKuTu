@@ -53,7 +53,7 @@ if(Cluster.isMaster){
 		JLog.error(`Worker @${chan} ${w.process.pid} died`);
 		channels[chan] = Cluster.fork({ SERVER_NO_FORK: true, KKUTU_PORT: Const.WAF.GAME ? Const.WAF.PORT : Const.MAIN_PORTS[SID] + 416 + (chan - 1), CHANNEL: chan });
 	});
-	process.env['KKUTU_PORT'] = Const.WAF.GAME ? Const.WAF.PORT : Const.MAIN_PORTS[SID];
+	process.env['KKUTU_PORT'] = Const.MAIN_PORTS[SID];
 	require("./master.js").init(SID.toString(), channels);
 }else{
 	require("./slave.js");
