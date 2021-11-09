@@ -336,7 +336,7 @@ exports.init = function(_SID, CHAN){
 		JLog.success("Master DB is ready.");
 		
 		MainDB.users.update([ 'server', SID ]).set([ 'server', "" ]).on();
-		if(Const.IS_SECURED || Const.WAF.GAME) {
+		if(Const.IS_SECURED || Const.WAF) {
 			const options = Secure();
 			HTTPS_Server = https.createServer(options)
 				.listen(global.test ? (Const.TEST_PORT + 416) : process.env['KKUTU_PORT']);
@@ -497,7 +497,7 @@ function joinNewUser($c) {
 
 	JLog.info("New user #" + $c.id);
 	
-	if(GLOBAL.WAF.GAME) setInterval(() => {
+	if(GLOBAL.WAF) setInterval(() => {
 		$c.send('keepConnected');
 	}, 20000);
 }
