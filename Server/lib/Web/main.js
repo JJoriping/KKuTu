@@ -229,7 +229,7 @@ Server.get("/", function(req, res){
 			'_page': "kkutu",
 			'_id': id,
 			'PORT': Const.MAIN_PORTS[server],
-			'ROOM_PORTS': Const.ROOM_PORTS[server],
+			'ROOM_PORT': Const.ROOM_PORTS[server],
 			'HOST': req.hostname,
 			'PROTOCOL': Const.IS_SECURED || Const.WAF ? 'wss' : 'ws',
 			'TEST': req.query.test,
