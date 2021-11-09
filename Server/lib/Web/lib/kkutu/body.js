@@ -146,7 +146,7 @@ function route(func, a0, a1, a2, a3, a4){
 }
 function connectToRoom(chan, rid){
 	var url = $data.URL.replace(/:(\d+)/, function(v, p1){
-		return ":" + $data.ROOM_PORTS[location.href.split("?server=")[1]] || (Number(p1) + 416 + Number(chan) - 1);
+		return ":" + $data.ROOM_PORTS || (Number(p1) + 416 + Number(chan) - 1);
 	}) + "&" + chan + "&" + rid;
 	
 	if(rws) return;

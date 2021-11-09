@@ -21,7 +21,7 @@ $(document).ready(function(){
 	
 	$data.PUBLIC = $("#PUBLIC").html() == "true";
 	$data.URL = $("#URL").html();
-	$data.ROOM_PORTS = $("#ROOM_PORTS").html().split(",");
+	$data.ROOM_PORTS = $("#ROOM_PORTS").html();
 	$data.version = $("#version").html();
 	$data.server = location.href.match(/\?.*server=(\d+)/)[1];
 	$data.shop = {};
