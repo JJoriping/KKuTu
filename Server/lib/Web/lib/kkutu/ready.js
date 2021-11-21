@@ -118,6 +118,9 @@ $(document).ready(function(){
 				lbNext: $("#lb-next"),
 				lbMe: $("#lb-me"),
 				lbPrev: $("#lb-prev"),
+			Message: $("#MessageDiag"),
+				MessageOK: $("#message-ok"),
+				MessageNO: $("#message-no"),
 			dress: $("#DressDiag"),
 				dressOK: $("#dress-ok"),
 			charFactory: $("#CharFactoryDiag"),
@@ -785,6 +788,36 @@ $(document).ready(function(){
 			drawMyDress();
 		});
 	});
+	function errorMessage(text, boolen){
+		var tf = Boolean(boolen);
+			if (text){
+				showDialog($stage.dialog.Message);
+				playSound('k');
+				if (tf){
+					$("#message-no").show();
+				} else {
+					$("#message-no").hide();
+				};
+				$stage.dialog.Message.show();
+				$("#message").html(text);
+			}else return;
+	};
+	$stage.dialog.MessageOK.on('click', function(e){
+		MessageON(true);
+	})
+	$stage.dialog.MessageNO.on('click', function(e){
+		MessageON(false);
+	})
+	function MessageON(boolen){
+		var tf = Boolean(boolen);
+		if (tf){ // 확인
+			$stage.dialog.Message.hide();
+			Message = false;
+		} else { // 취소
+			$stage.dialog.Message.hide();
+			Message = true;
+		}
+	}
 	$stage.dialog.dressOK.on('click', function(e){
 		$(e.currentTarget).attr('disabled', true);
 		$.post("/exordial", { data: $("#dress-exordial").val() }, function(res){
