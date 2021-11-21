@@ -144,7 +144,7 @@ iframe{
 	.dialog-bar button{ float: left; }
 		.dialog-opt{ float: left; width: 100px; }
 	.tail-button{ margin-top: 7px; }
-	.tail-button button{ float: right; margin-right: 5px; width: 80px; height: 20px; }
+	.tail-button button{ float: right; margin-right: 3px; width: 80px; height: 20px; }
 	.dialog .closeBtn{
 		float: right;
 		border-radius: 6px;
