@@ -162,7 +162,7 @@ $(document).ready(function(){
 	};
 	if(_WebSocket == undefined){
 		loading(L['websocketUnsupport']);
-		alert(L['websocketUnsupport']);
+		errorMessage(L['websocketUnsupport']);
 		return;
 	}
 	$data._soundList = [
@@ -849,7 +849,7 @@ $(document).ready(function(){
 			
 			if(res.error) return fail(res.error);
 			send('refresh');
-			alert(L['cfComposed']);
+			errorMessage(L['cfComposed']);
 			$data.users[$data.id].money = res.money;
 			$data.box = res.box;
 			for(i in res.gain) queueObtain(res.gain[i]);
@@ -911,7 +911,7 @@ $(document).ready(function(){
 			var my = $data.users[$data.id];
 			
 			if(res.error) return fail(res.error);
-			alert(L['purchased']);
+			errorMessage(L['purchased']);
 			my.money = res.money;
 			my.box = res.box;
 			updateMe();
@@ -970,7 +970,7 @@ $(document).ready(function(){
 				$stage.dialog.replayView.attr('disabled', false);
 			}catch(ex){
 				console.warn(ex);
-				return alert(L['replayError']);
+				return errorMessage(L['replayError']);
 			}
 		};
 	});
@@ -1014,7 +1014,7 @@ $(document).ready(function(){
 			
 			if(rws) rws.close();
 			stopAllSounds();
-			alert(ct);
+			errorMessage(ct);
 			$.get("/kkutu_notice.html", function(res){
 				loading(res);
 			});
