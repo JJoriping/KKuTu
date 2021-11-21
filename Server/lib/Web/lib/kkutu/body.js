@@ -182,15 +182,15 @@ function checkAge(){
 				if(--lv < 1) break; else continue;
 			}
 			if(lv == 1 && (str < 1000 || str > 2999)){
-				alert(str + "\n" + L['checkAgeNo']);
+				errorMessage(str + "\n" + L['checkAgeNo']);
 				continue;
 			}
 			if(lv == 2 && (str < 1 || str > 12)){
-				alert(str + "\n" + L['checkAgeNo']);
+				errorMessage(str + "\n" + L['checkAgeNo']);
 				continue;
 			}
 			if(lv == 3 && (str < 1 || str > 31)){
-				alert(str + "\n" + L['checkAgeNo']);
+				errorMessage(str + "\n" + L['checkAgeNo']);
 				continue;
 			}
 			input[lv++ - 1] = str;
@@ -237,7 +237,7 @@ function onMessage(data){
 			$data._okg = data.okg;
 			$data._gaming = false;
 			$data.box = data.box;
-			if(data.test) alert(L['welcomeTestServer']);
+			if(data.test) errorMessage(L['welcomeTestServer']);
 			if(location.hash[1]) tryJoin(location.hash.slice(1));
 			updateUI(undefined, true);
 			welcome();
@@ -502,7 +502,7 @@ function onMessage(data){
 				var block = "\n제한 시점: " + blockedUntil.getFullYear() + "년 " + blockedUntil.getMonth() + 1 + "월 " +
 				blockedUntil.getDate() + "일 " + blockedUntil.getHours() + "시 " + blockedUntil.getMinutes() + "분까지";
 				
-				alert("[#444] " + L['error_444'] + i + block);
+				errorMessage("[#444] " + L['error_444'] + i + block);
 				break;
 			}else if(data.code == 446){
 				i = data.reasonBlocked;
@@ -512,14 +512,14 @@ function onMessage(data){
 				var block = "\n제한 시점: " + blockedUntil.getFullYear() + "년 " + blockedUntil.getMonth() + 1 + "월 " +
 				blockedUntil.getDate() + "일 " + blockedUntil.getHours() + "시 " + blockedUntil.getMinutes() + "분까지";
 				
-				alert("[#446] " + L['error_446'] + i + block);
+				errorMessage("[#446] " + L['error_446'] + i + block);
 				break;
 			/* Enhanced User Block System [E] */
 			} else if (data.code === 447) {
-				alert("자동화 봇 방지를 위한 캡챠 인증에 실패했습니다. 메인 화면에서 다시 시도해 주세요.");
+				errorMessage("자동화 봇 방지를 위한 캡챠 인증에 실패했습니다. 메인 화면에서 다시 시도해 주세요.");
 				break;
 			}
-			alert("[#" + data.code + "] " + L['error_'+data.code] + i);
+			errorMessage("[#" + data.code + "] " + L['error_'+data.code] + i, false);
 			break;
 		default:
 			break;
@@ -1242,6 +1242,36 @@ function drawScore($obj, score){
 		$obj.append($("<div>").addClass("game-user-score-char").html(sc[i]));
 	}
 }
+function errorMessage(text, boolen){
+	var tf = Boolean(boolen);
+		if (text){
+			showDialog($stage.dialog.Message);
+			playSound('k');
+			if (tf){
+				$("#message-no").show();
+			} else {
+				$("#message-no").hide();
+			};
+			$stage.dialog.Message.show();
+			$("#message").html(text);
+		}else return;
+};
+$stage.dialog.MessageOK.on('click', function(e){
+	MessageON(true);
+})
+$stage.dialog.MessageNO.on('click', function(e){
+	MessageON(false);
+})
+function MessageON(boolen){
+	var tf = Boolean(boolen);
+	if (tf){ // 확인
+		$stage.dialog.Message.hide();
+		Message = false;
+	} else { // 취소
+		$stage.dialog.Message.hide();
+		Message = true;
+	}
+}
 function drawMyDress(avGroup){
 	var $view = $("#dress-view");
 	var my = $data.users[$data.id];
@@ -1309,7 +1339,7 @@ function drawMyGoods(avGroup){
 			if(!confirm(L['surePayback'] + commify(Math.round((item.cost || 0) * 0.2)) + L['ping'])) return;
 			$.post("/payback/" + id, function(res){
 				if(res.error) return fail(res.error);
-				alert(L['painback']);
+				errorMessage(L['painback']);
 				$data.box = res.box;
 				$data.users[$data.id].money = res.money;
 				
@@ -2884,7 +2914,7 @@ function setLocation(place){
 	else location.hash = "";
 }
 function fail(code){
-	return alert(L['error_' + code]);
+	return errorMessage(L['error_' + code]);
 }
 function yell(msg){
 	$stage.yell.show().css('opacity', 1).html(msg);
