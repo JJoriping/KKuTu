@@ -390,6 +390,12 @@ block Middle
 			button#obtain-ok= L('OK')
 	+Dialog('HelpDiag', 550, 400, L('helpText'))
 		iframe#help-board(width=550, height=375)
+	+Dialog('MessageDiag', 300, 140, L('messageEmbed'))
+		div#message(style='height:80px;text-align:center;padding:0px 12px 0px 12px;word-break:keep-all;vertical-align:middle;display:table-cell;')
+			h4.message-bar-value#message
+		div.dialog-bar.tail-button
+			button#message-ok= L('OK')
+			button#message-no= L('NO')
 	+Product('UserList')
 		div 불러오는 중
 	+Product('RoomList')
