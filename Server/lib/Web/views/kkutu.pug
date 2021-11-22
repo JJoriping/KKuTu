@@ -92,7 +92,7 @@ block Middle
 		button#ReplayBtn.for-lobby(style='display: none; background-color: #D9FF82;')= L('replay')
 		button#LeaderboardBtn.for-lobby(style='display: none; background-color: #FFADD3;')!= L('leaderboard')
 		div#facebook-menu.fb-like.for-lobby.for-master.for-normal.for-gaming(data-href='http://kkutu.kr', data-width='300', data-layout='button_count', data-action='like', data-show-faces='true', data-share='true')
-	+Dialog('SettingDiag', 300, 240, L('settingsText'))
+	+Dialog('SettingDiag', 300, 310, L('settingsText'))
 		div.dialog-bar
 			h4= L('mute')
 			+SettingOption('mute-bgm', L('bgm'))
