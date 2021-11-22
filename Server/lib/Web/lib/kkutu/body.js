@@ -76,6 +76,7 @@ function applyOptions(opt){
 	$("#sort-user").attr('checked', $data.opts.su);
 	$("#only-waiting").attr('checked', $data.opts.ow);
 	$("#only-unlock").attr('checked', $data.opts.ou);
+               $("#only-abuse").attr('checked', $data.opts.ab);
 	
 	if($data.bgm){
 		if($data.muteBGM){
@@ -2669,7 +2670,11 @@ function forkChat(){
 	$stage.chat.scrollTop(999999999);
 }
 function badWords(text){
-	return text.replace(BAD, "♥♥");
+	if($data.opts.ab){
+		return text.replace(BAD, "♥♥");
+	} else {
+		return text.replace(oldBAD, "♥♥");
+	}
 }
 function chatBalloon(text, id, flag){
 	$("#cb-" + id).remove();
