@@ -2671,9 +2671,9 @@ function forkChat(){
 }
 function badWords(text){
 	if($data.opts.ab){
-		return text.replace(BAD, "♥♥");
+		return text.replace(ADVANCED_BAD, "♥♥");
 	} else {
-		return text.replace(ADVANCED_BAD, "♥♥"); 
+		return text.replace(Previous_BAD, "♥♥"); 
 	}
 }
 function chatBalloon(text, id, flag){
