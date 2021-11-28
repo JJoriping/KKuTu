@@ -16,8 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { Not, In, Raw, MoreThan } = require("typeorm");
 var Const = require('../../const');
-var Lizard = require('../../sub/lizard');
 var DB;
 var DIC;
 
@@ -30,14 +30,14 @@ exports.init = function(_DB, _DIC){
 	DIC = _DIC;
 };
 exports.getTitle = function(){
-	var R = new Lizard.Tail();
-	var my = this;
-	
-	my.game.done = [];
-	setTimeout(function(){
-		R.go("①②③④⑤⑥⑦⑧⑨⑩");
-	}, 500);
-	return R;
+	return new Promise((resolve) => {
+		var my = this;
+		
+		my.game.done = [];
+		setTimeout(function(){
+			resolve("①②③④⑤⑥⑦⑧⑨⑩");
+		}, 500);
+	});
 };
 exports.roundReady = function(){
 	var my = this;
@@ -234,28 +234,23 @@ function getHint($ans){
 	return R;
 }
 function getAnswer(theme, nomean){
-	var my = this;
-	var R = new Lizard.Tail();
-	var args = [ [ '_id', { $nin: my.game.done } ] ];
-	
-	args.push([ 'theme', new RegExp("(,|^)(" + theme + ")(,|$)") ]);
-	args.push([ 'type', Const.KOR_GROUP ]);
-	args.push([ 'flag', { $lte: 7 } ]);
-	DB.kkutu['ko'].find.apply(my, args).on(function($res){
-		if(!$res) return R.go(null);
+	return new Promise(async (resolve) => {
+		var my = this;
+		
+		const $res = await DB.kkutu['ko'].find({ where: { _id: Not(In(my.game.done)), theme: Raw((_) => `${_} ~ '(,|^)(${theme})(,|$)'`), type: Raw((type) => `${type} ~ '${Const.KOR_GROUP}'`), flag: Not(MoreThan(7)) } });
+		if(!$res) return resolve(null);
 		var pick;
 		var len = $res.length;
 		
-		if(!len) return R.go(null);
+		if(!len) return resolve(null);
 		do{
 			pick = Math.floor(Math.random() * len);
 			if($res[pick]._id.length >= 2) if($res[pick].type == "INJEONG" || $res[pick].mean.length >= 0){
-				return R.go($res[pick]);
+				return resolve($res[pick]);
 			}
 			$res.splice(pick, 1);
 			len--;
 		}while(len > 0);
-		R.go(null);
+		resolve(null);
 	});
-	return R;
 }

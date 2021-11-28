@@ -37,8 +37,7 @@ if(Const.IS_SECURED) {
 }
 var Master = require('./master');
 var KKuTu = require('./kkutu');
-var Lizard = require('../sub/lizard');
-var MainDB = require('../Web/db');
+var MainDB = require('../Web/db/agent');
 var JLog = require('../sub/jjlog');
 var GLOBAL = require('../sub/global.json');
 
@@ -102,7 +101,7 @@ MainDB.ready = function(){
 	JLog.success("DB is ready.");
 	KKuTu.init(MainDB, DIC, ROOM, GUEST_PERMISSION);
 };
-Server.on('connection', function(socket, info){
+Server.on('connection', async function(socket, info){
 	var chunk = info.url.slice(1).split('&');
 	var key = chunk[0];
 	var reserve = RESERVED[key] || {}, room;
@@ -129,56 +128,54 @@ Server.on('connection', function(socket, info){
 		socket.close();
 		return;
 	}
-	MainDB.session.findOne([ '_id', key ]).limit([ 'profile', true ]).on(function($body){
-		$c = new KKuTu.Client(socket, $body ? $body.profile : null, key);
-		$c.admin = GLOBAL.ADMIN.indexOf($c.id) != -1;
-		
-		/* Enhanced User Block System [S] */
-		$c.remoteAddress = GLOBAL.USER_BLOCK_OPTIONS.USE_X_FORWARDED_FOR ? info.connection.remoteAddress : (info.headers['x-forwarded-for'] || info.connection.remoteAddress);
-		if(GLOBAL.USER_BLOCK_OPTIONS.USE_MODULE && ((GLOBAL.USER_BLOCK_OPTIONS.BLOCK_IP_ONLY_FOR_GUEST && $c.guest) || !GLOBAL.USER_BLOCK_OPTIONS.BLOCK_IP_ONLY_FOR_GUEST)){
-			MainDB.ip_block.findOne([ '_id', $c.remoteAddress ]).on(function($body){
-				if ($body.reasonBlocked) {
-					$c.socket.send(JSON.stringify({
-						type: 'error',
-						code: 446,
-						reasonBlocked: !$body.reasonBlocked ? GLOBAL.USER_BLOCK_OPTIONS.DEFAULT_BLOCKED_TEXT : $body.reasonBlocked,
-						ipBlockedUntil: !$body.ipBlockedUntil ? GLOBAL.USER_BLOCK_OPTIONS.BLOCKED_FOREVER : $body.ipBlockedUntil
-					}));
-					$c.socket.close();
-					return;
-				}
-			});
-		}
-		/* Enhanced User Block System [E] */
-		if(DIC[$c.id]){
-			DIC[$c.id].send('error', { code: 408 });
-			DIC[$c.id].socket.close();
-		}
-		if(DEVELOP && !Const.TESTER.includes($c.id)){
-			$c.send('error', { code: 500 });
+	const $ses = await MainDB.session.findOne({ select: [ "_id", "profile" ], where: { _id: key } });
+	$c = new KKuTu.Client(socket, $ses ? $ses.profile : null, key);
+	$c.admin = GLOBAL.ADMIN.indexOf($c.id) != -1;
+	
+	/* Enhanced User Block System [S] */
+	$c.remoteAddress = GLOBAL.USER_BLOCK_OPTIONS.USE_X_FORWARDED_FOR ? info.connection.remoteAddress : (info.headers['x-forwarded-for'] || info.connection.remoteAddress);
+	if(GLOBAL.USER_BLOCK_OPTIONS.USE_MODULE && ((GLOBAL.USER_BLOCK_OPTIONS.BLOCK_IP_ONLY_FOR_GUEST && $c.guest) || !GLOBAL.USER_BLOCK_OPTIONS.BLOCK_IP_ONLY_FOR_GUEST)){
+		const $body = await MainDB.ip_block.findOne({ where: { _id: $c.remoteAddress } });
+		if ($body.reasonBlocked) {
+			$c.socket.send(JSON.stringify({
+				type: 'error',
+				code: 446,
+				reasonBlocked: !$body.reasonBlocked ? GLOBAL.USER_BLOCK_OPTIONS.DEFAULT_BLOCKED_TEXT : $body.reasonBlocked,
+				ipBlockedUntil: !$body.ipBlockedUntil ? GLOBAL.USER_BLOCK_OPTIONS.BLOCKED_FOREVER : $body.ipBlockedUntil
+			}));
 			$c.socket.close();
 			return;
 		}
-		$c.refresh().then(function(ref){
-			if(ref.result == 200){
-				DIC[$c.id] = $c;
-				DNAME[($c.profile.title || $c.profile.name).replace(/\s/g, "")] = $c.id;
-				
-				$c.enter(room, reserve.spec, reserve.pass);
-				if($c.place == room.id){
-					$c.publish('connRoom', { user: $c.getData() });
-				}else{ // 입장 실패
-					$c.socket.close();
-				}
-				JLog.info(`Chan @${CHAN} New #${$c.id}`);
-			}else{
-				$c.send('error', {
-					code: ref.result, message: ref.black
-				});
-				$c._error = ref.result;
+	}
+	/* Enhanced User Block System [E] */
+	if(DIC[$c.id]){
+		DIC[$c.id].send('error', { code: 408 });
+		DIC[$c.id].socket.close();
+	}
+	if(DEVELOP && !Const.TESTER.includes($c.id)){
+		$c.send('error', { code: 500 });
+		$c.socket.close();
+		return;
+	}
+	$c.refresh().then(function(ref){
+		if(ref.result == 200){
+			DIC[$c.id] = $c;
+			DNAME[($c.profile.title || $c.profile.name).replace(/\s/g, "")] = $c.id;
+			
+			$c.enter(room, reserve.spec, reserve.pass);
+			if($c.place == room.id){
+				$c.publish('connRoom', { user: $c.getData() });
+			}else{ // 입장 실패
 				$c.socket.close();
 			}
-		});
+			JLog.info(`Chan @${CHAN} New #${$c.id}`);
+		}else{
+			$c.send('error', {
+				code: ref.result, message: ref.black
+			});
+			$c._error = ref.result;
+			$c.socket.close();
+		}
 	});
 });
 Server.on('error', function(err){

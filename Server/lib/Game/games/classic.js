@@ -16,8 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { Raw, Not, MoreThan } = require("typeorm");
 var Const = require('../../const');
-var Lizard = require('../../sub/lizard');
 var DB;
 var DIC;
 
@@ -35,92 +35,78 @@ exports.init = function(_DB, _DIC){
 	DIC = _DIC;
 };
 exports.getTitle = function(){
-	var R = new Lizard.Tail();
-	var my = this;
-	var l = my.rule;
-	var EXAMPLE;
-	var eng, ja;
-	
-	if(!l){
-		R.go("undefinedd");
-		return R;
-	}
-	if(!l.lang){
-		R.go("undefinedd");
-		return R;
-	}
-	EXAMPLE = Const.EXAMPLE_TITLE[l.lang];
-	my.game.dic = {};
-	
-	switch(Const.GAME_TYPE[my.mode]){
-		case 'EKT':
-		case 'ESH':
-			eng = "^" + String.fromCharCode(97 + Math.floor(Math.random() * 26));
-			break;
-		case 'KKT':
-			my.game.wordLength = 3;
-		case 'KSH':
-			ja = 44032 + 588 * Math.floor(Math.random() * 18);
-			eng = "^[\\u" + ja.toString(16) + "-\\u" + (ja + 587).toString(16) + "]";
-			break;
-		case 'KAP':
-			ja = 44032 + 588 * Math.floor(Math.random() * 18);
-			eng = "[\\u" + ja.toString(16) + "-\\u" + (ja + 587).toString(16) + "]$";
-			break;
-	}
-	function tryTitle(h){
-		if(h > 50){
-			R.go(EXAMPLE);
-			return;
+	return new Promise(async (resolve) => {
+		var my = this;
+		var l = my.rule;
+		var EXAMPLE;
+		var eng, ja;
+		
+		if(!l) return resolve("undefinedd");
+		if(!l.lang) return resolve("undefinedd");
+		
+		EXAMPLE = Const.EXAMPLE_TITLE[l.lang];
+		my.game.dic = {};
+		
+		switch(Const.GAME_TYPE[my.mode]){
+			case 'EKT':
+			case 'ESH':
+				eng = "^" + String.fromCharCode(97 + Math.floor(Math.random() * 26));
+				break;
+			case 'KKT':
+				my.game.wordLength = 3;
+			case 'KSH':
+				ja = 44032 + 588 * Math.floor(Math.random() * 18);
+				eng = "^[\\u" + ja.toString(16) + "-\\u" + (ja + 587).toString(16) + "]";
+				break;
+			case 'KAP':
+				ja = 44032 + 588 * Math.floor(Math.random() * 18);
+				eng = "[\\u" + ja.toString(16) + "-\\u" + (ja + 587).toString(16) + "]$";
+				break;
 		}
-		DB.kkutu[l.lang].find(
-			[ '_id', new RegExp(eng + ".{" + Math.max(1, my.round - 1) + "}$") ],
-			// [ 'hit', { '$lte': h } ],
-			(l.lang == "ko") ? [ 'type', Const.KOR_GROUP ] : [ '_id', Const.ENG_ID ]
-			// '$where', eng+"this._id.length == " + Math.max(2, my.round) + " && this.hit <= " + h
-		).limit(20).on(function($md){
-			var list;
+		async function tryTitle(h){
+			if(h > 50) return resolve(EXAMPLE);
+			
+			const q = { where: { _id: Raw((_id) => `LENGTH(${_id}) = ${Math.max(1, my.round)} ${l.lang != "ko" ? "AND " + _id + " ~ '" + Const.ENG_ID + "'" : ""}`) }, take: 20 };
+			if(l.lang == "ko") q.where.type = Raw((type) => `${type} ~ '${Const.KOR_GROUP}'`);
+			const $md = await DB.kkutu[l.lang].find(q);
 			
 			if($md.length){
 				list = shuffle($md);
 				checkTitle(list.shift()._id).then(onChecked);
 			
 				function onChecked(v){
-					if(v) R.go(v);
+					if(v) resolve(v);
 					else if(list.length) checkTitle(list.shift()._id).then(onChecked);
-					else R.go(EXAMPLE);
+					else resolve(EXAMPLE);
 				}
 			}else{
-				tryTitle(h + 10);
+				await tryTitle(h + 10);
 			}
-		});
-	}
-	function checkTitle(title){
-		var R = new Lizard.Tail();
-		var i, list = [];
-		var len;
-		
-		/* 부하가 너무 걸린다면 주석을 풀자.
-		R.go(true);
-		return R;
-		*/
-		if(title == null){
-			R.go(EXAMPLE);
-		}else{
-			len = title.length;
-			for(i=0; i<len; i++) list.push(getAuto.call(my, title[i], getSubChar.call(my, title[i]), 1));
-			
-			Lizard.all(list).then(function(res){
-				for(i in res) if(!res[i]) return R.go(EXAMPLE);
+		}
+		function checkTitle(title){
+			return new Promise((resolve) => {
+				var i, list = [];
+				var len;
 				
-				return R.go(title);
+				/* 부하가 너무 걸린다면 주석을 풀자.
+				resolve(true);
+				*/
+				
+				if(title == null) resolve(EXAMPLE);
+				else{
+					len = title.length;
+					for(i=0; i<len; i++) list.push(getAuto.call(my, title[i], getSubChar.call(my, title[i]), 1));
+					
+					Promise.all(list).then(function(res){
+						for(i in res) if(!res[i]) resolve(EXAMPLE);
+						
+						return resolve(title);
+					});
+				}
 			});
 		}
-		return R;
-	}
-	tryTitle(10);
-	
-	return R;
+		await tryTitle(10);
+	});
 };
 exports.roundReady = function(){
 	var my = this;
@@ -207,7 +193,7 @@ exports.turnEnd = function(){
 	});
 	clearTimeout(my.game.robotTimer);
 };
-exports.submit = function(client, text){
+exports.submit = async function(client, text){
 	var score, l, t;
 	var my = this;
 	var tv = (new Date()).getTime();
@@ -229,7 +215,7 @@ exports.submit = function(client, text){
 		var firstMove = my.game.chain.length < 1;
 		
 		function preApproved(){
-			function approved(){
+			async function approved(){
 				if(my.game.late) return;
 				if(!my.game.chain) return;
 				if(!my.game.dic) return;
@@ -261,7 +247,9 @@ exports.submit = function(client, text){
 				setTimeout(my.turnNext, my.game.turnTime / 6);
 				if(!client.robot){
 					client.invokeWordPiece(text, 1);
-					DB.kkutu[l].update([ '_id', text ]).set([ 'hit', $doc.hit + 1 ]).on();
+					const word = await DB.kkutu[l].findOne({ where: { _id: text } });
+					word.hit = $doc.hit + 1;
+					await DB.kkutu[l].save(word);
 				}
 			}
 			if(firstMove || my.opts.manner) getAuto.call(my, preChar, preSubChar, 1).then(function(w){
@@ -305,9 +293,9 @@ exports.submit = function(client, text){
 			default: return false;
 		}
 	}
-	DB.kkutu[l].findOne([ '_id', text ],
-		(l == "ko") ? [ 'type', Const.KOR_GROUP ] : [ '_id', Const.ENG_ID ]
-	).on(onDB);
+	const q = { where: { _id: Raw((_id) => `${_id} = '${text}' ${l != "ko" ? "AND " + _id + " ~ '" + Const.ENG_ID + "'" : ""}`) } };
+	if(l == "ko") q.where.type = Raw((type) => `${type} ~ '${Const.KOR_GROUP}'`);
+	DB.kkutu[l].findOne(q).then(onDB);
 };
 exports.getScore = function(text, delay, ignoreMission){
 	var my = this;
@@ -379,29 +367,27 @@ exports.readyRobot = function(robot){
 		setTimeout(my.turnRobot, delay, robot, text);
 	}
 	function getWishList(list){
-		var R = new Lizard.Tail();
-		var wz = [];
-		var res;
-		
-		for(i in list) wz.push(getWish(list[i]));
-		Lizard.all(wz).then(function($res){
-			if(!my.game.chain) return;
-			$res.sort(function(a, b){ return a.length - b.length; });
+		return new Promise((resolve) => {
+			var wz = [];
+			var res;
 			
-			if(my.opts.manner || !my.game.chain.length){
-				while(res = $res.shift()) if(res.length) break;
-			}else res = $res.shift();
-			R.go(res ? res.char : null);
+			for(i in list) wz.push(getWish(list[i]));
+			Promise.all(wz).then(function($res){
+				if(!my.game.chain) return;
+				$res.sort(function(a, b){ return a.length - b.length; });
+				
+				if(my.opts.manner || !my.game.chain.length){
+					while(res = $res.shift()) if(res.length) break;
+				}else res = $res.shift();
+				resolve(res ? res.char : null);
+			});
 		});
-		return R;
 	}
 	function getWish(char){
-		var R = new Lizard.Tail();
-		
-		DB.kkutu[my.rule.lang].find([ '_id', new RegExp(isRev ? `.${char}$` : `^${char}.`) ]).limit(10).on(function($res){
-			R.go({ char: char, length: $res.length });
+		return new Promise(async (resolve) => {
+			const $res = await DB.kkutu[my.rule.lang].find({ where: { _id: Raw((_id) => `${_id} ~ '${isRev ? "." + char + "$" : "^" + char + "."}'`) }, take: 10 });
+			resolve({ char, length: $res.length });
 		});
-		return R;
 	}
 };
 function getMission(l){
@@ -411,95 +397,93 @@ function getMission(l){
 	return arr[Math.floor(Math.random() * arr.length)];
 }
 function getAuto(char, subc, type){
-	/* type
-		0 무작위 단어 하나
-		1 존재 여부
-		2 단어 목록
-	*/
-	var my = this;
-	var R = new Lizard.Tail();
-	var gameType = Const.GAME_TYPE[my.mode];
-	var adv, adc;
-	var key = gameType + "_" + keyByOptions(my.opts);
-	var MAN = DB.kkutu_manner[my.rule.lang];
-	var bool = type == 1;
-	
-	adc = char + (subc ? ("|"+subc) : "");
-	switch(gameType){
-		case 'EKT':
-			adv = `^(${adc})..`;
-			break;
-		case 'KSH':
-			adv = `^(${adc}).`;
-			break;
-		case 'ESH':
-			adv = `^(${adc})...`;
-			break;
-		case 'KKT':
-			adv = `^(${adc}).{${my.game.wordLength-1}}$`;
-			break;
-		case 'KAP':
-			adv = `.(${adc})$`;
-			break;
-	}
-	if(!char){
-		console.log(`Undefined char detected! key=${key} type=${type} adc=${adc}`);
-	}
-	MAN.findOne([ '_id', char || "★" ]).on(function($mn){
-		if($mn && bool){
-			if($mn[key] === null) produce();
-			else R.go($mn[key]);
-		}else{
-			produce();
-		}
-	});
-	function produce(){
-		var aqs = [[ '_id', new RegExp(adv) ]];
-		var aft;
-		var lst;
+	return new Promise(async (resolve) => {
+		/* type
+			0 무작위 단어 하나
+			1 존재 여부
+			2 단어 목록
+		*/
+		var my = this;
+		var gameType = Const.GAME_TYPE[my.mode];
+		var adv, adc;
+		var key = gameType + "_" + keyByOptions(my.opts);
+		var MAN = DB.kkutu_manner[my.rule.lang];
+		var bool = type == 1;
 		
-		if(!my.opts.injeong) aqs.push([ 'flag', { '$nand': Const.KOR_FLAG.INJEONG } ]);
-		if(my.rule.lang == "ko"){
-			if(my.opts.loanword) aqs.push([ 'flag', { '$nand': Const.KOR_FLAG.LOANWORD } ]);
-			if(my.opts.strict) aqs.push([ 'type', Const.KOR_STRICT ], [ 'flag', { $lte: 3 } ]);
-			else aqs.push([ 'type', Const.KOR_GROUP ]);
+		adc = char + (subc ? ("|"+subc) : "");
+		switch(gameType){
+			case 'EKT':
+				adv = `^(${adc})..`;
+				break;
+			case 'KSH':
+				adv = `^(${adc}).`;
+				break;
+			case 'ESH':
+				adv = `^(${adc})...`;
+				break;
+			case 'KKT':
+				adv = `^(${adc}).{${my.game.wordLength-1}}$`;
+				break;
+			case 'KAP':
+				adv = `.(${adc})$`;
+				break;
+		}
+		if(!char){
+			console.log(`Undefined char detected! key=${key} type=${type} adc=${adc}`);
+		}
+		const $mn = await MAN.findOne({ _id: char || "★" });
+		if($mn && bool){
+			if(!$mn.data[key]) produce();
+			else resolve($mn.data[key]);
 		}else{
-			aqs.push([ '_id', Const.ENG_ID ]);
+			await produce();
 		}
-		switch(type){
-			case 0:
-			default:
-				aft = function($md){
-					R.go($md[Math.floor(Math.random() * $md.length)]);
-				};
-				break;
-			case 1:
-				aft = function($md){
-					R.go($md.length ? true : false);
-				};
-				break;
-			case 2:
-				aft = function($md){
-					R.go($md);
-				};
-				break;
-		}
-		DB.kkutu[my.rule.lang].find.apply(this, aqs).limit(bool ? 1 : 123).on(function($md){
-			forManner($md);
+		async function produce(){
+			const aqs = { where: { _id: Raw((_id) => `${_id} ~ '${adv}'`) }, take: bool ? 1 : 123 };
+			var aft;
+			var lst;
+			
+			if(!my.opts.injeong) aqs.where.flag = Raw((flag) => `${flag} & ${Const.KOR_FLAG.INJEONG} = 0`);
+			if(my.rule.lang == "ko"){
+				if(my.opts.loanword) aqs.where.flag = Raw((flag) => `${flag} & ${Const.KOR_FLAG.LOANWORD} = 0`);
+				if(my.opts.strict){
+					aqs.where.type = Raw((type) => `${type} ~ '${Const.KOR_STRICT}'`);
+					aqs.where.flag = Not(MoreThan(3));
+				}
+				else aqs.where.type = Raw((type) => `${type} ~ '${Const.KOR_GROUP}'`);
+			}else{
+				aqs.where._id = Raw((_id) => `${_id} ~ '${Const.ENG_ID}'`);
+			}
+			switch(type){
+				case 0:
+				default:
+					aft = function($md){
+						resolve($md[Math.floor(Math.random() * $md.length)]);
+					};
+					break;
+				case 1:
+					aft = function($md){
+						resolve($md.length ? true : false);
+					};
+					break;
+				case 2:
+					aft = function($md){
+						resolve($md);
+					};
+					break;
+			}
+			const $md = await DB.kkutu[my.rule.lang].find(aqs);
+			await forManner($md);
 			if(my.game.chain) aft($md.filter(function(item){ return !my.game.chain.includes(item); }));
 			else aft($md);
-		});
-		function forManner(list){
-			lst = list;
-			MAN.upsert([ '_id', char ]).set([ key, lst.length ? true : false ]).on(null, null, onFail);
+			async function forManner(list){
+				lst = list;
+				const word = (await MAN.findOne({ where: { _id: char } })) || new DB.Manner(my.rule.lang, char);
+				word.data[key] = !!lst.length;
+				await MAN.save(word);
+			}
 		}
-		function onFail(){
-			MAN.createColumn(key, "boolean").on(function(){
-				forManner(lst);
-			});
-		}
-	}
-	return R;
+	});
 }
 function keyByOptions(opts){
 	var arr = [];

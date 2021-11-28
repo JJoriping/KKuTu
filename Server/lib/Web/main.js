@@ -21,6 +21,7 @@
  * Login 을 Passport 로 수행하기 위한 수정
  */
 
+const { Not, MoreThan } = require("typeorm");
 var WS		 = require("ws");
 var Express	 = require("express");
 var Exession = require("express-session");
@@ -29,7 +30,7 @@ var Redis	 = require("redis");
 var Parser	 = require("body-parser");
 var DDDoS	 = require("dddos");
 var Server	 = Express();
-var DB		 = require("./db");
+var DB		 = require("./db/agent");
 //볕뉘 수정 구문삭제 (28)
 var JLog	 = require("../sub/jjlog");
 var WebInit	 = require("../sub/webinit");
@@ -118,11 +119,11 @@ DDDoS.rules[0].logFunction = DDDoS.rules[1].logFunction = function(ip, path){
 Server.use(DDDoS.express());*/
 
 WebInit.init(Server, true);
-DB.ready = function(){
-	setInterval(function(){
-		var q = [ 'createdAt', { $lte: Date.now() - 3600000 * 12 } ];
-
-		DB.session.remove(q).on();
+DB.ready = async function(){
+	setInterval(async function(){
+		DB.session.remove(
+			await DB.session.find({ createdAt: Not(MoreThan(Date.now() - 3600000 * 12)) })
+		);
 	}, 600000);
 	setInterval(function(){
 		gameServers.forEach(function(v){
@@ -132,20 +133,18 @@ DB.ready = function(){
 	}, 4000);
 	JLog.success("DB is ready.");
 
-	DB.kkutu_shop_desc.find().on(function($docs){
-		var i, j;
+	const $docs = await DB.kkutu_shop_desc.find();
+	
+	for(let i in Language) flush(i);
+	function flush(lang){
+		var db;
 
-		for(i in Language) flush(i);
-		function flush(lang){
-			var db;
-
-			Language[lang].SHOP = db = {};
-			for(j in $docs){
-				db[$docs[j]._id] = [ $docs[j][`name_${lang}`], $docs[j][`desc_${lang}`] ];
-			}
+		Language[lang].SHOP = db = {};
+		for(let j in $docs){
+			db[$docs[j]._id] = [ $docs[j][`name_${lang}`], $docs[j][`desc_${lang}`] ];
 		}
-	});
-	Server.listen(80);
+	}
+	Server.listen(81);
 	if(Const.IS_SECURED) {
 		const options = Secure();
 		https.createServer(options, Server).listen(443);
@@ -206,20 +205,19 @@ function GameClient(id, url){
 ROUTES.forEach(function(v){
 	require(`./routes/${v}`).run(Server, WebInit.page);
 });
-Server.get("/", function(req, res){
+Server.get("/", async function(req, res){
 	var server = req.query.server;
 	
 	//볕뉘 수정 구문삭제(220~229, 240)
-	DB.session.findOne([ '_id', req.session.id ]).on(function($ses){
-		// var sid = (($ses || {}).profile || {}).sid || "NULL";
-		if(global.isPublic){
-			onFinish($ses);
-			// DB.jjo_session.findOne([ '_id', sid ]).limit([ 'profile', true ]).on(onFinish);
-		}else{
-			if($ses) $ses.profile.sid = $ses._id;
-			onFinish($ses);
-		}
-	});
+	const $ses = await DB.session.findOne({ where: { _id: req.session.id } });
+	// var sid = (($ses || {}).profile || {}).sid || "NULL";
+	if(global.isPublic){
+		onFinish($ses);
+		// DB.jjo_session.findOne([ '_id', sid ]).limit([ 'profile', true ]).on(onFinish);
+	}else{
+		if($ses) $ses.profile.sid = $ses._id;
+		onFinish($ses);
+	}
 	function onFinish($doc){
 		var id = req.session.id;
 

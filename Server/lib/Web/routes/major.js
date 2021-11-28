@@ -17,7 +17,7 @@
  */
 
 var Web		 = require("request");
-var MainDB	 = require("../db");
+var MainDB	 = require("../db/agent");
 var JLog	 = require("../../sub/jjlog");
 var Const	 = require("../../const");
 
@@ -48,7 +48,7 @@ function consume($user, key, value, force){
 
 exports.run = function(Server, page){
 
-Server.get("/box", function(req, res){
+Server.get("/box", async function(req, res){
 	if(req.session.profile){
 		/*if(Const.ADMIN.indexOf(req.session.profile.id) == -1){
 			return res.send({ error: 555 });
@@ -56,13 +56,12 @@ Server.get("/box", function(req, res){
 	}else{
 		return res.send({ error: 400 });
 	}
-	MainDB.users.findOne([ '_id', req.session.profile.id ]).limit([ 'box', true ]).on(function($body){
-		if(!$body){
-			res.send({ error: 400 });
-		}else{
-			res.send($body.box);
-		}
-	});
+	const $body = await MainDB.users.findOne({ select: [ "_id", "box" ], where: { _id: req.session.profile.id } });
+	if(!$body){
+		res.send({ error: 400 });
+	}else{
+		res.send($body.box);
+	}
 });
 Server.get("/help", function(req, res){
 	page(req, res, "help", {
@@ -84,7 +83,7 @@ Server.get("/ranking", function(req, res){
 		});
 	}
 });
-Server.get("/injeong/:word", function(req, res){
+Server.get("/injeong/:word", async function(req, res){
 	if(!req.session.profile) return res.send({ error: 402 });
 	var word = req.params.word;
 	var theme = req.query.theme;
@@ -93,137 +92,137 @@ Server.get("/injeong/:word", function(req, res){
 	if(now - req.session.injBefore < 2000) return res.send({ error: 429 });
 	req.session.injBefore = now;
 	
-	MainDB.kkutu['ko'].findOne([ '_id', word.replace(/[^가-힣0-9]/g, "") ]).on(function($word){
-		if($word) return res.send({ error: 409 });
-		MainDB.kkutu_injeong.findOne([ '_id', word ]).on(function($ij){
-			if($ij){
-				if($ij.theme == '~') return res.send({ error: 406 });
-				else return res.send({ error: 403 });
-			}
-			Web.get("https://namu.moe/w/" + encodeURI(word), function(err, _res){
-				if(err) return res.send({ error: 400 });
-				else if(_res.statusCode != 200) return res.send({ error: 405 });
-				MainDB.kkutu_injeong.insert([ '_id', word ], [ 'theme', theme ], [ 'createdAt', now ], [ 'writer', req.session.profile.id ]).on(function($res){
-					res.send({ message: "OK" });
-				});
-			});
+	const $word = await MainDB.kkutu['ko'].findOne({ where: { _id: word.replace(/[^가-힣0-9]/g, "") } });
+	if($word) return res.send({ error: 409 });
+	
+	const $ij = await MainDB.kkutu_injeong.findOne({ where: { _id: word } });
+	if($ij){
+		if($ij.theme == '~') return res.send({ error: 406 });
+		else return res.send({ error: 403 });
+	}
+	Web.get("https://namu.moe/w/" + encodeURI(word), function(err, _res){
+		if(err) return res.send({ error: 400 });
+		else if(_res.statusCode != 200) return res.send({ error: 405 });
+		
+		const requested = new MainDB.Injeong();
+		requested._id = word;
+		requested.theme = theme;
+		requested.createdAt = now;
+		requested.writer = req.session.profile.id;
+		MainDB.kkutu_injeong.save(requested).then(() => {
+			res.send({ message: "OK" });
 		});
 	});
 });
 Server.get("/cf/:word", function(req, res){
 	res.send(getCFRewards(req.params.word, Number(req.query.l || 0), req.query.b == "1"));
 });
-Server.get("/shop", function(req, res){
-	MainDB.kkutu_shop.find().limit([ 'cost', true ], [ 'term', true ], [ 'group', true ], [ 'options', true ], [ 'updatedAt', true ]).on(function($goods){
-		res.json({ goods: $goods });
-	});
+Server.get("/shop", async function(req, res){
+	const $goods = await MainDB.kkutu_shop.find({ select: [ "_id", "cost", "term", "group", "options", "updatedAt" ] });
+	
+	res.json({ goods: $goods });
 	// res.json({ error: 555 });
 });
 
 // POST
-Server.post("/exordial", function(req, res){
+Server.post("/exordial", async function(req, res){
 	var text = req.body.data || "";
 	
 	if(req.session.profile){
 		text = text.slice(0, 100);
-		MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'exordial', text ]).on(function($res){
-			res.send({ text: text });
+		const user = await MainDB.users.findOne({ where: { _id: req.session.profile.id } });
+		user.exordial = text;
+		MainDB.users.save(user).then(() => {
+			res.send({ text });
 		});
 	}else res.send({ error: 400 });
 });
-Server.post("/buy/:id", function(req, res){
+Server.post("/buy/:id", async function(req, res){
 	if(req.session.profile){
 		var uid = req.session.profile.id;
 		var gid = req.params.id;
 		
-		MainDB.kkutu_shop.findOne([ '_id', gid ]).on(function($item){
-			if(!$item) return res.json({ error: 400 });
-			if($item.cost < 0) return res.json({ error: 400 });
-			MainDB.users.findOne([ '_id', uid ]).limit([ 'money', true ], [ 'box', true ]).on(function($user){
-				if(!$user) return res.json({ error: 400 });
-				if(!$user.box) $user.box = {};
-				var postM = $user.money - $item.cost;
-				
-				if(postM < 0) return res.send({ result: 400 });
-				
-				obtain($user, gid, 1, $item.term);
-				MainDB.users.update([ '_id', uid ]).set(
-					[ 'money', postM ],
-					[ 'box', $user.box ]
-				).on(function($fin){
-					res.send({ result: 200, money: postM, box: $user.box });
-					JLog.log("[PURCHASED] " + gid + " by " + uid);
-				});
-				// HIT를 올리는 데에 동시성 문제가 발생한다. 조심하자.
-				MainDB.kkutu_shop.update([ '_id', gid ]).set([ 'hit', $item.hit + 1 ]).on();
-			});
+		const $item = await MainDB.kkutu_shop.findOne({ where: { _id: gid } });
+		if(!$item) return res.json({ error: 400 });
+		if($item.cost < 0) return res.json({ error: 400 });
+		const $user = await MainDB.users.findOne({ /* select: [ "_id", "money", "box" ], */where: { _id: uid } });
+		if(!$user) return res.json({ error: 400 });
+		if(!$user.box) $user.box = {};
+		var postM = $user.money - $item.cost;
+		
+		if(postM < 0) return res.send({ result: 400 });
+		
+		obtain($user, gid, 1, $item.term);
+		$user.money = postM;
+		MainDB.users.save($user).then(() => {
+			res.send({ result: 200, money: postM, box: $user.box });
+			JLog.log("[PURCHASED] " + gid + " by " + uid);
 		});
+		// HIT를 올리는 데에 동시성 문제가 발생한다. 조심하자.
+		$item.hit++;
+		await MainDB.kkutu_shop.save($item);
 	}else res.json({ error: 423 });
 });
-Server.post("/equip/:id", function(req, res){
+Server.post("/equip/:id", async function(req, res){
 	if(!req.session.profile) return res.json({ error: 400 });
 	var uid = req.session.profile.id;
 	var gid = req.params.id;
 	var isLeft = req.body.isLeft == "true";
 	var now = Date.now() * 0.001;
 	
-	MainDB.users.findOne([ '_id', uid ]).limit([ 'box', true ], [ 'equip', true ]).on(function($user){
-		if(!$user) return res.json({ error: 400 });
-		if(!$user.box) $user.box = {};
-		if(!$user.equip) $user.equip = {};
-		var q = $user.box[gid], r;
-		
-		MainDB.kkutu_shop.findOne([ '_id', gid ]).limit([ 'group', true ]).on(function($item){
-			if(!$item) return res.json({ error: 430 });
-			if(!Const.AVAIL_EQUIP.includes($item.group)) return res.json({ error: 400 });
-			
-			var part = $item.group;
-			if(part.substr(0, 3) == "BDG") part = "BDG";
-			if(part == "Mhand") part = isLeft ? "Mlhand" : "Mrhand";
-			var qid = $user.equip[part];
-			
-			if(qid){
-				r = $user.box[qid];
-				if(r && r.expire){
-					obtain($user, qid, 1, r.expire, true);
-				}else{
-					obtain($user, qid, 1, now + $item.term, true);
-				}
-			}
-			if(qid == $item._id){
-				delete $user.equip[part];
-			}else{
-				if(!q) return res.json({ error: 430 });
-				consume($user, gid, 1);
-				$user.equip[part] = $item._id;
-			}
-			MainDB.users.update([ '_id', uid ]).set([ 'box', $user.box ], [ 'equip', $user.equip ]).on(function($res){
-				res.send({ result: 200, box: $user.box, equip: $user.equip });
-			});
-		});
+	const $user = await MainDB.users.findOne({ where: { _id: uid } });
+	if(!$user) return res.json({ error: 400 });
+	if(!$user.box) $user.box = {};
+	if(!$user.equip) $user.equip = {};
+	var q = $user.box[gid], r;
+	
+	const $item = await MainDB.kkutu_shop.findOne({ select: [ "_id", "group" ], where: { _id: gid } });
+	if(!$item) return res.json({ error: 430 });
+	if(!Const.AVAIL_EQUIP.includes($item.group)) return res.json({ error: 400 });
+	
+	var part = $item.group;
+	if(part.substr(0, 3) == "BDG") part = "BDG";
+	if(part == "Mhand") part = isLeft ? "Mlhand" : "Mrhand";
+	var qid = $user.equip[part];
+	
+	if(qid){
+		r = $user.box[qid];
+		if(r && r.expire){
+			obtain($user, qid, 1, r.expire, true);
+		}else{
+			obtain($user, qid, 1, now + $item.term, true);
+		}
+	}
+	if(qid == $item._id){
+		delete $user.equip[part];
+	}else{
+		if(!q) return res.json({ error: 430 });
+		consume($user, gid, 1);
+		$user.equip[part] = $item._id;
+	}
+	MainDB.users.save($user).then(() => {
+		res.send({ result: 200, box: $user.box, equip: $user.equip });
 	});
 });
-Server.post("/payback/:id", function(req, res){
+Server.post("/payback/:id", async function(req, res){
 	if(!req.session.profile) return res.json({ error: 400 });
 	var uid = req.session.profile.id;
 	var gid = req.params.id;
 	var isDyn = gid.charAt() == '$';
 	
-	MainDB.users.findOne([ '_id', uid ]).limit([ 'money', true ], [ 'box', true ]).on(function($user){
-		if(!$user) return res.json({ error: 400 });
-		if(!$user.box) $user.box = {};
-		var q = $user.box[gid];
-		
-		if(!q) return res.json({ error: 430 });
-		MainDB.kkutu_shop.findOne([ '_id', isDyn ? gid.slice(0, 4) : gid ]).limit([ 'cost', true ]).on(function($item){
-			if(!$item) return res.json({ error: 430 });
-			
-			consume($user, gid, 1, true);
-			$user.money = Number($user.money) + Math.round(0.2 * Number($item.cost));
-			MainDB.users.update([ '_id', uid ]).set([ 'money', $user.money ], [ 'box', $user.box ]).on(function($res){
-				res.send({ result: 200, box: $user.box, money: $user.money });
-			});
-		});
+	const $user = await MainDB.users.findOne({ where: { _id: uid } });
+	if(!$user) return res.json({ error: 400 });
+	if(!$user.box) $user.box = {};
+	var q = $user.box[gid];
+	
+	if(!q) return res.json({ error: 430 });
+	const $item = await MainDB.kkutu_shop.findOne({ select: [ "_id", "cost" ], where: { _id: isDyn ? gid.slice(0, 4) : gid } });
+	if(!$item) return res.json({ error: 430 });
+	
+	consume($user, gid, 1, true);
+	$user.money = Number($user.money) + Math.round(0.2 * Number($item.cost));
+	MainDB.users.save($user).then(() => {
+		res.send({ result: 200, box: $user.box, money: $user.money });
 	});
 });
 function blendWord(word){
@@ -247,69 +246,66 @@ function blendWord(word){
 function parseLanguage(word){
 	return word.match(/[a-zA-Z]/) ? "en" : "ko";
 }
-Server.post("/cf", function(req, res){
+Server.post("/cf", async function(req, res){
 	if(!req.session.profile) return res.json({ error: 400 });
 	var uid = req.session.profile.id;
 	var tray = (req.body.tray || "").split('|');
 	var i, o;
 	
 	if(tray.length < 1 || tray.length > 6) return res.json({ error: 400 });
-	MainDB.users.findOne([ '_id', uid ]).limit([ 'money', true ], [ 'box', true ]).on(function($user){
-		if(!$user) return res.json({ error: 400 });
-		if(!$user.box) $user.box = {};
-		var req = {}, word = "", level = 0;
-		var cfr, gain = [];
-		var blend;
+	const $user = MainDB.users.findOne({ where: { _id: uid } });
+	if(!$user) return res.json({ error: 400 });
+	if(!$user.box) $user.box = {};
+	var req = {}, word = "", level = 0;
+	var cfr, gain = [];
+	var blend;
+	
+	for(i in tray){
+		word += tray[i].slice(4);
+		level += 68 - tray[i].charCodeAt(3);
+		req[tray[i]] = (req[tray[i]] || 0) + 1;
+		if(($user.box[tray[i]] || 0) < req[tray[i]]) return res.json({ error: 434 });
+	}
+	const $dic = await MainDB.kkutu[parseLanguage(word)].findOne({ where: { _id: word } });
+	if(!$dic){
+		if(word.length == 3){
+			blend = true;
+		}else return res.json({ error: 404 });
+	}
+	cfr = getCFRewards(word, level, blend);
+	if($user.money < cfr.cost) return res.json({ error: 407 });
+	for(i in req) consume($user, i, req[i]);
+	for(i in cfr.data){
+		o = cfr.data[i];
 		
-		for(i in tray){
-			word += tray[i].slice(4);
-			level += 68 - tray[i].charCodeAt(3);
-			req[tray[i]] = (req[tray[i]] || 0) + 1;
-			if(($user.box[tray[i]] || 0) < req[tray[i]]) return res.json({ error: 434 });
+		if(Math.random() >= o.rate) continue;
+		if(o.key.charAt(4) == "?"){
+			o.key = o.key.slice(0, 4) + (blend ? blendWord(word) : word.charAt(Math.floor(Math.random() * word.length)));
 		}
-		MainDB.kkutu[parseLanguage(word)].findOne([ '_id', word ]).on(function($dic){
-			if(!$dic){
-				if(word.length == 3){
-					blend = true;
-				}else return res.json({ error: 404 });
-			}
-			cfr = getCFRewards(word, level, blend);
-			if($user.money < cfr.cost) return res.json({ error: 407 });
-			for(i in req) consume($user, i, req[i]);
-			for(i in cfr.data){
-				o = cfr.data[i];
-				
-				if(Math.random() >= o.rate) continue;
-				if(o.key.charAt(4) == "?"){
-					o.key = o.key.slice(0, 4) + (blend ? blendWord(word) : word.charAt(Math.floor(Math.random() * word.length)));
-				}
-				obtain($user, o.key, o.value, o.term);
-				gain.push(o);
-			}
-			$user.money -= cfr.cost;
-			MainDB.users.update([ '_id', uid ]).set([ 'money', $user.money ], [ 'box', $user.box ]).on(function($res){
-				res.send({ result: 200, box: $user.box, money: $user.money, gain: gain });
-			});
-		});
+		obtain($user, o.key, o.value, o.term);
+		gain.push(o);
+	}
+	$user.money -= cfr.cost;
+	MainDB.users.save($user).then(() => {
+		res.send({ result: 200, box: $user.box, money: $user.money, gain: gain });
 	});
 	// res.send(getCFRewards(req.params.word, Number(req.query.l || 0)));
 });
-Server.get("/dict/:word", function(req, res){
+Server.get("/dict/:word", async function(req, res){
     var word = req.params.word;
     var lang = req.query.lang;
     var DB = MainDB.kkutu[lang];
     
     if(!DB) return res.send({ error: 400 });
     if(!DB.findOne) return res.send({ error: 400 });
-    DB.findOne([ '_id', word ]).on(function($word){
-        if(!$word) return res.send({ error: 404 });
-        res.send({
-            word: $word._id,
-            mean: $word.mean,
-            theme: $word.theme,
-            type: $word.type
-        });
-    });
+	const $word = await DB.findOne({ where: { _id: word } });
+	if(!$word) return res.send({ error: 404 });
+	res.send({
+		word: $word._id,
+		mean: $word.mean,
+		theme: $word.theme,
+		type: $word.type
+	});
 });
 
 };

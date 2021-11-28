@@ -19,7 +19,6 @@
 var GUEST_PERMISSION;
 var Cluster = require("cluster");
 var Const = require('../const');
-var Lizard = require('../sub/lizard');
 var JLog = require('../sub/jjlog');
 // 망할 셧다운제 var Ajae = require("../sub/ajae");
 var DB;
@@ -38,7 +37,7 @@ const MAX_OKG = 18;
 const PER_OKG = 600000;
 
 exports.NIGHT = false;
-exports.init = function(_DB, _DIC, _ROOM, _GUEST_PERMISSION, _CHAN){
+exports.init = async function(_DB, _DIC, _ROOM, _GUEST_PERMISSION, _CHAN){
 	var i, k;
 	
 	DB = _DB;
@@ -47,13 +46,10 @@ exports.init = function(_DB, _DIC, _ROOM, _GUEST_PERMISSION, _CHAN){
 	GUEST_PERMISSION = _GUEST_PERMISSION;
 	CHAN = _CHAN;
 	_rid = 100;
+	SHOP = {};
 	// 망할 셧다운제 if(Cluster.isMaster) setInterval(exports.processAjae, 60000);
-	DB.kkutu_shop.find().on(function($shop){
-		SHOP = {};
-		
-		$shop.forEach(function(item){
-			SHOP[item._id] = item;
-		});
+	(await DB.kkutu_shop.find()).forEach((item) => {
+		SHOP[item._id] = item;
 	});
 	Rule = {};
 	for(i in Const.RULE){
@@ -404,88 +400,85 @@ exports.Client = function(socket, profile, sid){
 		}
 	};
 	my.refresh = function(){
-		var R = new Lizard.Tail();
-		
-		if(my.guest){
-			my.equip = {};
-			my.data = new exports.Data();
-			my.money = 0;
-			my.friends = {};
-			
-			R.go({ result: 200 });
-		}else DB.users.findOne([ '_id', my.id ]).on(function($user){
-			var first = !$user;
-			var black = first ? "" : $user.black;
-			/* Enhanced User Block System [S] */
-			const blockedUntil = (first || !$user.blockedUntil) ? null : $user.blockedUntil;
-			/* Enhanced User Block System [E] */
+		return new Promise(async (resolve) => {
+			if(my.guest){
+				my.equip = {};
+				my.data = new exports.Data();
+				my.money = 0;
+				my.friends = {};
+				
+				resolve({ result: 200 });
+			}else{
+				const $user = (await DB.users.findOne({ where: { _id: my.id } })) || new DB.User();
+				var first = !$user._id;
+				var black = first ? "" : $user.black;
+				/* Enhanced User Block System [S] */
+				const blockedUntil = (first || !$user.blockedUntil) ? null : $user.blockedUntil;
+				/* Enhanced User Block System [E] */
 
-			if(first) $user = { money: 0 };
-			if(black == "null") black = false;
-			if(black == "chat"){
-				black = false;
-				my.noChat = true;
-			}
-			/* 망할 셧다운제
-			if(Cluster.isMaster && !my.isAjae){ // null일 수는 없다.
-				my.isAjae = Ajae.checkAjae(($user.birthday || "").split('-'));
-				if(my.isAjae === null){
-					if(my._birth) my._checkAjae = setTimeout(function(){
-						my.sendError(442);
-						my.socket.close();
-					}, 300000);
-					else{
-						my.sendError(441);
-						my.socket.close();
-						return;
-					}
+				if(black == "null") black = false;
+				if(black == "chat"){
+					black = false;
+					my.noChat = true;
 				}
-			}*/
-			my.exordial = $user.exordial || "";
-			my.equip = $user.equip || {};
-			my.box = $user.box || {};
-			my.data = new exports.Data($user.kkutu);
-			my.money = Number($user.money);
-			my.friends = $user.friends || {};
-			if(first) my.flush();
-			else{
-				my.checkExpire();
-				my.okgCount = Math.floor((my.data.playTime || 0) / PER_OKG);
-			}
-			/* Enhanced User Block System [S] */
-			if(black){
-				if(blockedUntil) R.go({ result: 444, black: black, blockedUntil: blockedUntil });
-				else R.go({ result: 444, black: black });
-			}
-			/* Enhanced User Block System [E] */
-			else if(Cluster.isMaster && $user.server) R.go({ result: 409, black: $user.server });
-			else if(exports.NIGHT && my.isAjae === false) R.go({ result: 440 });
-			else R.go({ result: 200 });
+				/* 망할 셧다운제
+				if(Cluster.isMaster && !my.isAjae){ // null일 수는 없다.
+					my.isAjae = Ajae.checkAjae(($user.birthday || "").split('-'));
+					if(my.isAjae === null){
+						if(my._birth) my._checkAjae = setTimeout(function(){
+							my.sendError(442);
+							my.socket.close();
+						}, 300000);
+						else{
+							my.sendError(441);
+							my.socket.close();
+							return;
+						}
+					}
+				}*/
+				my.exordial = $user.exordial || "";
+				my.equip = $user.equip || {};
+				my.box = $user.box || {};
+				my.data = new exports.Data($user.kkutu);
+				my.money = Number($user.money);
+				my.friends = $user.friends || {};
+				if(first) my.flush();
+				else{
+					my.checkExpire();
+					my.okgCount = Math.floor((my.data.playTime || 0) / PER_OKG);
+				}
+				/* Enhanced User Block System [S] */
+				if(black){
+					if(blockedUntil) resolve({ result: 444, black: black, blockedUntil: blockedUntil });
+					else resolve({ result: 444, black: black });
+				}
+				/* Enhanced User Block System [E] */
+				else if(Cluster.isMaster && $user.server) resolve({ result: 409, black: $user.server });
+				else if(exports.NIGHT && my.isAjae === false) resolve({ result: 440 });
+				else resolve({ result: 200 });
+			};
 		});
-		return R;
 	};
 	my.flush = function(box, equip, friends){
-		var R = new Lizard.Tail();
-		
-		if(my.guest){
-			R.go({ id: my.id, prev: 0 });
-			return R;
-		}
-		DB.users.upsert([ '_id', my.id ]).set(
-			!isNaN(my.money) ? [ 'money', my.money ] : undefined,
-			(my.data && !isNaN(my.data.score)) ? [ 'kkutu', my.data ] : undefined,
-			box ? [ 'box', my.box ] : undefined,
-			equip ? [ 'equip', my.equip ] : undefined,
-			friends ? [ 'friends', my.friends ] : undefined
-		).on(function(__res){
-			DB.redis.getGlobal(my.id).then(function(_res){
-				DB.redis.putGlobal(my.id, my.data.score).then(function(res){
-					JLog.log(`FLUSHED [${my.id}] PTS=${my.data.score} MNY=${my.money}`);
-					R.go({ id: my.id, prev: _res });
+		return new Promise(async (resolve) => {
+			if(my.guest) return resolve({ id: my.id, prev: 0 });
+			
+			const user = (await DB.users.findOne({ where: { _id: my.id } })) || new DB.User(my.id);
+			user.money = isNaN(my.money) ? undefined : my.money;
+			user.kkutu = my.data && !isNaN(my.data.score) ? my.data : undefined;
+			user.box = my.box || undefined;
+			user.equip = my.equip || undefined;
+			user.friends = my.friends || undefined;
+			console.log(my)
+			DB.users.save(user).then(() => {
+				DB.redis.getGlobal(my.id).then(function(_res){
+					DB.redis.putGlobal(my.id, my.data.score).then(function(res){
+						JLog.log(`FLUSHED [${my.id}] PTS=${my.data.score} MNY=${my.money}`);
+						resolve({ id: my.id, prev: _res });
+					});
 				});
 			});
 		});
-		return R;
 	};
 	my.invokeWordPiece = function(text, coef){
 		if(!my.game.wpc) return;
@@ -771,15 +764,12 @@ exports.Client = function(socket, profile, sid){
 		my.flush(false, false, true);
 		my.send('friendEdit', { friends: my.friends });
 	};
-	my.removeFriend = function(id){
-		DB.users.findOne([ '_id', id ]).limit([ 'friends', true ]).on(function($doc){
-			if(!$doc) return;
-			
-			var f = $doc.friends;
-			
-			delete f[my.id];
-			DB.users.update([ '_id', id ]).set([ 'friends', f ]).on();
-		});
+	my.removeFriend = async function(id){
+		let $doc = await DB.users.findOne({ where: { _id: id } });
+		if(!$doc) return;
+		
+		delete $doc.friends[my.id];
+		await DB.users.save($doc);
 		delete my.friends[id];
 		my.flush(false, false, true);
 		my.send('friendEdit', { friends: my.friends });
@@ -1225,7 +1215,7 @@ exports.Room = function(room, channel){
 			
 			suv.push(o.flush(true));
 		}
-		Lizard.all(suv).then(function(uds){
+		Promise.all(suv).then(function(uds){
 			var o = {};
 			
 			suv = [];
@@ -1233,7 +1223,7 @@ exports.Room = function(room, channel){
 				o[uds[i].id] = { prev: uds[i].prev };
 				suv.push(DB.redis.getSurround(uds[i].id));
 			}
-			Lizard.all(suv).then(function(ranks){
+			Promise.all(suv).then(function(ranks){
 				var i, j;
 				
 				for(i in ranks){

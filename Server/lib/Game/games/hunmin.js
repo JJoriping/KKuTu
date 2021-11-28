@@ -16,8 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { Raw, Not, MoreThan, In } = require("typeorm");
 ﻿var Const = require('../../const');
-var Lizard = require('../../sub/lizard');
 var DB;
 var DIC;
 
@@ -33,14 +33,14 @@ exports.init = function(_DB, _DIC){
 	DIC = _DIC;
 };
 exports.getTitle = function(){
-	var R = new Lizard.Tail();
-	var my = this;
-	
-	my.game.done = [];
-	setTimeout(function(){
-		R.go("①②③④⑤⑥⑦⑧⑨⑩");
-	}, 500);
-	return R;
+	return new Promise((resolve) => {
+		var my = this;
+		
+		my.game.done = [];
+		setTimeout(function(){
+			resolve("①②③④⑤⑥⑦⑧⑨⑩");
+		}, 500);
+	});
 };
 exports.roundReady = function(){
 	var my = this;
@@ -171,7 +171,7 @@ exports.submit = function(client, text, data){
 					denied();
 				}
 			}
-			DB.kkutu[l].findOne([ '_id', text ], [ 'type', Const.KOR_GROUP ]).on(onDB);
+			DB.kkutu[l].findOne({ where: { _id: text, type: Raw((type) => `${type} ~ '${Const.KOR_GROUP}'`) } }).then(onDB);
 		}else{
 			client.publish('turnError', { code: 409, value: text }, true);
 		}
@@ -247,47 +247,48 @@ function getMission(theme){
 	return String.fromCharCode(44032 + 588 * (theme.charCodeAt(flag) - 4352));
 }
 function getAuto(theme, type){
-	/* type
-		0 무작위 단어 하나
-		1 존재 여부
-		2 단어 목록
-	*/
-	var my = this;
-	var R = new Lizard.Tail();
-	var bool = type == 1;
-	
-	var aqs = [[ '_id', toRegex(theme) ]];
-	var aft;
-	var raiser;
-	var lst = false;
-	
-	if(!my.opts.injeong) aqs.push([ 'flag', { '$nand': Const.KOR_FLAG.INJEONG } ]);
-	if(my.opts.loanword) aqs.push([ 'flag', { '$nand': Const.KOR_FLAG.LOANWORD } ]);
-	if(my.opts.strict) aqs.push([ 'type', Const.KOR_STRICT ], [ 'flag', { $lte: 3 } ]);
-	else aqs.push([ 'type', Const.KOR_GROUP ]);
-	if(my.game.chain) aqs.push([ '_id', { '$nin': my.game.chain } ]);
-	raiser = DB.kkutu[my.rule.lang].find.apply(this, aqs).limit(bool ? 1 : 123);
-	switch(type){
-		case 0:
-		default:
-			aft = function($md){
-				R.go($md[Math.floor(Math.random() * $md.length)]);
-			};
-			break;
-		case 1:
-			aft = function($md){
-				R.go($md.length ? true : false);
-			};
-			break;
-		case 2:
-			aft = function($md){
-				R.go($md);
-			};
-			break;
-	}
-	raiser.on(aft);
-	
-	return R;
+	return new Promise(async (resolve) => {
+		/* type
+			0 무작위 단어 하나
+			1 존재 여부
+			2 단어 목록
+		*/
+		var my = this;
+		var bool = type == 1;
+		
+		var aqs = { where: { _id: Raw((_id) => `${_id} ~ '^(${theme.split('').map(toRegexText).join('')})$'`) }, take: bool ? 1 : 123 };
+		var aft;
+		var raiser;
+		var lst = false;
+		
+		if(!my.opts.injeong) aqs.where.flag = Raw((flag) => `${flag} & ${Const.KOR_FLAG.INJEONG} = 0`);
+		if(my.opts.loanword) aqs.where.flag = Raw((flag) => `${flag} & ${Const.KOR_FLAG.LOANWORD} = 0`);
+		if(my.opts.strict){
+			aqs.where.type = Raw((type) => `${type} ~ '${Const.KOR_STRICT}'`);
+			aqs.where.flag = Not(MoreThan(3));
+		}
+		else aqs.where.type = Raw((type) => `${type} ~ '${Const.KOR_GROUP}'`);
+		if(my.game.chain) aqs.where._id = Not(In(my.game.chain));
+		switch(type){
+			case 0:
+			default:
+				aft = function($md){
+					resolve($md[Math.floor(Math.random() * $md.length)]);
+				};
+				break;
+			case 1:
+				aft = function($md){
+					resolve(!!$md.length);
+				};
+				break;
+			case 2:
+				aft = function($md){
+					resolve($md);
+				};
+				break;
+		}
+		raiser = DB.kkutu[my.rule.lang].find(aqs).then(aft);
+	});
 }
 function getTheme(len, ex){
 	var res = "";

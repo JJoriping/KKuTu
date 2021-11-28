@@ -17,7 +17,6 @@
  */
 
 var Const = require('../../const');
-var Lizard = require('../../sub/lizard');
 var DB;
 var DIC;
 
@@ -30,13 +29,13 @@ exports.init = function(_DB, _DIC){
 	DIC = _DIC;
 };
 exports.getTitle = function(){
-	var R = new Lizard.Tail();
-	var my = this;
-	var means = [];
-	var mdb = [];
-	
-	my.game.started = false;
-	DB.kkutu_cw[my.rule.lang].find().on(function($box){
+	return new Promise(async (resolve) => {
+		var my = this;
+		var means = [];
+		var mdb = [];
+		
+		my.game.started = false;
+		const $box = await DB.kkutu_cw[my.rule.lang].find();
 		var answers = {};
 		var boards = [];
 		var maps = [];
@@ -63,44 +62,42 @@ exports.getTitle = function(){
 			}
 		}
 		my.game.numQ = mParser.length;
-		Lizard.all(mParser).then(function(){
+		Promise.all(mParser).then(function(){
 			my.game.prisoners = {};
 			my.game.answers = answers;
 			my.game.boards = boards;
 			my.game.means = means;
 			my.game.mdb = mdb;
-			R.go("①②③④⑤⑥⑦⑧⑨⑩");
+			resolve("①②③④⑤⑥⑦⑧⑨⑩");
 		});
+		function getMeaning(round, bItem){
+			return new Promise(async (resolve) => {
+				var word = bItem[4];
+				var x = Number(bItem[0]), y = Number(bItem[1]);
+				
+				const $doc = await DB.kkutu[my.rule.lang].findOne({ where: { _id: word } });
+				if(!$doc) return resolve(null);
+				var rk = `${x},${y}`;
+				var i, o;
+				
+				means[round][`${rk},${bItem[2]}`] = o = {
+					count: 0,
+					x: x, y: y,
+					dir: Number(bItem[2]), len: Number(bItem[3]),
+					type: $doc.type,
+					theme: $doc.theme,
+					mean: $doc.mean.replace(new RegExp(word.split('').map(function(w){ return w + "\\s?"; }).join(''), "g"), "★")
+				};
+				for(i=0; i<o.len; i++){
+					rk = `${x},${y}`;
+					if(!mdb[round][rk]) mdb[round][rk] = [];
+					mdb[round][rk].push(o);
+					if(o.dir) y++; else x++;
+				}
+				resolve(true);
+			});
+		}
 	});
-	function getMeaning(round, bItem){
-		var R = new Lizard.Tail();
-		var word = bItem[4];
-		var x = Number(bItem[0]), y = Number(bItem[1]);
-		
-		DB.kkutu[my.rule.lang].findOne([ '_id', word ]).on(function($doc){
-			if(!$doc) return R.go(null);
-			var rk = `${x},${y}`;
-			var i, o;
-			
-			means[round][`${rk},${bItem[2]}`] = o = {
-				count: 0,
-				x: x, y: y,
-				dir: Number(bItem[2]), len: Number(bItem[3]),
-				type: $doc.type,
-				theme: $doc.theme,
-				mean: $doc.mean.replace(new RegExp(word.split('').map(function(w){ return w + "\\s?"; }).join(''), "g"), "★")
-			};
-			for(i=0; i<o.len; i++){
-				rk = `${x},${y}`;
-				if(!mdb[round][rk]) mdb[round][rk] = [];
-				mdb[round][rk].push(o);
-				if(o.dir) y++; else x++;
-			}
-			R.go(true);
-		});
-		return R;
-	}
-	return R;
 };
 exports.roundReady = function(){
 	var my = this;
