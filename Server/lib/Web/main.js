@@ -144,7 +144,7 @@ DB.ready = async function(){
 			db[$docs[j]._id] = [ $docs[j][`name_${lang}`], $docs[j][`desc_${lang}`] ];
 		}
 	}
-	Server.listen(81);
+	Server.listen(80);
 	if(Const.IS_SECURED) {
 		const options = Secure();
 		https.createServer(options, Server).listen(443);
