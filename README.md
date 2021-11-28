@@ -20,7 +20,7 @@
 ### 설치 방법
 #### Windows 환경
 1. 이 레포지토리를 내려받습니다.
-1. [node.js](https://nodejs.org/ko/) 인스톨러를 내려받아 설치(버전 16 이상)합니다. [npm](https://www.npmjs.com/)과 함께 설치되어야 합니다. (버전 14 이상 사용 시 DB 관련 문제가 발생합니다. 버전 13의 경우 일부 모듈의 지원이 끊겼으므로 버전 12 사용을 권장합니다.)
+1. [node.js](https://nodejs.org/ko/) 인스톨러를 내려받아 설치(버전 16 이상)합니다. [npm](https://www.npmjs.com/)과 함께 설치되어야 합니다.
 1. 명령 프롬프트에서 `npm install -g grunt grunt-cli`를 입력해 [grunt](https://gruntjs.com/)를 설치합니다.
 1. [PostgreSQL](https://www.postgresql.org/) 인스톨러(**버전 11 이하**)를 내려받아 *pgAdmin*(자동으로 설치됨)과 함께 설치합니다. (버전 13 이상 사용 시 authenticationok 문제가 발생합니다.)
 1. *pgAdmin*을 실행시키고 SQL 파일(`./db.sql`)을 데이터베이스에 입력시킵니다.
