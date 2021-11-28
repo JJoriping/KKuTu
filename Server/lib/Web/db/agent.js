@@ -24,10 +24,9 @@ const JLog = require("../../sub/jjlog");
 const RedisCol = require("./redis").Agent;
 
 const FAKE_REDIS_FUNC = () => {
-	var R = new Lizard.Tail();
-
-	R.go({});
-	return R;
+	return new Promise((resolve) => {
+		resolve({});
+	});
 };
 const FAKE_REDIS = {
 	putGlobal: FAKE_REDIS_FUNC,
