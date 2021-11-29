@@ -470,7 +470,6 @@ function onMessage(data){
 			}else if(data.code == 416){
 				// 게임 중
 				if(confirm(L['error_'+data.code])){
-					stopBGM();
 					$data._spectate = true;
 					$data._gaming = true;
 					send('enter', { id: data.target, password: $data._pw, spectate: true }, true);
