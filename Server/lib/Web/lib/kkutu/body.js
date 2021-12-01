@@ -170,7 +170,7 @@ function connectToRoom(chan, rid){
 	};
 }
 function checkAge(){
-	if(!confirm(L['checkAgeAsk'])) return send('caj', { answer: "no" }, true);
+	if(!errormessage(L['checkAgeAsk'])) return send('caj', { answer: "no" }, true);
 	
 	while(true){
 		var input = [], lv = 1;
@@ -196,12 +196,12 @@ function checkAge(){
 			input[lv++ - 1] = str;
 		}
 		if(lv == 4){
-			if(confirm(L['checkAgeSure'] + "\n"
+			if(errormessage(L['checkAgeSure'] + "\n"
 			+ input[0] + L['YEAR'] + " "
 			+ input[1] + L['MONTH'] + " "
 			+ input[2] + L['DATE'])) return send('caj', { answer: "yes", input: [ input[1], input[2], input[0] ] }, true);
 		}else{
-			if(confirm(L['checkAgeCancel'])) return send('caj', { answer: "no" }, true);
+			if(errormessage(L['checkAgeCancel'])) return send('caj', { answer: "no" }, true);
 		}
 	}
 }
@@ -336,7 +336,7 @@ function onMessage(data){
 			i = ($target.title || $target.name) + "(#" + data.from.substr(0, 5) + ")";
 			send('friendAddRes', {
 				from: data.from,
-				res: $data.opts.df ? false : confirm(i + L['attemptFriendAdd'])
+				res: $data.opts.df ? false : errormessage(i + L['attemptFriendAdd'])
 			}, true);
 			break;
 		case 'friendAddRes':
@@ -406,7 +406,7 @@ function onMessage(data){
 		case 'invited':
 			send('inviteRes', {
 				from: data.from,
-				res: $data.opts.di ? false : confirm(data.from + L['invited'])
+				res: $data.opts.di ? false : errormessage(data.from + L['invited'])
 			});
 			break;
 		case 'inviteNo':
@@ -469,7 +469,7 @@ function onMessage(data){
 				i = L['server_' + i];
 			}else if(data.code == 416){
 				// 게임 중
-				if(confirm(L['error_'+data.code])){
+				if(errormessage(L['error_'+data.code])){
 					stopBGM();
 					$data._spectate = true;
 					$data._gaming = true;
@@ -1336,7 +1336,7 @@ function drawMyGoods(avGroup){
 		
 		if(e.ctrlKey){
 			if($target.hasClass("dress-equipped")) return fail(426);
-			if(!confirm(L['surePayback'] + commify(Math.round((item.cost || 0) * 0.2)) + L['ping'])) return;
+			if(!errormessage(L['surePayback'] + commify(Math.round((item.cost || 0) * 0.2)) + L['ping'])) return;
 			$.post("/payback/" + id, function(res){
 				if(res.error) return fail(res.error);
 				errorMessage(L['painback']);
@@ -1348,11 +1348,11 @@ function drawMyGoods(avGroup){
 			});
 		}else if(AVAIL_EQUIP.indexOf(item.group) != -1){
 			if(item.group == "Mhand"){
-				isLeft = confirm(L['dressWhichHand']);
+				isLeft = errormessage(L['dressWhichHand']);
 			}
 			requestEquip(id, isLeft);
 		}else if(item.group == "CNS"){
-			if(!confirm(L['sureConsume'])) return;
+			if(!errormessage(L['sureConsume'])) return;
 			$.post("/consume/" + id, function(res){
 				if(res.exp) notice(L['obtainExp'] + ": " + commify(res.exp));
 				if(res.money) notice(L['obtainMoney'] + ": " + commify(res.money));
@@ -1374,7 +1374,7 @@ function requestEquip(id, isLeft){
 	if(part.substr(0, 3) == "BDG") part = "BDG";
 	var already = my.equip[part] == id;
 	
-	if(confirm(L[already ? 'sureUnequip' : 'sureEquip'] + ": " + L[id][0])){
+	if(errormessage(L[already ? 'sureUnequip' : 'sureEquip'] + ": " + L[id][0])){
 		$.post("/equip/" + id, { isLeft: isLeft }, function(res){
 			if(res.error) return fail(res.error);
 			$data.box = res.box;
@@ -1552,7 +1552,7 @@ function updateCommunity(){
 		var memo = $data.friends[id];
 		
 		if($data._friends[id].server) return fail(455);
-		if(!confirm(memo + "(#" + id.substr(0, 5) + ")\n" + L['friendSureRemove'])) return;
+		if(!errormessage(memo + "(#" + id.substr(0, 5) + ")\n" + L['friendSureRemove'])) return;
 		send('friendRemove', { id: id }, true);
 	}
 	$("#CommunityDiag .dialog-title").html(L['communityText'] + " (" + len + " / 100)");
@@ -1662,7 +1662,7 @@ function requestInvite(id){
 	
 	if(id != "AI"){
 		nick = $data.users[id].profile.title || $data.users[id].profile.name;
-		if(!confirm(nick + L['sureInvite'])) return;
+		if(!errormessage(nick + L['sureInvite'])) return;
 	}
 	send('invite', { target: id });
 }
@@ -2755,7 +2755,7 @@ function chat(profile, msg, from, timestamp){
 	if(link = msg.match(/https?:\/\/[\w\.\?\/&#%=-_\+]+/g)){
 		msg = $msg.html();
 		link.forEach(function(item){
-			msg = msg.replace(item, "<a href='#' style='color: #2222FF;' onclick='if(confirm(\"" + L['linkWarning'] + "\")) window.open(\"" + item + "\");'>" + item + "</a>");
+			msg = msg.replace(item, "<a href='#' style='color: #2222FF;' onclick='if(errormessage(\"" + L['linkWarning'] + "\")) window.open(\"" + item + "\");'>" + item + "</a>");
 		});
 		$msg.html(msg);
 	}
