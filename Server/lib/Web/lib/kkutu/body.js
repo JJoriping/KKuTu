@@ -388,7 +388,7 @@ function onMessage(data){
 			}
 			/*if($data.guest){
 				$stage.menu.exit.trigger('click');
-				alert(L['guestExit']);
+				(L['guestExit']);
 			}*/
 			$data._resultRank = data.ranks;
 			roundEnd(data.result, data.data);
@@ -659,7 +659,7 @@ function processRoom(data){
 		$target = $data.users[data.target];
 		if(data.kickVote){
 			notice(getKickText($target.profile, data.kickVote));
-			if($target.id == data.id) alert(L['hasKicked']);
+			if($target.id == data.id) errorMessage(L['hasKicked']);
 		}
 		if(data.room.players.indexOf($data.id) == -1){
 			if($data.room) if($data.room.gaming){
