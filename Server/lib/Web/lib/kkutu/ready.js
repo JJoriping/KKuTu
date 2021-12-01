@@ -577,7 +577,7 @@ $(document).ready(function(){
 	});
 	$stage.menu.exit.on('click', function(e){
 		if($data.room.gaming){
-			if(!confirm(L['sureExit'])) return;
+			if(!errormessage(L['sureExit'])) return;
 			clearGame();
 		}
 		send('leave');
@@ -760,7 +760,7 @@ $(document).ready(function(){
 		tryJoin($data._roominfo);
 	});
 	$stage.dialog.profileHandover.on('click', function(e){
-		if(!confirm(L['sureHandover'])) return;
+		if(!errormessage(L['sureHandover'])) return;
 		send('handover', { target: $data._profiled });
 	});
 	$stage.dialog.profileKick.on('click', function(e){
@@ -842,7 +842,7 @@ $(document).ready(function(){
 	});
 	$stage.dialog.cfCompose.on('click', function(e){
 		if(!$stage.dialog.cfCompose.hasClass("cf-composable")) return fail(436);
-		if(!confirm(L['cfSureCompose'])) return;
+		if(!errormessage(L['cfSureCompose'])) return;
 		
 		$.post("/cf", { tray: $data._tray.join('|') }, function(res){
 			var i;
