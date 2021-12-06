@@ -577,7 +577,7 @@ $(document).ready(function(){
 	});
 	$stage.menu.exit.on('click', function(e){
 		if($data.room.gaming){
-			if(!alert(L['sureExit'])) return;
+			if(!confirm(L['sureExit'])) return;
 			clearGame();
 		}
 		send('leave');
