@@ -50,11 +50,11 @@ Server.get("/gwalli/users", async function(req, res){
 	if(!checkAdmin(req, res)) return;
 	
 	if(req.query.name){
-		const $ut = await MainDB.session.find({ where: { profile: { title: req.query.name } } });
-		if($ut) await onSession($ut);
+		const $ut = await MainDB.session.find({ where: { profile: Raw((profile) => `${profile} ->> 'title' = '${req.query.name}'`) } });
+		if($ut) return await onSession($ut);
 		
-		const $un = await MainDB.session.find({ where: { profile: { name: req.query.name } } });
-		if($un) await onSession($un);
+		const $un = await MainDB.session.find({ where: { profile: Raw((profile) => `${profile} ->> 'name' = '${req.query.name}'`) } });
+		if($un) return await onSession($un);
 		res.sendStatus(404);
 	}else{
 		const $u = await MainDB.users.findOne({ where: { _id: req.query.id } });
