@@ -543,7 +543,7 @@ KKuTu.onClientMessage = function ($c, msg) {
 	}
 };
 
-function processClientRequest($c, msg) {
+async function processClientRequest($c, msg) {
 	var stable = true;
 	var temp;
 	var now = (new Date()).getTime();
@@ -567,7 +567,7 @@ function processClientRequest($c, msg) {
 			}
 			msg.value = msg.value.substr(0, 200);
 			if ($c.admin) {
-				if (!processAdmin($c.id, msg.value)) break;
+				if (!(await processAdmin($c.id, msg.value))) break;
 			}
 			checkTailUser($c.id, $c.place, msg);
 			if (msg.whisper) {
