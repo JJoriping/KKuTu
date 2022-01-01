@@ -16,28 +16,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var DB	 = require("../Web/db");
-var len = Number(process.argv[2] || 10);
+var DB	 = require("../Web/db/agent");
+var take = Number(process.argv[2] || 10);
 
-DB.ready = function(){
+DB.ready = async function(){
 	var rank = 0;
 	var phit = 0;
 	
-	DB.kkutu['ko'].find([ 'hit', { $gt: 0 } ]).sort([ 'hit', -1 ]).limit(len).on(function($res){
-		var i, $o, c;
-		var res = [];
-		
-		for(i in $res){
-			$o = $res[i];
-			if(phit == $o.hit){
-				c = rank;
-			}else{
-				c = rank = Number(i) + 1;
-				phit = $o.hit;
-			}
-			res.push(c + "위. " + $o._id + " (" + $o.hit + ")");
+	const $res = await DB.kkutu["ko"].find({ where: { hit: require("typeorm").MoreThan(0) }, take, order: { hit: "DESC" } });
+	var i, $o, c;
+	var res = [];
+	
+	for(i in $res){
+		$o = $res[i];
+		if(phit == $o.hit){
+			c = rank;
+		}else{
+			c = rank = Number(i) + 1;
+			phit = $o.hit;
 		}
-		console.log(res.join('\n'));
-		process.exit();
-	});
+		res.push(c + "위. " + $o._id + " (" + $o.hit + ")");
+	}
+	console.log(res.join('\n'));
+	process.exit();
 };

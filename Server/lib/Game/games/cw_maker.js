@@ -16,33 +16,32 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { Raw, Not, In, MoreThan } = require("typeorm");
 ﻿var Prompt = require('prompt');
-var DB = require('../../Web/db');
+var DB = require('../../Web/db/agent');
 var Const = require('../../const');
-var Lizard = require('../../sub/lizard');
 var LANG = 'ko';
 
 Prompt.start();
-DB.ready = function(){
+DB.ready = async function(){
 	var i;
 	
 	for(i in MAPS){
 		MC[MAPS[i].name] = 0;
 		MAPS[i].queue = MAPS[i].queue.split(' ').map(function(item){ return item.split(''); });
 	}
-	DB.kkutu_cw[LANG].find().on(function($res){
-		var j, lis, q;
-		
-		for(i in $res){
-			MC[$res[i].map]++;
-			lis = $res[i].data.split('|');
-			for(j in lis){
-				q = lis[j].slice(8);
-				if(!words.includes(q)) words.push(q);
-			}
+	const $res = await DB.kkutu_cw[LANG].find();
+	var j, lis, q;
+	
+	for(i in $res){
+		MC[$res[i].map]++;
+		lis = $res[i].data.split('|');
+		for(j in lis){
+			q = lis[j].slice(8);
+			if(!words.includes(q)) words.push(q);
 		}
-		doMining();
-	});
+	}
+	doMining();
 	function doMining(){
 		getBoard(LANG).then(function(data){
 			var j, o, s, t;
@@ -71,10 +70,11 @@ DB.ready = function(){
 				res.push([ s[0], s[1], s[2], s[3], o.word ]);
 			}
 			console.log(res);
-			Prompt.get([ 'flush' ], function(err, _res){
+			Prompt.get([ 'flush' ], async function(err, _res){
 				if(_res.flush == "y"){
 					MC[data.map.name]++;
-					DB.kkutu_cw[LANG].insert([ 'map', data.map.name ], [ 'data', res.map(function(item){ return item.join(','); }).join('|') ]).on();
+					const cw = new DB.CWKo(data.map.name, res.map(function(item){ return item.join(','); }).join('|'));
+					await DB.kkutu_cw[LANG].save(cw);
 				}
 				setTimeout(doMining, 500);
 			});
@@ -204,91 +204,79 @@ function getMap(){
 	return MAPS[li];
 }
 function getBoard(lang){
-	var R = new Lizard.Tail();
-	var MEAN = [ 'mean', new RegExp("^.{9}[^=→][^\.]{15}") ];
-	var NO_BUL = new RegExp("^(500|210|120|10)$");
-	var board = {};
-	var proc = [];
-	var map = getMap();
-	var queue = map.queue.slice(0);
-	var regCache = {};
-	
-	function process(){
-		var i, m = queue.shift();
-		var arg = [];
-		var reg = "";
-		var p, k;
-		var mapLen = queue.length;
+	return new Promise(async (resolve) => {
+		var board = {};
+		var proc = [];
+		var map = getMap();
+		var queue = map.queue.slice(0);
+		var regCache = {};
 		
-		console.log("[PROCESS] QUEUE: " + mapLen);
-		if(!m){
-			R.go({ map: map, board: board });
-			return;
-		}
-		p = [ m[0], m[1] ];
-		for(i=0; i<m[3]; i++){
-			k = p.join(',');
-			if(board[k]){
-				arg.push(board[k].chain);
-				reg += board[k].char;
-			}
-			else reg += ".";
-			p[m[2]]++;
-		}
-		if(regCache[reg]){
-			// if(Math.random() < 0.5 && regCache[reg].length >= 50) regCache[reg].shift();
-			onDBFound(regCache[reg].shift());
-		}else DB.kkutu[lang].find(
-			[ '_id', new RegExp(`^${reg}$`) ],
-			[ 'theme', { $not: NO_BUL } ],
-			[ '_id', { $nin: words } ],
-			[ 'type', Const.KOR_GROUP ],
-			[ 'flag', { $lte: 7 } ],
-			// (mapLen < 10) ? undefined : [ 'hit', { $gte: 2 } ],
-			MEAN
-		).limit(500).on(function($docs){
-			// regCache[reg] = $docs;
-			regCache[reg] = $docs.sort(function(a, b){ return b.hit - a.hit; });
-			// if(Math.random() < 0.5 && regCache[reg].length >= 50) regCache[reg].shift();
-			onDBFound(regCache[reg].shift());
-		});
-		function onDBFound($doc){
-			var obj = {};
-			var pick = $doc; // hit 순으로 하나씩 뽑자.
-			var j, l, n;
+		async function process(){
+			var i, m = queue.shift();
+			var arg = [];
+			var reg = "";
+			var p, k;
+			var mapLen = queue.length;
 			
-			if(pick && !words.includes(pick._id)){
-				obj.word = pick._id;
-				obj.mean = pick.mean;
-				obj.pos = m;
-				p = [ m[0], m[1] ];
-				for(j=0; j<m[3]; j++){
-					k = p.join(',');
-					if(!board[k]) board[k] = { chain: {}, char: obj.word.charAt(j) };
-					board[k].chain[obj.word] = obj;
-					p[m[2]]++;
+			console.log("[PROCESS] QUEUE: " + mapLen);
+			if(!m) resolve({ map: map, board: board });
+			p = [ m[0], m[1] ];
+			for(i=0; i<m[3]; i++){
+				k = p.join(',');
+				if(board[k]){
+					arg.push(board[k].chain);
+					reg += board[k].char;
 				}
-				words.push(obj.word);
+				else reg += ".";
+				p[m[2]]++;
+			}
+			if(regCache[reg]){
+				// if(Math.random() < 0.5 && regCache[reg].length >= 50) regCache[reg].shift();
+				onDBFound(regCache[reg].shift());
 			}else{
-				queue.push(m);
-				for(j in arg){
-					for(n in arg[j]){
-						// arg[j][k]를 지운다
-						queue.push(m = arg[j][n].pos);
-						p = [ m[0], m[1] ];
-						for(l=0; l<m[3]; l++){
-							k = p.join(',');
-							delete board[k].chain[n];
-							if(!Object.keys(board[k].chain).length) delete board[k];
-							p[m[2]]++;
+				const $dosc = await DB.kkutu[lang].find({ where: { _id: Raw((_id) => `${_id} ~ '${"^" + reg + "$"}' AND ${_id} NOT IN ("${words.join("\", \"")}")`), theme: Raw((theme) => `${theme} !~ '^(500|210|120|10)$'`), type: Const.KOR_GROUP, flag: Not(MoreThan(7)), mean: Raw((mean) => `${mean} ~ '^.{9}[^=→][^\.]{15}'`) }, take: 500 });
+				// regCache[reg] = $docs;
+				regCache[reg] = $docs.sort(function(a, b){ return b.hit - a.hit; });
+				// if(Math.random() < 0.5 && regCache[reg].length >= 50) regCache[reg].shift();
+				onDBFound(regCache[reg].shift());
+			}
+			function onDBFound($doc){
+				var obj = {};
+				var pick = $doc; // hit 순으로 하나씩 뽑자.
+				var j, l, n;
+				
+				if(pick && !words.includes(pick._id)){
+					obj.word = pick._id;
+					obj.mean = pick.mean;
+					obj.pos = m;
+					p = [ m[0], m[1] ];
+					for(j=0; j<m[3]; j++){
+						k = p.join(',');
+						if(!board[k]) board[k] = { chain: {}, char: obj.word.charAt(j) };
+						board[k].chain[obj.word] = obj;
+						p[m[2]]++;
+					}
+					words.push(obj.word);
+				}else{
+					queue.push(m);
+					for(j in arg){
+						for(n in arg[j]){
+							// arg[j][k]를 지운다
+							queue.push(m = arg[j][n].pos);
+							p = [ m[0], m[1] ];
+							for(l=0; l<m[3]; l++){
+								k = p.join(',');
+								delete board[k].chain[n];
+								if(!Object.keys(board[k].chain).length) delete board[k];
+								p[m[2]]++;
+							}
+							words.splice(words.indexOf(n), 1);
 						}
-						words.splice(words.indexOf(n), 1);
 					}
 				}
+				await process();
 			}
-			process();
 		}
-	}
-	process();
-	return R;
+		await process();
+	});
 }

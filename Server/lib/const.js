@@ -231,13 +231,13 @@ exports.REGION = {
 	'en': "en",
 	'ko': "kr"
 };
-exports.KOR_STRICT = /(^|,)(1|INJEONG)($|,)/;
-exports.KOR_GROUP = new RegExp("(,|^)(" + [
+exports.KOR_STRICT = "(^|,)(1|INJEONG)($|,)";
+exports.KOR_GROUP = "(,|^)(" + [
 	"0", "1", "3", "7", "8", "11", "9",
 	"16", "15", "17", "2", "18", "20", "26", "19",
 	"INJEONG"
-].join('|') + ")(,|$)");
-exports.ENG_ID = /^[a-z]+$/i;
+].join('|') + ")(,|$)";
+exports.ENG_ID = "^[a-z]+$";
 exports.KOR_FLAG = {
 	LOANWORD: 1, // 외래어
 	INJEONG: 2,	// 어인정

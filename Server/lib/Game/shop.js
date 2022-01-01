@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var DB	 = require("../Web/db");
+var DB	 = require("../Web/db/agent");
 var File = require("fs");
 var JLog = require("../sub/jjlog");
 
@@ -45,7 +45,7 @@ DB.ready = function(){
 	});
 	JLog.success("DB is ready.");
 };
-function run(data){
+async function run(data){
 	var i, o;
 	
 	switch(data.type){
@@ -64,16 +64,10 @@ function run(data){
 				o = data.list[i];
 				
 				JLog.log(i);
-				DB.kkutu_shop.upsert([ '_id', Number(o.id) ]).set(
-					[ 'group', o.group ],
-					[ 'title', o.title ],
-					[ 'cost', Number(o.cost) ],
-					[ 'term', Number(o.term) ],
-					[ 'desc', o.desc ],
-					[ 'updatedAt', new Date() ]
-				).soi(
-					[ 'hit', 0 ]
-				).on();
+				const $item = (await DB.kkutu_shop.findOne({ where: { _id: Number(o.id) } })) || new DB.Item();
+				Object.assign($item, o);
+				$item.updatedAt = new Date();
+				await DB.kkutu_shop.save($item);
 			}
 			break;
 		default:

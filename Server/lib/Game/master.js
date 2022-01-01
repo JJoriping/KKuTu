@@ -20,6 +20,7 @@ var Cluster = require("cluster");
 var File = require('fs');
 var WebSocket = require('ws');
 var https = require('https');
+var { In } = require("typeorm");
 var HTTPS_Server;
 // var Heapdump = require("heapdump");
 var KKuTu = require('./kkutu');
@@ -69,7 +70,7 @@ process.on('uncaughtException', function(err){
 		console.log(text);
 	});
 });
-function processAdmin(id, value){
+async function processAdmin(id, value){
 	var cmd, temp, i, j;
 	
 	value = value.replace(/^(#\w+\s+)?(.+)/, function(v, p1, p2){
@@ -120,11 +121,13 @@ function processAdmin(id, value){
 		case 'ban':
 			try {
 				var args = value.split(",");
-				if(args.length == 2){
-					MainDB.users.update([ '_id', args[0].trim() ]).set([ 'black', args[1].trim() ]).on();
-				}else if(args.length == 3){
-					MainDB.users.update([ '_id', args[0].trim() ]).set([ 'black', args[1].trim() ], [ 'blockedUntil', addDate(parseInt(args[2].trim())) ]).on();				
-				}else return null;
+				const user = await MainDB.users.findOne({ where: { _id: args[0].trim() } });
+				
+				user.black = args[1].trim();
+				if(args.length == 3) user.blockedUntil = addDate(parseInt(args[2].trim()));
+				else if(args.length != 2) return null;
+				
+				await MainDB.users.save(user);
 				
 				JLog.info(`[Block] 사용자 #${args[0].trim()}(이)가 이용제한 처리되었습니다.`);
 				
@@ -139,11 +142,13 @@ function processAdmin(id, value){
 		case 'ipban':
 			try {
 				var args = value.split(",");
-				if(args.length == 2){
-					MainDB.ip_block.update([ '_id', args[0].trim() ]).set([ 'reasonBlocked', args[1].trim() ]).on();
-				}else if(args.length == 3){
-					MainDB.ip_block.update([ '_id', args[0].trim() ]).set([ 'reasonBlocked', args[1].trim() ], [ 'ipBlockedUntil', addDate(parseInt(args[2].trim())) ]).on();				
-				}else return null;
+				const user = await MainDB.ip_block.findOne({ where: { _id: args[0].trim() } });
+				
+				user.reasonBlocked = args[1].trim();
+				if(args.length == 3) user.ipBlockedUntil = addDate(parseInt(args[2].trim()));
+				else if(args.length != 2) return null;
+				
+				await MainDB.ip_block.save(user);
 				
 				JLog.info(`[Block] IP 주소 ${args[0].trim()}(이)가 이용제한 처리되었습니다.`);
 			}catch(e){
@@ -152,7 +157,10 @@ function processAdmin(id, value){
 			return null;
 		case 'unban':
 			try {
-				MainDB.users.update([ '_id', value ]).set([ 'black', null ], [ 'blockedUntil', 0 ]).on();								
+				const user = await MainDB.users.findOne({ where: { _id: value } });
+				user.black = null;
+				user.blockedUntil = 0;
+				await MainDB.users.save(user);								
 				JLog.info(`[Block] 사용자 #${value}(이)가 이용제한 해제 처리되었습니다.`);
 			}catch(e){
 				processAdminErrorCallback(e, id);
@@ -160,7 +168,10 @@ function processAdmin(id, value){
 			return null;
 		case 'ipunban':
 			try {
-				MainDB.ip_block.update([ '_id', value ]).set([ 'reasonBlocked', null ], [ 'ipBlockedUntil', 0 ]).on();								
+				const user = await MainDB.users.ip_block.findOne({ where: { _id: value } });
+				user.reasonBlocked = null;
+				user.ipBlockedUntil = 0;
+				await MainDB.users.save(user);
 				JLog.info(`[Block] IP 주소 ${value}(이)가 이용제한 해제 처리되었습니다.`);
 			}catch(e){
 				processAdminErrorCallback(e, id);
@@ -192,30 +203,30 @@ function checkTailUser(id, place, msg){
 		DIC[temp].send('tail', { a: "user", rid: place, id: id, msg: msg });
 	}
 }
-function narrateFriends(id, friends, stat){
+async function narrateFriends(id, friends, stat){
 	if(!friends) return;
 	var fl = Object.keys(friends);
 	
 	if(!fl.length) return;
 	
-	MainDB.users.find([ '_id', { $in: fl } ], [ 'server', /^\w+$/ ]).limit([ 'server', true ]).on(function($fon){
-		var i, sf = {}, s;
-		
-		for(i in $fon){
-			if(!sf[s = $fon[i].server]) sf[s] = [];
-			sf[s].push($fon[i]._id);
-		}
-		if(DIC[id]) DIC[id].send('friends', { list: sf });
-		
-		if(sf[SID]){
-			KKuTu.narrate(sf[SID], 'friend', { id: id, s: SID, stat: stat });
-			delete sf[SID];
-		}
-		for(i in WDIC){
-			WDIC[i].send('narrate-friend', { id: id, s: SID, stat: stat, list: sf });
-			break;
-		}
-	});
+	const $fon = await MainDB.users.find({ select: [ "_id", "server" ], where: { _id: In(fl) } });
+	var sf = {}, s;
+	
+	for(let i in $fon){
+		if(!/^\w+$/.test($fon[i].server)) continue;
+		if(!sf[s = $fon[i].server]) sf[s] = [];
+		sf[s].push($fon[i]._id);
+	}
+	if(DIC[id]) DIC[id].send('friends', { list: sf });
+	
+	if(sf[SID]){
+		KKuTu.narrate(sf[SID], 'friend', { id: id, s: SID, stat: stat });
+		delete sf[SID];
+	}
+	for(let i in WDIC){
+		WDIC[i].send('narrate-friend', { id: id, s: SID, stat: stat, list: sf });
+		break;
+	}
 }
 Cluster.on('message', function(worker, msg){
 	var temp;
@@ -331,11 +342,13 @@ Cluster.on('message', function(worker, msg){
 });
 exports.init = function(_SID, CHAN){
 	SID = _SID;
-	MainDB = require('../Web/db');
-	MainDB.ready = function(){
+	MainDB = require('../Web/db/agent');
+	MainDB.ready = async function(){
 		JLog.success("Master DB is ready.");
 		
-		MainDB.users.update([ 'server', SID ]).set([ 'server', "" ]).on();
+		const users = await MainDB.users.find({ where: { server: SID } });
+		for(let i in users) users[i].server = "";
+		await MainDB.users.save(users);
 		if(Const.IS_SECURED) {
 			const options = Secure();
 			HTTPS_Server = https.createServer(options)
@@ -347,7 +360,7 @@ exports.init = function(_SID, CHAN){
 				perMessageDeflate: false
 			});
 		}
-		Server.on('connection', function(socket, info){
+		Server.on('connection', async function(socket, info){
 			var key = info.url.slice(1);
 			var $c;
 			
@@ -370,105 +383,112 @@ exports.init = function(_SID, CHAN){
 				socket.send(`{ "type": "error", "code": "full" }`);
 				return;
 			}
-			MainDB.session.findOne([ '_id', key ]).limit([ 'profile', true ]).on(function($body){
-				$c = new KKuTu.Client(socket, $body ? $body.profile : null, key);
-				$c.admin = GLOBAL.ADMIN.indexOf($c.id) != -1;
+			const $body = await MainDB.session.findOne({ select: [ "_id", "profile" ], where: { _id: key } });
+			$c = new KKuTu.Client(socket, $body ? $body.profile : null, key);
+			$c.admin = GLOBAL.ADMIN.indexOf($c.id) != -1;
+			/* Enhanced User Block System [S] */
+			$c.remoteAddress = GLOBAL.USER_BLOCK_OPTIONS.USE_X_FORWARDED_FOR ? info.connection.remoteAddress : (info.headers['x-forwarded-for'] || info.connection.remoteAddress);
+			/* Enhanced User Block System [E] */
+			
+			if(DIC[$c.id]){
+				DIC[$c.id].sendError(408);
+				DIC[$c.id].socket.close();
+			}
+			if(DEVELOP && !Const.TESTER.includes($c.id)){
+				$c.sendError(500);
+				$c.socket.close();
+				return;
+			}
+			if($c.guest){
+				if(SID != "0"){
+					$c.sendError(402);
+					$c.socket.close();
+					return;
+				}
+				if(KKuTu.NIGHT){
+					$c.sendError(440);
+					$c.socket.close();
+					return;
+				}
+			}
+			/* Enhanced User Block System [S] */
+			if(GLOBAL.USER_BLOCK_OPTIONS.USE_MODULE && ((GLOBAL.USER_BLOCK_OPTIONS.BLOCK_IP_ONLY_FOR_GUEST && $c.guest) || !GLOBAL.USER_BLOCK_OPTIONS.BLOCK_IP_ONLY_FOR_GUEST)){
+				const $body = await MainDB.ip_block.findOne({ where: { _id: $c.remoteAddress } });
+				if ($body.reasonBlocked) {
+					if($body.ipBlockedUntil < Date.now()) {
+						$body.ipBlockedUntil = 0;
+						$body.reasonBlocked = null;
+						await MainDB.ip_block.save($body);
+						JLog.info(`IP 주소 ${$c.remoteAddress}의 이용제한이 해제되었습니다.`);
+					}
+					else {
+						$c.socket.send(JSON.stringify({
+							type: 'error',
+							code: 446,
+							reasonBlocked: !$body.reasonBlocked ? GLOBAL.USER_BLOCK_OPTIONS.DEFAULT_BLOCKED_TEXT : $body.reasonBlocked,
+							ipBlockedUntil: !$body.ipBlockedUntil ? GLOBAL.USER_BLOCK_OPTIONS.BLOCKED_FOREVER : $body.ipBlockedUntil
+						}));
+						$c.socket.close();
+						return;
+					}
+				}
+			}
+			/* Enhanced User Block System [E] */
+			if($c.isAjae === null){
+				$c.sendError(441);
+				$c.socket.close();
+				return;
+			}
+			$c.refresh().then(async function(ref){
 				/* Enhanced User Block System [S] */
-				$c.remoteAddress = GLOBAL.USER_BLOCK_OPTIONS.USE_X_FORWARDED_FOR ? info.connection.remoteAddress : (info.headers['x-forwarded-for'] || info.connection.remoteAddress);
-				/* Enhanced User Block System [E] */
+				let isBlockRelease = false;
 				
-				if(DIC[$c.id]){
-					DIC[$c.id].sendError(408);
-					DIC[$c.id].socket.close();
+				if(ref.blockedUntil < Date.now()) {
+					DIC[$c.id] = $c;
+					const user = await MainDB.users.findOne({ where: { _id: $c.id } });
+					user.blockedUntil = 0;
+					user.black = null;
+					await MainDB.users.save(user);
+					JLog.info(`사용자 #${$c.id}의 이용제한이 해제되었습니다.`);
+					isBlockRelease = true;
 				}
-				if(DEVELOP && !Const.TESTER.includes($c.id)){
-					$c.sendError(500);
-					$c.socket.close();
-					return;
-				}
-				if($c.guest){
-					if(SID != "0"){
-						$c.sendError(402);
-						$c.socket.close();
-						return;
-					}
-					if(KKuTu.NIGHT){
-						$c.sendError(440);
-						$c.socket.close();
-						return;
-					}
-				}
+				/* Enhanced User Block System [E] */						
+				
 				/* Enhanced User Block System [S] */
-				if(GLOBAL.USER_BLOCK_OPTIONS.USE_MODULE && ((GLOBAL.USER_BLOCK_OPTIONS.BLOCK_IP_ONLY_FOR_GUEST && $c.guest) || !GLOBAL.USER_BLOCK_OPTIONS.BLOCK_IP_ONLY_FOR_GUEST)){
-					MainDB.ip_block.findOne([ '_id', $c.remoteAddress ]).on(function($body){
-						if ($body.reasonBlocked) {
-							if($body.ipBlockedUntil < Date.now()) {
-								MainDB.ip_block.update([ '_id', $c.remoteAddress ]).set([ 'ipBlockedUntil', 0 ], [ 'reasonBlocked', null ]).on();
-								JLog.info(`IP 주소 ${$c.remoteAddress}의 이용제한이 해제되었습니다.`);
-							}
-							else {
-								$c.socket.send(JSON.stringify({
-									type: 'error',
-									code: 446,
-									reasonBlocked: !$body.reasonBlocked ? GLOBAL.USER_BLOCK_OPTIONS.DEFAULT_BLOCKED_TEXT : $body.reasonBlocked,
-									ipBlockedUntil: !$body.ipBlockedUntil ? GLOBAL.USER_BLOCK_OPTIONS.BLOCKED_FOREVER : $body.ipBlockedUntil
-								}));
-								$c.socket.close();
-								return;
-							}
-						}
-					});
-				}
+				if(ref.result == 200 || isBlockRelease){
 				/* Enhanced User Block System [E] */
-				if($c.isAjae === null){
-					$c.sendError(441);
-					$c.socket.close();
-					return;
-				}
-				$c.refresh().then(function(ref){
-					/* Enhanced User Block System [S] */
-					let isBlockRelease = false;
-					
-					if(ref.blockedUntil < Date.now()) {
-						DIC[$c.id] = $c;
-						MainDB.users.update([ '_id', $c.id ]).set([ 'blockedUntil', 0 ], [ 'black', null ]).on();
-						JLog.info(`사용자 #${$c.id}의 이용제한이 해제되었습니다.`);
-						isBlockRelease = true;
+					DIC[$c.id] = $c;
+					DNAME[($c.profile.title || $c.profile.name).replace(/\s/g, "")] = $c.id;
+					const user = await MainDB.users.findOne({ where: { _id: $c.id } });
+					if(user){
+						user.server = SID;
+						await MainDB.users.save(user);
 					}
-					/* Enhanced User Block System [E] */						
-					
-					/* Enhanced User Block System [S] */
-					if(ref.result == 200 || isBlockRelease){
-					/* Enhanced User Block System [E] */
-						DIC[$c.id] = $c;
-						DNAME[($c.profile.title || $c.profile.name).replace(/\s/g, "")] = $c.id;
-						MainDB.users.update([ '_id', $c.id ]).set([ 'server', SID ]).on();
 
-						if (($c.guest && GLOBAL.GOOGLE_RECAPTCHA_TO_GUEST) || GLOBAL.GOOGLE_RECAPTCHA_TO_USER) {
-							$c.socket.send(JSON.stringify({
-								type: 'recaptcha',
-								siteKey: GLOBAL.GOOGLE_RECAPTCHA_SITE_KEY
-							}));
-						} else {
-							$c.passRecaptcha = true;
-
-							joinNewUser($c);
-						}
+					if (($c.guest && GLOBAL.GOOGLE_RECAPTCHA_TO_GUEST) || GLOBAL.GOOGLE_RECAPTCHA_TO_USER) {
+						$c.socket.send(JSON.stringify({
+							type: 'recaptcha',
+							siteKey: GLOBAL.GOOGLE_RECAPTCHA_SITE_KEY
+						}));
 					} else {
-						/* Enhanced User Block System [S] */
-						if(ref.blockedUntil) $c.send('error', {
-							code: ref.result, message: ref.black, blockedUntil: ref.blockedUntil
-						});
-						else $c.send('error', {
-							code: ref.result, message: ref.black
-						});
-						/* Enhanced User Block System [E] */
-						
-						$c._error = ref.result;
-						$c.socket.close();
-						// JLog.info("Black user #" + $c.id);
+						$c.passRecaptcha = true;
+
+						joinNewUser($c);
 					}
-				});
+				} else {
+					/* Enhanced User Block System [S] */
+					if(ref.blockedUntil) $c.send('error', {
+						code: ref.result, message: ref.black, blockedUntil: ref.blockedUntil
+					});
+					else $c.send('error', {
+						code: ref.result, message: ref.black
+					});
+					/* Enhanced User Block System [E] */
+					
+					$c._error = ref.result;
+					$c.socket.close();
+					// JLog.info("Black user #" + $c.id);
+				}
 			});
 		});
 		Server.on('error', function (err) {
@@ -523,7 +543,7 @@ KKuTu.onClientMessage = function ($c, msg) {
 	}
 };
 
-function processClientRequest($c, msg) {
+async function processClientRequest($c, msg) {
 	var stable = true;
 	var temp;
 	var now = (new Date()).getTime();
@@ -547,7 +567,7 @@ function processClientRequest($c, msg) {
 			}
 			msg.value = msg.value.substr(0, 200);
 			if ($c.admin) {
-				if (!processAdmin($c.id, msg.value)) break;
+				if (!(await processAdmin($c.id, msg.value))) break;
 			}
 			checkTailUser($c.id, $c.place, msg);
 			if (msg.whisper) {
@@ -674,9 +694,15 @@ function processClientRequest($c, msg) {
 	}
 }
 
-KKuTu.onClientClosed = function($c, code){
+KKuTu.onClientClosed = async function($c, code){
 	delete DIC[$c.id];
-	if($c._error != 409) MainDB.users.update([ '_id', $c.id ]).set([ 'server', "" ]).on();
+	if($c._error != 409){
+		const user = await MainDB.users.findOne({ where: { _id: $c.id } });
+		if(user){
+			user.server = "";
+			await MainDB.users.save(user);
+		}
+	}
 	if($c.profile) delete DNAME[$c.profile.title || $c.profile.name];
 	if($c.socket) $c.socket.removeAllListeners();
 	if($c.friends) narrateFriends($c.id, $c.friends, "off");

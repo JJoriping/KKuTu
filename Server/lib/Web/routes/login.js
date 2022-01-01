@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const MainDB	 = require("../db");
+const MainDB	 = require("../db/agent");
 const JLog	 = require("../../sub/jjlog");
 // const Ajae	 = require("../../sub/ajaejs").checkAjae;
 const passport = require('passport');
@@ -25,7 +25,7 @@ const GLOBAL	 = require("../../sub/global.json");
 const config = require('../../sub/auth.json');
 const path = require('path')
 
-function process(req, accessToken, MainDB, $p, done) {
+async function process(req, accessToken, MainDB, $p, done) {
     $p.token = accessToken;
     $p.sid = req.session.id;
 
@@ -33,14 +33,18 @@ function process(req, accessToken, MainDB, $p, done) {
     $p.sid = req.session.id;
     req.session.admin = GLOBAL.ADMIN.includes($p.id);
     req.session.authType = $p.authType;
-    MainDB.session.upsert([ '_id', req.session.id ]).set({
-        'profile': $p,
-        'createdAt': now
-    }).on();
-    MainDB.users.findOne([ '_id', $p.id ]).on(($body) => {
-        req.session.profile = $p;
-        MainDB.users.update([ '_id', $p.id ]).set([ 'lastLogin', now ]).on();
-    });
+	
+	const session = (await MainDB.session.findOne({ where: { _id: req.session.id } })) || new MainDB.Session(req.session.id);
+    session.profile = $p;
+	session.createdAt = now;
+	await MainDB.session.save(session);
+	
+	const $body = await MainDB.users.findOne({ where: { _id: $p.id } });
+	req.session.profile = $p;
+	if($body){
+		$body.lastLogin = now;
+		await MainDB.users.save($body);
+	}
 
     done(null, $p);
 }
@@ -80,7 +84,7 @@ exports.run = (Server, page) => {
 		}
 	}
 	
-	Server.get("/login", (req, res) => {
+	Server.get("/login", async (req, res) => {
 		if(global.isPublic){
 			page(req, res, "login", { '_id': req.session.id, 'text': req.query.desc, 'loginList': strategyList});
 		}else{
@@ -92,12 +96,18 @@ exports.run = (Server, page) => {
 				birth: [ 4, 16, 0 ],
 				_age: { min: 20, max: undefined }
 			};
-			MainDB.session.upsert([ '_id', req.session.id ]).set([ 'profile', JSON.stringify(lp) ], [ 'createdAt', now ]).on(function($res){
-				MainDB.users.update([ '_id', id ]).set([ 'lastLogin', now ]).on();
-				req.session.admin = true;
-				req.session.profile = lp;
-				res.redirect("/");
-			});
+			const session = (await MainDB.session.findOne({ where: { _id: req.session.id } })) || new MainDB.Session(req.session.id);
+			session.profile = JSON.stringify(lp);
+			session.createdAt = now;
+			await MainDB.session.save(session);
+			
+			const user = await MainDB.users.findOne({ where: { _id: id } });
+			user.lastLogin = now;
+			await MainDB.users.save(user);
+			
+			req.session.admin = true;
+			req.session.profile = lp;
+			res.redirect("/");
 		}
 	});
 

@@ -16,9 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { Raw, Not, LessThan } = require("typeorm");
 var Const = require('../../const');
 var TYL = require('./typing_const');
-var Lizard = require('../../sub/lizard');
 var DB;
 var DIC;
 
@@ -41,33 +41,34 @@ exports.init = function(_DB, _DIC){
 	DIC = _DIC;
 };
 exports.getTitle = function(){
-	var R = new Lizard.Tail();
-	var my = this;
-	var i, j;
-	
-	if(my.opts.proverb) pick(TYL.PROVERBS[my.rule.lang]);
-	else DB.kkutu[my.rule.lang].find([ '_id', /^.{2,5}$/ ], [ 'hit', { $gte: 1 } ]).limit(416).on(function($res){
-		pick($res.map(function(item){ return item._id; }));
-	});
-	function pick(list){
-		var data = [];
-		var len = list.length;
-		var arr;
+	return new Promise(async (resolve) => {
+		var my = this;
+		var i, j;
 		
-		for(i=0; i<my.round; i++){
-			arr = [];
-			for(j=0; j<LIST_LENGTH; j++){
-				arr.push(list[Math.floor(Math.random() * len)]);
-			}
-			data.push(arr);
+		if(my.opts.proverb) pick(TYL.PROVERBS[my.rule.lang]);
+		else{
+			const $res = await DB.kkutu[my.rule.lang].find({ where: { _id: Raw((_id) => `${_id} ~ '^.{2,5}$'`), hit: Not(LessThan(1)) }, take: 416 });
+			pick($res.map(function(item){ return item._id; }));
 		}
-		my.game.lists = data;
-		R.go("①②③④⑤⑥⑦⑧⑨⑩");
-	}
-	traverse.call(my, function(o){
-		o.game.spl = 0;
+		function pick(list){
+			var data = [];
+			var len = list.length;
+			var arr;
+			
+			for(i=0; i<my.round; i++){
+				arr = [];
+				for(j=0; j<LIST_LENGTH; j++){
+					arr.push(list[Math.floor(Math.random() * len)]);
+				}
+				data.push(arr);
+			}
+			my.game.lists = data;
+			resolve("①②③④⑤⑥⑦⑧⑨⑩");
+		}
+		traverse.call(my, function(o){
+			o.game.spl = 0;
+		});
 	});
-	return R;
 };
 exports.roundReady = function(){
 	var my = this;

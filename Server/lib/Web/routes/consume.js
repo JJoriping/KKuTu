@@ -16,36 +16,35 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var MainDB	 = require("../db");
+var MainDB	 = require("../db/agent");
 var JLog	 = require("../../sub/jjlog");
 
 exports.run = function(Server, page){
 
-Server.post("/consume/:id", function(req, res){
+Server.post("/consume/:id", async function(req, res){
 	if(!req.session.profile) return res.json({ error: 400 });
 	var uid = req.session.profile.id;
 	var gid = req.params.id;
 	var isDyn = gid.charAt() == '$';
 	
-	MainDB.users.findOne([ '_id', uid ]).on(function($user){
-		if(!$user) return res.json({ error: 400 });
-		if(!$user.box) return res.json({ error: 400 });
-		if(!$user.lastLogin) $user.lastLogin = new Date().getTime();
-		var q = $user.box[gid];
-		var output;
-		
-		if(!q) return res.json({ error: 430 });
-		MainDB.kkutu_shop.findOne([ '_id', isDyn ? gid.slice(0, 4) : gid ]).limit([ 'cost', true ]).on(function($item){
-			if(!$item) return res.json({ error: 430 });
-			consume($user, gid, 1);
-			output = useItem($user, $item, gid);
-			MainDB.users.update([ '_id', uid ]).set($user).on(function($res){
-				output.result = 200;
-				output.box = $user.box;
-				output.data = $user.kkutu;
-				res.send(output);
-			});
-		});
+	const $user = await MainDB.users.findOne({ where: { _id: uid } });
+	if(!$user) return res.json({ error: 400 });
+	if(!$user.box) return res.json({ error: 400 });
+	if(!$user.lastLogin) $user.lastLogin = new Date().getTime();
+	var q = $user.box[gid];
+	var output;
+	
+	if(!q) return res.json({ error: 430 });
+	
+	const $item = await MainDB.kkutu_shop.findOne({ select: [ "_id", "cost" ], where: { _id: isDyn ? gid.slice(0, 4) : gid } });
+	if(!$item) return res.json({ error: 430 });
+	consume($user, gid, 1);
+	output = useItem($user, $item, gid);
+	MainDB.users.save($user).then(() => {
+		output.result = 200;
+		output.box = $user.box;
+		output.data = $user.kkutu;
+		res.send(output);
 	});
 });
 

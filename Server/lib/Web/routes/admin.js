@@ -16,11 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { Not, Like, Raw } = require("typeorm");
 var File	 = require("fs");
-var MainDB	 = require("../db");
+var MainDB	 = require("../db/agent");
 var GLOBAL	 = require("../../sub/global.json");
 var JLog	 = require("../../sub/jjlog");
-var Lizard	 = require("../../sub/lizard.js");
 
 exports.run = function(Server, page){
 
@@ -30,86 +30,78 @@ Server.get("/gwalli", function(req, res){
 	req.session.admin = true;
 	page(req, res, "gwalli");
 });
-Server.get("/gwalli/injeong", function(req, res){
+Server.get("/gwalli/injeong", async function(req, res){
 	if(!checkAdmin(req, res)) return;
 	
-	MainDB.kkutu_injeong.find([ 'theme', { $not: "~" } ]).limit(100).on(function($list){
-		res.send({ list: $list });
-	});
+	res.send({ list: await MainDB.kkutu_injeong.find({ where: { theme: Not("~") }, take: 100 }) });
 });
-Server.get("/gwalli/gamsi", function(req, res){
+Server.get("/gwalli/gamsi", async function(req, res){
 	if(!checkAdmin(req, res)) return;
 	
-	MainDB.users.findOne([ '_id', req.query.id ]).limit([ 'server', true ]).on(function($u){
-		if(!$u) return res.sendStatus(404);
-		var data = { _id: $u._id, server: $u.server };
-		
-		MainDB.session.findOne([ 'profile.id', $u._id ]).limit([ 'profile', true ]).on(function($s){
-			if($s) data.title = $s.profile.title || $s.profile.name;
-			res.send(data);
-		});
-	});
+	const $u = await MainDB.users.findOne({ select: [ "_id", "server" ], where: { _id: req.query.id } });
+	if(!$u) return res.sendStatus(404);
+	var data = { _id: $u._id, server: $u.server };
+	
+	const $s = await MainDB.session.findOne({ where: { profile: Raw((profile) => `${profile} ->> 'id' = '${$u._id}'`) } });
+	if($s) data.title = $s.profile.title || $s.profile.name;
+	res.send(data);
 });
-Server.get("/gwalli/users", function(req, res){
+Server.get("/gwalli/users", async function(req, res){
 	if(!checkAdmin(req, res)) return;
 	
 	if(req.query.name){
-		MainDB.session.find([ 'profile.title', req.query.name ]).on(function($u){
-			if($u) return onSession($u);
-			MainDB.session.find([ 'profile.name', req.query.name ]).on(function($u){
-				if($u) return onSession($u);
-				res.sendStatus(404);
-			});
-		});
+		const $ut = await MainDB.session.find({ where: { profile: Raw((profile) => `${profile} ->> 'title' = '${req.query.name}'`) } });
+		if($ut) return await onSession($ut);
+		
+		const $un = await MainDB.session.find({ where: { profile: Raw((profile) => `${profile} ->> 'name' = '${req.query.name}'`) } });
+		if($un) return await onSession($un);
+		res.sendStatus(404);
 	}else{
-		MainDB.users.findOne([ '_id', req.query.id ]).on(function($u){
-			if($u) return res.send({ list: [ $u ] });
-			res.sendStatus(404);
-		});
+		const $u = await MainDB.users.findOne({ where: { _id: req.query.id } });
+		if($u) return res.send({ list: [ $u ] });
+		res.sendStatus(404);
 	}
 	function onSession(list){
 		var board = {};
 		
-		Lizard.all(list.map(function(v){
+		Promise.all(list.map(async function(v){
 			if(board[v.profile.id]) return null;
 			else{
 				board[v.profile.id] = true;
-				return getProfile(v.profile.id);
+				return await getProfile(v.profile.id);
 			}
 		})).then(function(data){
 			res.send({ list: data });
 		});
 	}
 	function getProfile(id){
-		var R = new Lizard.Tail();
-		
-		if(id) MainDB.users.findOne([ '_id', id ]).on(function($u){
-			R.go($u);
-		}); else R.go(null);
-		return R;
+		return new Promise(async (resolve) => {
+			if(id){
+				const $u = await MainDB.users.findOne({ where: { _id: id } });
+				resolve($u);
+			}else resolve(null);
+		});
 	}
 });
-Server.get("/gwalli/kkutudb/:word", function(req, res){
+Server.get("/gwalli/kkutudb/:word", async function(req, res){
 	if(!checkAdmin(req, res)) return;
 	
 	var TABLE = MainDB.kkutu[req.query.lang];
 	
 	if(!TABLE) return res.sendStatus(400);
 	if(!TABLE.findOne) return res.sendStatus(400);
-	TABLE.findOne([ '_id', req.params.word ]).on(function($doc){
-		res.send($doc);
-	});
+	res.send(await TABLE.findOne({ where: { _id: req.params.word } }));
 });
-Server.get("/gwalli/kkututheme", function(req, res){
+Server.get("/gwalli/kkututheme", async function(req, res){
 	if(!checkAdmin(req, res)) return;
 	
 	var TABLE = MainDB.kkutu[req.query.lang];
 	
 	if(!TABLE) return res.sendStatus(400);
 	if(!TABLE.find) return res.sendStatus(400);
-	TABLE.find([ 'theme', new RegExp(req.query.theme) ]).limit([ '_id', true ]).on(function($docs){
-		res.send({ list: $docs.map(v => v._id) });
-	});
+	res.send({ list: (
+		await TABLE.find({ select: [ "_id", "theme" ], where: { theme: Like(`%${req.query.theme}%`) } })
+	).map(v => v._id) });
 });
 Server.get("/gwalli/kkutuhot", function(req, res){
 	if(!checkAdmin(req, res)) return;
@@ -122,16 +114,13 @@ Server.get("/gwalli/kkutuhot", function(req, res){
 		});
 	});
 });
-Server.get("/gwalli/shop/:key", function(req, res){
+Server.get("/gwalli/shop/:key", async function(req, res){
 	if(!checkAdmin(req, res)) return;
 	
-	var q = (req.params.key == "~ALL") ? undefined : [ '_id', req.params.key ];
+	const goods = await MainDB.kkutu_shop.find(req.params.key == "~ALL" ? undefined : { where: { _id: req.params.key } });
+	const desc = await MainDB.kkutu_shop_desc.find(req.params.key == "~ALL" ? undefined : { where: { _id: req.params.key } });
 	
-	MainDB.kkutu_shop.find(q).on(function($docs){
-		MainDB.kkutu_shop_desc.find(q).on(function($desc){
-			res.send({ goods: $docs, desc: $desc });
-		});
-	});
+	res.send({ goods, desc });
 });
 Server.post("/gwalli/injeong", function(req, res){
 	if(!checkAdmin(req, res)) return;
@@ -140,19 +129,21 @@ Server.post("/gwalli/injeong", function(req, res){
 	var list = JSON.parse(req.body.list).list;
 	var themes;
 	
-	list.forEach(function(v){
+	list.forEach(async function(v){
 		if(v.ok){
 			req.body.nof = true;
 			req.body.lang = "ko";
 			v.theme.split(',').forEach(function(w, i){
-				setTimeout(function(lid, x){
+				setTimeout(async function(lid, x){
 					req.body.list = lid;
 					req.body.theme = x;
 					onKKuTuDB(req, res);
 				}, i * 1000, v._id.replace(/[^가-힣0-9]/g, ""), w);
 			});
 		}else{
-			MainDB.kkutu_injeong.update([ '_id', v._origin ]).set([ 'theme', "~" ]).on();
+			const word = await MainDB.kkutu_injeong.findOne({ where: { _id: v._origin } });
+			word.theme = "~";
+			await MainDB.kkutu_injeong.save(word);
 		}
 		// MainDB.kkutu_injeong.remove([ '_id', v._origin ]).on();
 	});
@@ -170,46 +161,48 @@ function onKKuTuDB(req, res){
 	if(list) list = list.split(/[,\r\n]+/);
 	else return res.sendStatus(400);
 	if(!TABLE) return res.sendStatus(400);
-	if(!TABLE.insert) return res.sendStatus(400);
+	if(!TABLE.findOne) return res.sendStatus(400);
 	
 	noticeAdmin(req, theme, list.length);
-	list.forEach(function(item){
+	list.forEach(async function(item){
 		if(!item) return;
 		item = item.trim();
 		if(!item.length) return;
-		TABLE.findOne([ '_id', item ]).on(function($doc){
-			if(!$doc) return TABLE.insert([ '_id', item ], [ 'type', "INJEONG" ], [ 'theme', theme ], [ 'mean', "＂1＂" ], [ 'flag', 2 ]).on();
-			var means = $doc.mean.split(/＂[0-9]+＂/g).slice(1);
-			var len = means.length;
-			
-			if($doc.theme.indexOf(theme) == -1){
-				$doc.type += ",INJEONG";
-				$doc.theme += "," + theme;
-				$doc.mean += `＂${len+1}＂`;
-				TABLE.update([ '_id', item ]).set([ 'type', $doc.type ], [ 'theme', $doc.theme ], [ 'mean', $doc.mean ]).on();
-			}else{
-				JLog.warn(`Word '${item}' already has the theme '${theme}'!`);
-			}
-		});
+		const $doc = await TABLE.findOne({ where: { _id: item } });
+		if(!$doc) return await TABLE.save(new MainDB.Word(req.body.lang, item, "INJEONG", theme, "＂1＂", 2));
+		
+		var means = $doc.mean.split(/＂[0-9]+＂/g).slice(1);
+		var len = means.length;
+		
+		if($doc.theme.indexOf(theme) == -1){
+			$doc.type += ",INJEONG";
+			$doc.theme += "," + theme;
+			$doc.mean += `＂${len+1}＂`;
+			await TABLE.save($doc);
+		}else{
+			JLog.warn(`Word '${item}' already has the theme '${theme}'!`);
+		}
 	});
 	if(!req.body.nof) res.sendStatus(200);
 }
-Server.post("/gwalli/kkutudb/:word", function(req, res){
+Server.post("/gwalli/kkutudb/:word", async function(req, res){
 	if(!checkAdmin(req, res)) return;
 	if(req.body.pw != GLOBAL.PASS) return res.sendStatus(400);
 	var TABLE = MainDB.kkutu[req.body.lang];
 	var data = JSON.parse(req.body.data);
 	
 	if(!TABLE) return res.sendStatus(400);
-	if(!TABLE.upsert) return res.sendStatus(400);
+	if(!TABLE.remove) return res.sendStatus(400);
 	
 	noticeAdmin(req, data._id);
 	if(data.mean == ""){
-		TABLE.remove([ '_id', data._id ]).on(function($res){
+		TABLE.remove(await TABLE.findOne({ where: { _id: data._id } })).then(($res) => {
 			res.send($res.toString());
 		});
 	}else{
-		TABLE.upsert([ '_id', data._id ]).set([ 'flag', data.flag ], [ 'type', data.type ], [ 'theme', data.theme ], [ 'mean', data.mean ]).on(function($res){
+		const word = (await TABLE.findOne({ where: { _id: data._id } })) || new MainDB.Word(req.body.lang);
+		Object.assign(word, data);
+		TABLE.save(word).then(($res) => {
 			res.send($res.toString());
 		});
 	}
@@ -238,8 +231,14 @@ Server.post("/gwalli/users", function(req, res){
 	
 	var list = JSON.parse(req.body.list).list;
 	
-	list.forEach(function(item){
-		MainDB.users.upsert([ '_id', item._id ]).set(item).on();
+	list.forEach(async function(item){
+		const user = (await MainDB.users.findOne({ where: { _id: item._id } })) || new MainDB.User();
+		item.kkutu = JSON.parse(item.kkutu);
+		item.box = JSON.parse(item.box);
+		item.equip = JSON.parse(item.equip);
+		item.friends = JSON.parse(item.friends);
+		Object.assign(user, item);
+		await MainDB.users.save(user);
 	});
 	res.sendStatus(200);
 });
@@ -249,10 +248,14 @@ Server.post("/gwalli/shop", function(req, res){
 	
 	var list = JSON.parse(req.body.list).list;
 	
-	list.forEach(function(item){
+	list.forEach(async function(item){
 		item.core.options = JSON.parse(item.core.options);
-		MainDB.kkutu_shop.upsert([ '_id', item._id ]).set(item.core).on();
-		MainDB.kkutu_shop_desc.upsert([ '_id', item._id ]).set(item.text).on();
+		const $item = (await MainDB.kkutu_shop.findOne({ where: { _id: item._id } })) || new MainDB.Item(item._id);
+		const $desc = (await MainDB.kkutu_shop_desc.findOne({ where: { _id: item._id } })) || new MainDB.Description(item._id);
+		Object.assign($item, item.core);
+		Object.assign($desc, item.text);
+		await MainDB.kkutu_shop.save($item);
+		await MainDB.kkutu_shop_desc.save($desc);
 	});
 	res.sendStatus(200);
 });
@@ -276,24 +279,22 @@ function checkAdmin(req, res){
 	return true;
 }
 function parseKKuTuHot(){
-	var R = new Lizard.Tail();
-		
-	Lizard.all([
-		query(`SELECT * FROM kkutu_ko WHERE hit > 0 ORDER BY hit DESC LIMIT 50`),
-		query(`SELECT * FROM kkutu_ko WHERE _id ~ '^...$' AND hit > 0 ORDER BY hit DESC LIMIT 50`),
-		query(`SELECT * FROM kkutu_ko WHERE type = 'INJEONG' AND hit > 0 ORDER BY hit DESC LIMIT 50`),
-		query(`SELECT * FROM kkutu_en WHERE hit > 0 ORDER BY hit DESC LIMIT 50`)
-	]).then(function($docs){
-		R.go($docs);
-	});
-	function query(q){
-		var R = new Lizard.Tail();
-		
-		MainDB.kkutu['ko'].direct(q, function(err, $docs){
-			if(err) return JLog.error(err.toString());
-			R.go($docs.rows);
+	return new Promise((resolve) => {
+		Promise.all([
+			query(`SELECT * FROM kkutu_ko WHERE hit > 0 ORDER BY hit DESC LIMIT 50`),
+			query(`SELECT * FROM kkutu_ko WHERE _id ~ '^...$' AND hit > 0 ORDER BY hit DESC LIMIT 50`),
+			query(`SELECT * FROM kkutu_ko WHERE type = 'INJEONG' AND hit > 0 ORDER BY hit DESC LIMIT 50`),
+			query(`SELECT * FROM kkutu_en WHERE hit > 0 ORDER BY hit DESC LIMIT 50`)
+		]).then(function($docs){
+			resolve($docs);
 		});
-		return R;
-	}
-	return R;
+		function query(q){
+			return new Promise((resolve) => {
+				MainDB.agent.manager.query(q).then((err, $docs) => {
+					if(err) return JLog.error(err.toString());
+					resolve($docs.rows);
+				});
+			});
+		}
+	});
 }

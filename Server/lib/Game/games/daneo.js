@@ -16,8 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { Raw, Not, In } = require("typeorm");
 var Const = require('../../const');
-var Lizard = require('../../sub/lizard');
 var DB;
 var DIC;
 
@@ -31,13 +31,13 @@ exports.init = function(_DB, _DIC){
 	DIC = _DIC;
 };
 exports.getTitle = function(){
-	var R = new Lizard.Tail();
-	var my = this;
-	
-	setTimeout(function(){
-		R.go("①②③④⑤⑥⑦⑧⑨⑩");
-	}, 500);
-	return R;
+	return new Promise((resolve) => {
+		var my = this;
+		
+		setTimeout(function(){
+			resolve("①②③④⑤⑥⑦⑧⑨⑩");
+		}, 500);
+	});
 };
 exports.roundReady = function(){
 	var my = this;
@@ -126,7 +126,7 @@ exports.submit = function(client, text, data){
 		l = my.rule.lang;
 		my.game.loading = true;
 		function onDB($doc){
-			function preApproved(){
+			async function preApproved(){
 				if(my.game.late) return;
 				if(!my.game.chain) return;
 				
@@ -154,7 +154,9 @@ exports.submit = function(client, text, data){
 				setTimeout(my.turnNext, my.game.turnTime / 6);
 				if(!client.robot){
 					client.invokeWordPiece(text, 1);
-					DB.kkutu[l].update([ '_id', text ]).set([ 'hit', $doc.hit + 1 ]).on();
+					const word = await DB.kkutu[l].findOne({ where: { _id: text } });
+					word.hit = $doc.hit + 1;
+					await DB.kkutu[l].save(word);
 				}
 			}
 			function denied(code){
@@ -168,7 +170,7 @@ exports.submit = function(client, text, data){
 				denied();
 			}
 		}
-		DB.kkutu[l].findOne([ '_id', text ]).on(onDB);
+		DB.kkutu[l].findOne({ where: { _id: text } }).then(onDB);
 	}else{
 		client.publish('turnError', { code: 409, value: text }, true);
 	}
@@ -227,41 +229,40 @@ function getMission(l){
 	return arr[Math.floor(Math.random() * arr.length)];
 }
 function getAuto(theme, type){
-	/* type
-		0 무작위 단어 하나
-		1 존재 여부
-		2 단어 목록
-	*/
-	var my = this;
-	var R = new Lizard.Tail();
-	var bool = type == 1;
-	
-	var aqs = [[ 'theme', toRegex(theme) ]];
-	var aft;
-	var raiser;
-	var lst = false;
-	
-	if(my.game.chain) aqs.push([ '_id', { '$nin': my.game.chain } ]);
-	raiser = DB.kkutu[my.rule.lang].find.apply(this, aqs).limit(bool ? 1 : 123);
-	switch(type){
-		case 0:
-		default:
-			aft = function($md){
-				R.go($md[Math.floor(Math.random() * $md.length)]);
-			};
-			break;
-		case 1:
-			aft = function($md){
-				R.go($md.length ? true : false);
-			};
-			break;
-		case 2:
-			aft = function($md){
-				R.go($md);
-			};
-			break;
-	}
-	raiser.on(aft);
-	
-	return R;
+	return new Promise(async (resolve) => {
+		/* type
+			0 무작위 단어 하나
+			1 존재 여부
+			2 단어 목록
+		*/
+		var my = this;
+		var bool = type == 1;
+		
+		var aqs = { where: { theme: Raw((_) => `${_} ~ '(^|,)${theme}($|,)'`) }, take: bool ? 1 : 123 };
+		var aft;
+		var raiser;
+		var lst = false;
+		
+		if(my.game.chain) aqs.where._id = Not(In(my.game.chain));
+		raiser = DB.kkutu[my.rule.lang].find(aqs);
+		switch(type){
+			case 0:
+			default:
+				aft = function($md){
+					resolve($md[Math.floor(Math.random() * $md.length)]);
+				};
+				break;
+			case 1:
+				aft = function($md){
+					resolve($md.length ? true : false);
+				};
+				break;
+			case 2:
+				aft = function($md){
+					resolve($md);
+				};
+				break;
+		}
+		raiser.then(aft);
+	});
 }
