@@ -262,7 +262,10 @@ function onMessage(data){
 			$data.setUser(data.user.id, data.user);
 			$target = $data.usersR[data.user.id] = data.user;
 			
-			if($target.id == $data.id) loading();
+			if($target.id == $data.id){
+				loading();
+				stopBGM();
+			}
 			else notice(($target.profile.title || $target.profile.name) + L['hasJoined']);
 			updateUserList();
 			break;
@@ -470,7 +473,6 @@ function onMessage(data){
 			}else if(data.code == 416){
 				// 게임 중
 				if(confirm(L['error_'+data.code])){
-					stopBGM();
 					$data._spectate = true;
 					$data._gaming = true;
 					send('enter', { id: data.target, password: $data._pw, spectate: true }, true);
