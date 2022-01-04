@@ -655,17 +655,6 @@ function processClientRequest($c, msg) {
 			}
 			delete $c._invited;
 			break;
-		/* 망할 셧다운제
-		case 'caj':
-			if(!$c._checkAjae) return;
-			clearTimeout($c._checkAjae);
-			if(msg.answer == "yes") $c.confirmAjae(msg.input);
-			else if(KKuTu.NIGHT){
-				$c.sendError(440);
-				$c.socket.close();
-			}
-			break;
-		*/
 		case 'test':
 			checkTailUser($c.id, $c.place, msg);
 			break;
