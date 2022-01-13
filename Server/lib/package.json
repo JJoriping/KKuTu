@@ -33,7 +33,7 @@
 	"passport-line": "0.0.4",
 	"passport-instagram": "^1.0.0",
 	"passport-spotify": "^1.1.0",
-    "pg": "^6.1.2",
+    "pg": "^8.0.3",
     "pg-escape": "^0.2.0",
     "pug": "^2.0.4",
     "ws": "^3.3.1"
