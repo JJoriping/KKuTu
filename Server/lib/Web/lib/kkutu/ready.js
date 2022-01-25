@@ -1007,7 +1007,6 @@ $(document).ready(function(){
 		};
 		ws.onerror = function(e){
 			console.warn(L['error'], e);
-			isWelcome = false;
 		};
 	}
 });

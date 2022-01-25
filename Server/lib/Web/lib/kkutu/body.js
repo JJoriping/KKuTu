@@ -553,8 +553,6 @@ function welcome(){
 	}, 2000);
 	
 	if($data.admin) console.log("관리자 모드");
-	
-	isWelcome = true;
 }
 function getKickText(profile, vote){
 	var vv = L['agree'] + " " + vote.Y + ", " + L['disagree'] + " " + vote.N + L['kickCon'];

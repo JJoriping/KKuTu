@@ -48,7 +48,6 @@ var $data = {};
 var $lib = { Classic: {}, Jaqwi: {}, Crossword: {}, Typing: {}, Hunmin: {}, Daneo: {}, Sock: {} };
 var $rec;
 var mobile;
-var isWelcome = false;
 
 var audioContext = window.hasOwnProperty("AudioContext") ? (new AudioContext()) : false;
 var _WebSocket = window['WebSocket'];
