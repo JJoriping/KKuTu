@@ -320,16 +320,13 @@ function onMessage(data){
 			break;
 		case 'reloadData':
 			$data.id = data.id;
-			$data.admin = data.admin;
 			if(!$data.room) $data.users = data.users;
 			$data.rooms = data.rooms;
 			$data.friends = data.friends;
-			$data._playTime = data.playTime;
-			$data._okg = data.okg;
 			$data.nickname = data.nickname;
 			$data.exordial = data.exordial;
-			$data.box = data.box;
-			updateUI(undefined, true);
+			updateUserList(true);
+			updateMe();
 			updateCommunity();
 			break;
 		case 'friends':

@@ -806,7 +806,7 @@ $(document).ready(function(){
 				}
 				if(!Object.is(data.exordial, undefined)) $data.users[$data.id].exordial = $data.exordial = data.exordial;
 				
-				send("bulkRefresh");
+				send("updateProfile", undefined, true);
 				alert(data.nickname ? (!Object.is(data.exordial, undefined) ? L.nickChanged + $data.nickname + L.changed + " " + L.exorChanged + $data.exordial + L.changed : L.nickChanged + $data.nickname + L.changed) : L.exorChanged + $data.exordial + L.changed);
 			});
 		}

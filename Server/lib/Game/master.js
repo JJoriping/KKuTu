@@ -497,20 +497,18 @@ function joinNewUser($c) {
 	narrateFriends($c.id, $c.friends, "on");
 	KKuTu.publish('conn', {user: $c.getData()});
 	
+	/* PR #871과 함께 사용하는 경우 maintainConnection 관련 내용은 삭제하시고 이 부분만 주석을 해제하시는 것을 권장합니다.
 	setInterval(() => {
 		$c.send('reloadData', {
 			id: $c.id,
-			box: $c.box,
 			nickname: $c.nickname,
 			exordial: $c.exordial,
-			playTime: $c.data.playTime,
-			okg: $c.okgCount,
 			users: KKuTu.getUserList(),
 			rooms: KKuTu.getRoomList(),
-			friends: $c.friends,
-			admin: $c.admin
+			friends: $c.friends
 		});
 	}, 18000);
+	*/
 
 	JLog.info("New user #" + $c.id);
 }
@@ -555,21 +553,26 @@ function processClientRequest($c, msg) {
 		case 'reloadData':
 			$c.send('reloadData', {
 				id: $c.id,
-				box: $c.box,
 				nickname: $c.nickname,
 				exordial: $c.exordial,
-				playTime: $c.data.playTime,
-				okg: $c.okgCount,
 				users: KKuTu.getUserList(),
 				rooms: KKuTu.getRoomList(),
-				friends: $c.friends,
-				admin: $c.admin
+				friends: $c.friends
 			});
 		case 'refresh':
 			$c.refresh();
 			break;
-		case 'bulkRefresh':
-			for(let i in DIC) DIC[i].refresh();
+		case 'updateProfile':
+			$c.refresh().then(function(){
+				for(let i in DIC) DIC[i].send('reloadData', {
+					id: $c.id,
+					nickname: $c.nickname,
+					exordial: $c.exordial,
+					users: KKuTu.getUserList(),
+					rooms: KKuTu.getRoomList(),
+					friends: $c.friends
+				});
+			});
 			break;
 		case 'talk':
 			if (!msg.value) return;
