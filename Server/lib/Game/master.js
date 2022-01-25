@@ -497,7 +497,8 @@ function joinNewUser($c) {
 	narrateFriends($c.id, $c.friends, "on");
 	KKuTu.publish('conn', {user: $c.getData()});
 	
-	/* PR #871과 함께 사용하는 경우 maintainConnection 관련 내용은 삭제하시고 이 부분만 주석을 해제하시는 것을 권장합니다.
+	/* 이 부분의 주석을 풀면 유저분들의 정보를 알아서 주기적으로 갱신합니다.
+		그러나 접속자 수가 많아질 경우 서버에 부담이 될 수 있습니다.
 	setInterval(() => {
 		$c.send('reloadData', {
 			id: $c.id,
