@@ -498,7 +498,7 @@ function joinNewUser($c) {
 	JLog.info("New user #" + $c.id);
 	
 	if(GLOBAL.WAF) setInterval(() => {
-		$c.send('keepConnected');
+		$c.send('maintainConnection');
 	}, 20000);
 }
 

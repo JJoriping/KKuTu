@@ -521,7 +521,7 @@ function onMessage(data){
 			}
 			alert("[#" + data.code + "] " + L['error_'+data.code] + i);
 			break;
-		case 'keepConnected':
+		case 'maintainConnection':
 		default:
 			break;
 	}
