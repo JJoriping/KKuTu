@@ -32,6 +32,8 @@ exports.TESTER = GLOBAL.ADMIN.concat([
 ]);
 exports.IS_SECURED = GLOBAL.IS_SECURED;
 exports.SSL_OPTIONS = GLOBAL.SSL_OPTIONS;
+exports.WAF = GLOBAL.WAF;
+exports.ROOM_PORTS = GLOBAL.ROOM_PORTS;
 exports.OPTIONS = {
 	'man': { name: "Manner" },
 	'ext': { name: "Injeong" },

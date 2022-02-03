@@ -336,7 +336,7 @@ exports.init = function(_SID, CHAN){
 		JLog.success("Master DB is ready.");
 		
 		MainDB.users.update([ 'server', SID ]).set([ 'server', "" ]).on();
-		if(Const.IS_SECURED) {
+		if(Const.IS_SECURED || Const.WAF) {
 			const options = Secure();
 			HTTPS_Server = https.createServer(options)
 				.listen(global.test ? (Const.TEST_PORT + 416) : process.env['KKUTU_PORT']);
@@ -496,6 +496,10 @@ function joinNewUser($c) {
 	KKuTu.publish('conn', {user: $c.getData()});
 
 	JLog.info("New user #" + $c.id);
+	
+	if(GLOBAL.WAF) setInterval(() => {
+		$c.send('maintainConnection');
+	}, 20000);
 }
 
 KKuTu.onClientMessage = function ($c, msg) {
