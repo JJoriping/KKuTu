@@ -629,7 +629,8 @@ $(document).ready(function(){
 			ar: $("#auto-ready").is(":checked"),
 			su: $("#sort-user").is(":checked"),
 			ow: $("#only-waiting").is(":checked"),
-			ou: $("#only-unlock").is(":checked")
+			ou: $("#only-unlock").is(":checked"),
+			ab: $("#only-abuse").is(":checked")
 		});
 		$.cookie('kks', JSON.stringify($data.opts));
 		$stage.dialog.setting.hide();
