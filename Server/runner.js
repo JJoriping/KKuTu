@@ -93,11 +93,15 @@ class ChildProcess{
 	constructor(id, cmd, ...argv){
 		this.process = Spawn(cmd, argv);
 		this.process.stdout.on('data', msg => {
-			exports.send('log', 'n', msg);
+			const lines = msg.toString().split(/(\r?\n)/g);
+			for (let i of lines) exports.send('log', 'n', i);
 		});
 		this.process.stderr.on('data', msg => {
-			console.error(`${id}: ${msg}`);
-			exports.send('log', 'e', msg);
+			const lines = msg.toString().split(/(\r?\n)/g);
+			for (let i of lines) {
+				console.error(`${id}: ${i}`);
+				exports.send('log', 'e', i);
+			}
 		});
 		this.process.on('close', code => {
 			let msg;
