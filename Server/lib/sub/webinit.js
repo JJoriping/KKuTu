@@ -41,6 +41,7 @@ function getLanguage(locale, page, shop){
 	for(i in L.GLOBAL) R[i] = L.GLOBAL[i];
 	if(shop) for(i in L.SHOP) R[i] = L.SHOP[i];
 	for(i in L[page]) R[i] = L[page][i];
+	if(page == "help") for(i in L.kkutu) if(i.includes("theme_")) R[i] = L.kkutu[i];
 	if(R['title']) R['title'] = `[${process.env['KKT_SV_NAME']}] ${R['title']}`;
 	
 	return R;
