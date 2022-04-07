@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-$(document).ready(function(){
+ $(document).ready(function(){
 	var i;
 	
 	$data.PUBLIC = $("#PUBLIC").html() == "true";
@@ -45,7 +45,7 @@ $(document).ready(function(){
 			userList: $(".UserListBox .product-body"),
 			roomListTitle: $(".RoomListBox .product-title"),
 			roomList: $(".RoomListBox .product-body"),
-			createBanner: $("<div>").addClass("rooms-item rooms-create").append($("<div>").html(L['newRoom']))
+			createBanner: $("<div>").addClass("rooms-item rooms-create").append($("<div>").html(L['newRoom2']))
 		},
 		chat: $("#Chat"),
 		chatLog: $("#chat-log-board"),
@@ -263,7 +263,10 @@ $(document).ready(function(){
 	});
 	$data.opts = $.cookie('kks');
 	if($data.opts){
-		applyOptions(JSON.parse($data.opts));
+		var opts = JSON.parse($data.opts);
+		opts.bv = $("#bgm-volume").val();
+		opts.ev = $("#effect-volume").val();
+		applyOptions(opts);
 	}
 	$(".dialog-head .dialog-title").on('mousedown', function(e){
 		var $pd = $(e.currentTarget).parents(".dialog");
@@ -621,8 +624,8 @@ $(document).ready(function(){
 	});
 	$stage.dialog.settingOK.on('click', function(e){
 		applyOptions({
-			mb: $("#mute-bgm").is(":checked"),
-			me: $("#mute-effect").is(":checked"),
+			bv: $("#bgm-volume").val(),
+			ev: $("#effect-volume").val(),
 			di: $("#deny-invite").is(":checked"),
 			dw: $("#deny-whisper").is(":checked"),
 			df: $("#deny-friend").is(":checked"),
@@ -786,11 +789,13 @@ $(document).ready(function(){
 		});
 	});
 	$stage.dialog.dressOK.on('click', function(e){
+		if($("#dress-nickname").val() == $data.nickname) return $stage.dialog.dress.hide();
+		// TODO: 운영 정책에 위배되는 닉네임 걸러내기. (닉네임 필터링 구현)
 		$(e.currentTarget).attr('disabled', true);
-		$.post("/exordial", { data: $("#dress-exordial").val() }, function(res){
+		$.post("/updateMe", { nickname: badWords($("#dress-nickname").val()), exordial: $("#dress-exordial").val() }, function(res){
 			$stage.dialog.dressOK.attr('disabled', false);
 			if(res.error) return fail(res.error);
-			
+			alert('닉네임이 성공적으로 변경되었습니다. 닉네임을 적용하거나 다시 변경하려면 새로고침이 필요합니다.')
 			$stage.dialog.dress.hide();
 		});
 	});
