@@ -157,26 +157,25 @@ Server.on('connection', async function(socket, info){
 		$c.socket.close();
 		return;
 	}
-	$c.refresh().then(function(ref){
-		if(ref.result == 200){
-			DIC[$c.id] = $c;
-			DNAME[($c.profile.title || $c.profile.name).replace(/\s/g, "")] = $c.id;
-			
-			$c.enter(room, reserve.spec, reserve.pass);
-			if($c.place == room.id){
-				$c.publish('connRoom', { user: $c.getData() });
-			}else{ // 입장 실패
-				$c.socket.close();
-			}
-			JLog.info(`Chan @${CHAN} New #${$c.id}`);
-		}else{
-			$c.send('error', {
-				code: ref.result, message: ref.black
-			});
-			$c._error = ref.result;
+	const ref = await $c.refresh();
+	if(ref.result == 200){
+		DIC[$c.id] = $c;
+		DNAME[($c.profile.title || $c.profile.name).replace(/\s/g, "")] = $c.id;
+		
+		$c.enter(room, reserve.spec, reserve.pass);
+		if($c.place == room.id){
+			$c.publish('connRoom', { user: $c.getData() });
+		}else{ // 입장 실패
 			$c.socket.close();
 		}
-	});
+		JLog.info(`Chan @${CHAN} New #${$c.id}`);
+	}else{
+		$c.send('error', {
+			code: ref.result, message: ref.black
+		});
+		$c._error = ref.result;
+		$c.socket.close();
+	}
 });
 Server.on('error', function(err){
 	JLog.warn("Error on ws: " + err.toString());

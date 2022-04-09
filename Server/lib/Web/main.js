@@ -53,12 +53,22 @@ var ROUTES = [
 ];
 //볕뉘 수정 끝
 var page = WebInit.page;
+var redisClient = Redis.createClient({ legacyMode: true });
 var gameServers = [];
 
 WebInit.MOBILE_AVAILABLE = [
 	"portal", "main", "kkutu"
 ];
 
+redisClient.on('connect', () => {
+	JLog.info("Redis is ready.");
+});
+redisClient.on('error', (err) => {
+	JLog.error("Error from Redis: " + err);
+	JLog.alert("Run with no-redis mode.");
+	redisClient.quit();
+});
+redisClient.connect();
 require("../sub/checkpub");
 
 JLog.info("<< KKuTu Web >>");
@@ -70,7 +80,7 @@ Server.use(Exession({
 	/* use only for redis-installed
 
 	store: new Redission({
-		client: Redis.createClient(),
+		client: redisClient,
 		ttl: 3600 * 12
 	}),*/
 	secret: 'kkutu',

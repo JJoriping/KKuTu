@@ -15,65 +15,58 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+const Redis = require("redis");
+const JLog = require("../../sub/jjlog");
+const client = Redis.createClient({ name: "db" });
 
-// Redis Agent (temporary, lagacy)
+client.on('connect', () => {
+	JLog.info("Redis is ready.");
+});
+client.on('error', (err) => {
+	JLog.error("Error from Redis: " + err);
+	JLog.alert("Run with no-redis mode.");
+	client.quit();
+});
 
-exports.Agent = function(type, origin){
-	var my = this;
-	
-	this.RedisTable = function(key){
-		var my = this;
+exports.client = client;
+exports.RedisTable = class RedisTable {
+	constructor(client, key){
+		this.client = client;
+		this.key = key;
 		
-		my.putGlobal = function(id, score){
-			return new Promise((resolve) => {
-				origin.zadd([ key, score, id ], function(err, res){
-					resolve(id);
-				});
-			});
-		};
-		my.getGlobal = function(id){
-			return new Promise((resolve) => {
-				origin.zrevrank([ key, id ], function(err, res){
-					resolve(res);
-				});
-			});
-		};
-		my.getPage = function(pg, lpp){
-			return new Promise((resolve) => {
-				origin.zrevrange([ key, pg * lpp, (pg + 1) * lpp - 1, "WITHSCORES" ], function(err, res){
-					var A = [];
-					var rank = pg * lpp;
-					var i, len = res.length;
+		this.client.zRevRange = (key, start, end) => this.client.sendCommand([ "ZREVRANGE", key, start, end, "WITHSCORES" ]);
+	}
+	async putGlobal(id, score){
+		await this.client.zAdd(this.key, { score, value: id });
+		return id;
+	}
+	async getGlobal(id){
+		return await this.client.zRevRank(this.key, id);
+	}
+	async getPage(page, lpp){
+		const res = await this.client.zRevRange(this.key, page * lpp, (page + 1) * lpp - 1);
+		const data = [];
+		let rank = page * lpp;
+		
+		for(let i = 0; i < res.length; i += 2)
+			data.push({ id: res[i], rank: rank++, score: res[i + 1] });
 					
-					for(i=0; i<len; i += 2){
-						A.push({ id: res[i], rank: rank++, score: res[i+1] });
-					}
-					resolve({ page: pg, data: A });
-				});
-			});
-		};
-		my.getSurround = function(id, rv){
-			return new Promise((resolve) => {
-				var i;
-				
-				rv = rv || 8;
-				origin.zrevrank([ key, id ], function(err, res){
-					var range = [ Math.max(0, res - Math.round(rv / 2 + 1)), 0 ];
-					
-					range[1] = range[0] + rv - 1;
-					origin.zrevrange([ key, range[0], range[1], "WITHSCORES" ], function(err, res){
-						if(!res) return resolve({ target: id, data: [] });
-						
-						var A = [], len = res.length;
-						
-						for(i=0; i<len; i += 2){
-							A.push({ id: res[i], rank: range[0]++, score: res[i+1] });
-						}
-						resolve({ target: id, data: A });
-					});
-				});
-			});
-		};
-	};
-	this.Table = this[`${type}Table`];
-};
+		return { page, data };
+	}
+	async getSurround(id, rv = 8){
+		const res = await this.client.zRevRank(this.key, id);
+		let range = [ Math.max(0, res - Math.round(rv / 2 + 1)), 0 ];
+		
+		range[1] = range[0] + rv - 1;
+		const _res = await this.client.zRevRange(this.key, range[0], range[1]);
+		if(!_res) return { target: id, data: [] };
+		
+		const data = [];
+		
+		for(let i = 0; i < _res.length; i += 2)
+			data.push({ id: _res[i], rank: range[0]++, score: _res[i + 1] });
+		
+		return { target: id, data };
+	}
+}

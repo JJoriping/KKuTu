@@ -439,57 +439,56 @@ exports.init = function(_SID, CHAN){
 				$c.socket.close();
 				return;
 			}
-			$c.refresh().then(async function(ref){
-				/* Enhanced User Block System [S] */
-				let isBlockRelease = false;
-				
-				if(ref.blockedUntil < Date.now()) {
-					DIC[$c.id] = $c;
-					const user = await MainDB.users.findOne({ where: { _id: $c.id } });
-					user.blockedUntil = 0;
-					user.black = null;
+			const ref = await $c.refresh();
+			/* Enhanced User Block System [S] */
+			let isBlockRelease = false;
+			
+			if(ref.blockedUntil < Date.now()) {
+				DIC[$c.id] = $c;
+				const user = await MainDB.users.findOne({ where: { _id: $c.id } });
+				user.blockedUntil = 0;
+				user.black = null;
+				await MainDB.users.save(user);
+				JLog.info(`사용자 #${$c.id}의 이용제한이 해제되었습니다.`);
+				isBlockRelease = true;
+			}
+			/* Enhanced User Block System [E] */						
+			
+			/* Enhanced User Block System [S] */
+			if(ref.result == 200 || isBlockRelease){
+			/* Enhanced User Block System [E] */
+				DIC[$c.id] = $c;
+				DNAME[($c.profile.title || $c.profile.name).replace(/\s/g, "")] = $c.id;
+				const user = await MainDB.users.findOne({ where: { _id: $c.id } });
+				if(user){
+					user.server = SID;
 					await MainDB.users.save(user);
-					JLog.info(`사용자 #${$c.id}의 이용제한이 해제되었습니다.`);
-					isBlockRelease = true;
 				}
-				/* Enhanced User Block System [E] */						
-				
-				/* Enhanced User Block System [S] */
-				if(ref.result == 200 || isBlockRelease){
-				/* Enhanced User Block System [E] */
-					DIC[$c.id] = $c;
-					DNAME[($c.profile.title || $c.profile.name).replace(/\s/g, "")] = $c.id;
-					const user = await MainDB.users.findOne({ where: { _id: $c.id } });
-					if(user){
-						user.server = SID;
-						await MainDB.users.save(user);
-					}
 
-					if (($c.guest && GLOBAL.GOOGLE_RECAPTCHA_TO_GUEST) || GLOBAL.GOOGLE_RECAPTCHA_TO_USER) {
-						$c.socket.send(JSON.stringify({
-							type: 'recaptcha',
-							siteKey: GLOBAL.GOOGLE_RECAPTCHA_SITE_KEY
-						}));
-					} else {
-						$c.passRecaptcha = true;
-
-						joinNewUser($c);
-					}
+				if (($c.guest && GLOBAL.GOOGLE_RECAPTCHA_TO_GUEST) || GLOBAL.GOOGLE_RECAPTCHA_TO_USER) {
+					$c.socket.send(JSON.stringify({
+						type: 'recaptcha',
+						siteKey: GLOBAL.GOOGLE_RECAPTCHA_SITE_KEY
+					}));
 				} else {
-					/* Enhanced User Block System [S] */
-					if(ref.blockedUntil) $c.send('error', {
-						code: ref.result, message: ref.black, blockedUntil: ref.blockedUntil
-					});
-					else $c.send('error', {
-						code: ref.result, message: ref.black
-					});
-					/* Enhanced User Block System [E] */
-					
-					$c._error = ref.result;
-					$c.socket.close();
-					// JLog.info("Black user #" + $c.id);
+					$c.passRecaptcha = true;
+
+					joinNewUser($c);
 				}
-			});
+			} else {
+				/* Enhanced User Block System [S] */
+				if(ref.blockedUntil) $c.send('error', {
+					code: ref.result, message: ref.black, blockedUntil: ref.blockedUntil
+				});
+				else $c.send('error', {
+					code: ref.result, message: ref.black
+				});
+				/* Enhanced User Block System [E] */
+				
+				$c._error = ref.result;
+				$c.socket.close();
+				// JLog.info("Black user #" + $c.id);
+			}
 		});
 		Server.on('error', function (err) {
 			JLog.warn("Error on ws: " + err.toString());

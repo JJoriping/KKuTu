@@ -10,10 +10,10 @@
   "dependencies": {
     "body-parser": "^1.15.2",
     "colors": "^1.1.2",
-    "connect-redis": "^3.2.0",
+    "connect-redis": "^3.4.2",
     "dddos": "^0.1.1",
     "express": "^4.14.0",
-    "express-session": "^1.14.2",
+    "express-session": "^1.17.2",
     "glob": "^7.1.2",
     "glob-promise": "^3.3.0",
     "grunt": "^1.0.4",
@@ -36,6 +36,7 @@
     "pg": "^8.7.1",
     "pg-escape": "^0.2.0",
     "pug": "^2.0.4",
+    "redis": "^4.0.6",
     "typeorm": "^0.2.41",
     "ws": "^3.3.1"
   },

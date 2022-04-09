@@ -21,13 +21,9 @@ const fs = require("fs");
 const GLOBAL = require("../../sub/global.json");
 const Pub = require("../../sub/checkpub");
 const JLog = require("../../sub/jjlog");
-const RedisCol = require("./redis").Agent;
+const { RedisTable } = require("./redis");
 
-const FAKE_REDIS_FUNC = () => {
-	return new Promise((resolve) => {
-		resolve({});
-	});
-};
+const FAKE_REDIS_FUNC = async () => ({});
 const FAKE_REDIS = {
 	putGlobal: FAKE_REDIS_FUNC,
 	getGlobal: FAKE_REDIS_FUNC,
@@ -49,17 +45,18 @@ const { MannerKo } = require("./model/games/MannerKo");
 const { Item } = require("./model/shop/Item");
 const { Description } = require("./model/shop/Description");
 
-Pub.ready = (isPub) => {
-	const Redis = require("redis").createClient();
-	Redis.on('connect', async () => {
-		await connectPg();
+Pub.ready = async (isPub) => {
+	const { client } = require("./redis");
+	client.on('connect', () => {
+		connectPg();
 	});
-	Redis.on('error', async (err) => {
+	client.on('error', (err) => {
 		JLog.error("Error from Redis: " + err);
 		JLog.alert("Run with no-redis mode.");
 		Redis.quit();
-		await connectPg(true);
+		connectPg(true);
 	});
+	client.connect();
 	async function connectPg(noRedis){
 		const mainAgent = await TypeORM.createConnection({
 			type: "postgres",
@@ -83,8 +80,6 @@ Pub.ready = (isPub) => {
 				require("./entity/shop/Description")
 			]
 		});
-		const redisAgent = noRedis ? null : new RedisCol("Redis", Redis);
-		
 		let DB = exports;
 		
 		DB.agent = mainAgent;
@@ -101,7 +96,7 @@ Pub.ready = (isPub) => {
 			en: await mainAgent.getRepository(MannerEn)
 		};
 		
-		DB.redis = noRedis ? FAKE_REDIS : new redisAgent.Table("KKuTu_Score");
+		DB.redis = noRedis ? FAKE_REDIS : new RedisTable(client, "KKuTu_Score");
 		DB.kkutu_injeong = await mainAgent.getRepository(Injeong);
 		DB.kkutu_shop = await mainAgent.getRepository(Item);
 		DB.kkutu_shop_desc = await mainAgent.getRepository(Description);
@@ -112,7 +107,7 @@ Pub.ready = (isPub) => {
 		DB.ip_block = await mainAgent.getRepository(IpBlock);
 		/* Enhanced User Block System [E] */
 		
-		if(module.exports.ready) module.exports.ready(Redis, mainAgent);
+		if(module.exports.ready) module.exports.ready(client, mainAgent);
 		else JLog.warn("DB.onReady was not defined yet.");
 	}
 };

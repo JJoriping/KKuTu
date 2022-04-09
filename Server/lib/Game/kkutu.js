@@ -399,86 +399,79 @@ exports.Client = function(socket, profile, sid){
 			my.flush(my.box, my.equip);
 		}
 	};
-	my.refresh = function(){
-		return new Promise(async (resolve) => {
-			if(my.guest){
-				my.equip = {};
-				my.data = new exports.Data();
-				my.money = 0;
-				my.friends = {};
-				
-				resolve({ result: 200 });
-			}else{
-				const $user = (await DB.users.findOne({ where: { _id: my.id } })) || new DB.User();
-				var first = !$user._id;
-				var black = first ? "" : $user.black;
-				/* Enhanced User Block System [S] */
-				const blockedUntil = (first || !$user.blockedUntil) ? null : $user.blockedUntil;
-				/* Enhanced User Block System [E] */
-
-				if(black == "null") black = false;
-				if(black == "chat"){
-					black = false;
-					my.noChat = true;
-				}
-				/* 망할 셧다운제
-				if(Cluster.isMaster && !my.isAjae){ // null일 수는 없다.
-					my.isAjae = Ajae.checkAjae(($user.birthday || "").split('-'));
-					if(my.isAjae === null){
-						if(my._birth) my._checkAjae = setTimeout(function(){
-							my.sendError(442);
-							my.socket.close();
-						}, 300000);
-						else{
-							my.sendError(441);
-							my.socket.close();
-							return;
-						}
-					}
-				}*/
-				my.exordial = $user.exordial || "";
-				my.equip = $user.equip || {};
-				my.box = $user.box || {};
-				my.data = new exports.Data($user.kkutu);
-				my.money = Number($user.money);
-				my.friends = $user.friends || {};
-				if(first) my.flush();
-				else{
-					my.checkExpire();
-					my.okgCount = Math.floor((my.data.playTime || 0) / PER_OKG);
-				}
-				/* Enhanced User Block System [S] */
-				if(black){
-					if(blockedUntil) resolve({ result: 444, black: black, blockedUntil: blockedUntil });
-					else resolve({ result: 444, black: black });
-				}
-				/* Enhanced User Block System [E] */
-				else if(Cluster.isMaster && $user.server) resolve({ result: 409, black: $user.server });
-				else if(exports.NIGHT && my.isAjae === false) resolve({ result: 440 });
-				else resolve({ result: 200 });
-			};
-		});
-	};
-	my.flush = function(box, equip, friends){
-		return new Promise(async (resolve) => {
-			if(my.guest) return resolve({ id: my.id, prev: 0 });
+	my.refresh = async function(){
+		if(my.guest){
+			my.equip = {};
+			my.data = new exports.Data();
+			my.money = 0;
+			my.friends = {};
 			
-			const user = (await DB.users.findOne({ where: { _id: my.id } })) || new DB.User(my.id);
-			user.money = isNaN(my.money) ? undefined : my.money;
-			user.kkutu = my.data && !isNaN(my.data.score) ? my.data : undefined;
-			user.box = my.box || undefined;
-			user.equip = my.equip || undefined;
-			user.friends = my.friends || undefined;
-			console.log(my)
-			DB.users.save(user).then(() => {
-				DB.redis.getGlobal(my.id).then(function(_res){
-					DB.redis.putGlobal(my.id, my.data.score).then(function(res){
-						JLog.log(`FLUSHED [${my.id}] PTS=${my.data.score} MNY=${my.money}`);
-						resolve({ id: my.id, prev: _res });
-					});
-				});
-			});
-		});
+			return { result: 200 };
+		}else{
+			const $user = (await DB.users.findOne({ where: { _id: my.id } })) || new DB.User();
+			var first = !$user._id;
+			var black = first ? "" : $user.black;
+			/* Enhanced User Block System [S] */
+			const blockedUntil = (first || !$user.blockedUntil) ? null : $user.blockedUntil;
+			/* Enhanced User Block System [E] */
+
+			if(black == "null") black = false;
+			if(black == "chat"){
+				black = false;
+				my.noChat = true;
+			}
+			/* 망할 셧다운제
+			if(Cluster.isMaster && !my.isAjae){ // null일 수는 없다.
+				my.isAjae = Ajae.checkAjae(($user.birthday || "").split('-'));
+				if(my.isAjae === null){
+					if(my._birth) my._checkAjae = setTimeout(function(){
+						my.sendError(442);
+						my.socket.close();
+					}, 300000);
+					else{
+						my.sendError(441);
+						my.socket.close();
+						return;
+					}
+				}
+			}*/
+			my.exordial = $user.exordial || "";
+			my.equip = $user.equip || {};
+			my.box = $user.box || {};
+			my.data = new exports.Data($user.kkutu);
+			my.money = Number($user.money);
+			my.friends = $user.friends || {};
+			if(first) my.flush();
+			else{
+				my.checkExpire();
+				my.okgCount = Math.floor((my.data.playTime || 0) / PER_OKG);
+			}
+			/* Enhanced User Block System [S] */
+			if(black){
+				if(blockedUntil) return { result: 444, black: black, blockedUntil: blockedUntil };
+				else return { result: 444, black: black };
+			}
+			/* Enhanced User Block System [E] */
+			else if(Cluster.isMaster && $user.server) return { result: 409, black: $user.server };
+			else if(exports.NIGHT && my.isAjae === false) return { result: 440 };
+			else return { result: 200 };
+		};
+	};
+	my.flush = async function(box, equip, friends){
+		if(my.guest) return { id: my.id, prev: 0 };
+		
+		const user = (await DB.users.findOne({ where: { _id: my.id } })) || new DB.User(my.id);
+		user.money = isNaN(my.money) ? undefined : my.money;
+		user.kkutu = my.data && !isNaN(my.data.score) ? my.data : undefined;
+		user.box = my.box || undefined;
+		user.equip = my.equip || undefined;
+		user.friends = my.friends || undefined;
+		await DB.users.save(user);
+		
+		const prev = await DB.redis.getGlobal(my.id);
+		await DB.redis.putGlobal(my.id, my.data.score);
+		JLog.log(`FLUSHED [${my.id}] PTS=${my.data.score} MNY=${my.money}`);
+		return { id: my.id, prev };
 	};
 	my.invokeWordPiece = function(text, coef){
 		if(!my.game.wpc) return;
@@ -1072,7 +1065,7 @@ exports.Room = function(room, channel){
 			my.start();
 		}else DIC[my.master].sendError(412);
 	};
-	my.start = function(pracLevel){
+	my.start = async function(pracLevel){
 		var i, j, o, hum = 0;
 		var now = (new Date()).getTime();
 		
@@ -1124,11 +1117,9 @@ exports.Room = function(room, channel){
 			o.game.wpc = [];
 		}
 		my.game.hum = hum;
-		my.getTitle().then(function(title){
-			my.game.title = title;
-			my.export();
-			setTimeout(my.roundReady, 2000);
-		});
+		my.game.title = await my.getTitle();
+		my.export();
+		setTimeout(my.roundReady, 2000);
 		my.byMaster('starting', { target: my.id });
 		delete my._avTeam;
 		delete my._teams;
@@ -1145,7 +1136,7 @@ exports.Room = function(room, channel){
 		clearTimeout(my.game.hintTimer2);
 		clearTimeout(my.game.qTimer);
 	};
-	my.roundEnd = function(data){
+	my.roundEnd = async function(data){
 		var i, o, rw;
 		var res = [];
 		var users = {};
@@ -1215,25 +1206,23 @@ exports.Room = function(room, channel){
 			
 			suv.push(o.flush(true));
 		}
-		Promise.all(suv).then(function(uds){
-			var o = {};
+		const uds = await Promise.all(suv);
+		var o = {};
+		
+		suv = [];
+		for(i in uds){
+			o[uds[i].id] = { prev: uds[i].prev };
+			suv.push(DB.redis.getSurround(uds[i].id));
+		}
+		const ranks = await Promise.all(suv);
+		var i, j;
+		
+		for(i in ranks){
+			if(!o[ranks[i].target]) continue;
 			
-			suv = [];
-			for(i in uds){
-				o[uds[i].id] = { prev: uds[i].prev };
-				suv.push(DB.redis.getSurround(uds[i].id));
-			}
-			Promise.all(suv).then(function(ranks){
-				var i, j;
-				
-				for(i in ranks){
-					if(!o[ranks[i].target]) continue;
-					
-					o[ranks[i].target].list = ranks[i].data;
-				}
-				my.byMaster('roundEnd', { result: res, users: users, ranks: o, data: data }, true);
-			});
-		});
+			o[ranks[i].target].list = ranks[i].data;
+		}
+		my.byMaster('roundEnd', { result: res, users: users, ranks: o, data: data }, true);
 		my.gaming = false;
 		my.export();
 		delete my.game.seq;
