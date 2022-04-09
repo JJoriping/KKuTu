@@ -20,17 +20,6 @@ var spamWarning = 0;
 var spamCount = 0;
 // var smile = 94, tag = 35;
 
-// IE 지원 (의미가 있나?)
-if(!String.prototype.replaceAll){
-	String.prototype.replaceAll = function(regex){
-		var replaced = this;
-		while(regex.test(replaced)){
-			replaced = replaced.replace(regex, "");
-		}
-		return replaced;
-	}
-}
-
 function zeroPadding(num, len){ var s = num.toString(); return "000000000000000".slice(0, Math.max(0, len - s.length)) + s; }
 function send(type, data, toMaster){
 	var i, r = { type: type };
