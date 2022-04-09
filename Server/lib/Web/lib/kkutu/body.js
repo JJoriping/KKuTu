@@ -78,12 +78,12 @@ function applyOptions(opt){
 	$("#only-unlock").attr('checked', $data.opts.ou);
 	
 	if($data.bgm){
-		if($data.BGMVolume == 0){
-			$data.bgm.volume = 0;
-			$data.bgm.stop();
-		}else{
+		if($data.BGMVolume){
 			$data.bgm.volume = $data.BGMVolume;
 			$data.bgm = playBGM($data.bgm.key, true);
+		}else{
+			$data.bgm.volume = 0;
+			$data.bgm.stop();
 		}
 	}
 }
