@@ -47,9 +47,7 @@ var Language = {
 	'en_US': require("./lang/en_US.json")
 };
 //볕뉘 수정
-var ROUTES = [
-	"major", "consume", "admin", "login"
-];
+var ROUTES = { major: {}, consume: {}, admin: {}, login: {} };
 //볕뉘 수정 끝
 var page = WebInit.page;
 var gameServers = [];
@@ -118,8 +116,8 @@ DDDoS.rules[0].logFunction = DDDoS.rules[1].logFunction = function(ip, path){
 Server.use(DDDoS.express());*/
 
 WebInit.init(Server, true);
-ROUTES.forEach(function(v){
-	ROUTES[ROUTES.indexOf(v)] = require(`./routes/${v}`);
+Object.keys(ROUTES).forEach((v) => {
+	ROUTES[v] = require(`./routes/${v}`);
 });
 
 DB.ready = function(){
@@ -136,7 +134,7 @@ DB.ready = function(){
 	}, 4000);
 	JLog.success("DB is ready.");
 
-	ROUTES[2].flushShop();
+	ROUTES.admin.updateShop();
 	
 	Server.listen(80);
 	if(Const.IS_SECURED) {
@@ -196,9 +194,9 @@ function GameClient(id, url){
 		}
 	});
 }
-ROUTES.forEach(function(v){
-	v.run(Server, WebInit.page);
-});
+
+for(var i of Object.values(ROUTES)) i.run(Server, WebInit.page);
+
 Server.get("/", function(req, res){
 	var server = req.query.server;
 	

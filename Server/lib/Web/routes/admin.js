@@ -258,13 +258,13 @@ Server.post("/gwalli/shop", function(req, res){
 		MainDB.kkutu_shop.upsert([ '_id', item._id ]).set(item.core).on();
 		MainDB.kkutu_shop_desc.upsert([ '_id', item._id ]).set(item.text).on();
 	});
-	flushShop();
+	updateShop();
 	res.sendStatus(200);
 });
 
 };
 
-exports.flushShop = flushShop;
+exports.updateShop = updateShop;
 
 function noticeAdmin(req, ...args){
 	JLog.info(`[ADMIN] ${req.originalUrl} ${req.ip} | ${args.join(' | ')}`);
@@ -305,19 +305,16 @@ function parseKKuTuHot(){
 	}
 	return R;
 }
-function flushShop(){
+function updateShop(){
 	MainDB.kkutu_shop_desc.find().on(function($docs){
-		var i, j;
+		var lang, i;
 		
-		for(i in Language) flush(i);
-		function flush(lang){
+		for(lang in Language){
 			var db;
 			
 			Language[lang].SHOP = db = {};
-			for(j in $docs){
-				db[$docs[j]._id] = [ $docs[j][`name_${lang}`], $docs[j][`desc_${lang}`] ];
-			}
+			for(i in $docs)
+				db[$docs[i]._id] = [ $docs[i][`name_${lang}`], $docs[i][`desc_${lang}`] ];
 		}
 	});
-	JLog.log("Flushed Shop DB!");
 }
