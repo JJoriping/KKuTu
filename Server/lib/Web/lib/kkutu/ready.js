@@ -281,8 +281,8 @@ $(document).ready(function(){
 		var value = (mobile && $stage.game.here.is(':visible'))
 			? $stage.game.hereText.val()
 			: $stage.talk.val();
-		var o = { value: value };
 		if(!value) return;
+		var o = { value: value.trim() };
 		if(o.value[0] == "/"){
 			o.cmd = o.value.split(" ");
 			runCommand(o.cmd);
