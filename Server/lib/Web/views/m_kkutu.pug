@@ -66,7 +66,7 @@ block Jungle
 	
 block Middle
 	- var VERSION = L('version') + " (모바일)";
-	- var nick = SESSION.nickname;
+	- var nick = SESSION.profile && SESSION.profile.nickname;
 	div#Intro
 		img#intro(src='/img/kkutu/m_intro.png')
 		//- img#intro-start(src='/img/kkutu/intro_start.gif')
