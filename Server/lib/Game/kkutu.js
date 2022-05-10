@@ -228,7 +228,7 @@ exports.Client = function(socket, profile, sid){
 		delete my.profile.token;
 		delete my.profile.sid;
 
-		if(my.profile.title) my.profile.name = "anonymous";
+		//if(my.profile.title) my.profile.name = "anonymous";
 	}else{
 		gp = guestProfiles[Math.floor(Math.random() * guestProfiles.length)];
 		
@@ -445,7 +445,6 @@ exports.Client = function(socket, profile, sid){
 			}*/
 			my.nickname = $user.nickname;
 			my.exordial = $user.exordial || "";
-			if (my.nickname) my.profile.title = my.nickname;
 			my.equip = $user.equip || {};
 			my.box = $user.box || {};
 			my.data = new exports.Data($user.kkutu);
@@ -455,7 +454,6 @@ exports.Client = function(socket, profile, sid){
 				my.flush();
 				DB.users.update([ '_id', my.id ]).set([ 'nickname', my.nickname || "별명 미지정" ]).on(function($body){
 					if(!my.nickname) JLog.warn(`OAuth로부터 별명을 받아오지 못한 유저가 있습니다. #${my.id}`);
-					DB.session.update([ '_id', sid ]).set([ 'nickname', my.nickname || "별명 미지정" ]).on();
 				});
 			}else{
 				my.checkExpire();

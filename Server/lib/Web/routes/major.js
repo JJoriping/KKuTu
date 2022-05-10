@@ -127,10 +127,8 @@ Server.post("/profile", function(req, res){
 	var exordial = req.body.exordial;
 	
 	if(req.session.profile){
-		if(!Object.is(exordial, undefined)){
-			if(exordial.length > 100) exordial = exordial.slice(0, 100);
-			MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'exordial', exordial ]).on();
-		}
+		if(exordial !== undefined)
+			MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'exordial', exordial.slice(0, 100) ]).on();
 		
 		if(nickname){
 			if(nickname.length > 12) nickname = nickname.slice(0, 12);
@@ -144,13 +142,12 @@ Server.post("/profile", function(req, res){
 					if(data) return res.send({ error: 456 });
 					
 					MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'nickname', nickname ], [ 'nickChanged', now ]).on();
-					MainDB.session.update([ '_id', req.session.id ]).set([ 'nickname', nickname ]).on();
+					req.session.profile = { ...req.session.profile, name: nickname, title: nickname, nickname };
+					MainDB.session.update([ '_id', req.session.id ]).set([ 'profile', req.session.profile ]).on();
 					return res.send({ result: 200 });
 				});
 			});
-		}
-		
-		if(!nickname) return res.send({ result: 200 });
+		}else return res.send({ result: 200 });
 	}else return res.send({ error: 400 });
 });
 Server.post("/buy/:id", function(req, res){
