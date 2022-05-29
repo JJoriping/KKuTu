@@ -20,9 +20,9 @@
 ### 설치 방법
 #### Windows 환경
 1. 이 레포지토리를 내려받습니다.
-1. [node.js](https://nodejs.org/ko/) 인스톨러를 내려받아 설치(버전 6 이상, **버전 13 이하**)합니다. [npm](https://www.npmjs.com/)과 함께 설치되어야 합니다. (버전 14 이상 사용 시 DB 관련 문제가 발생합니다. 버전 13의 경우 일부 모듈의 지원이 끊겼으므로 버전 12 사용을 권장합니다.)
+1. [node.js](https://nodejs.org/ko/) 인스톨러를 내려받아 설치(버전 8 이상)합니다. [npm](https://www.npmjs.com/)과 함께 설치되어야 합니다.
 1. 명령 프롬프트에서 `npm install -g grunt grunt-cli`를 입력해 [grunt](https://gruntjs.com/)를 설치합니다.
-1. [PostgreSQL](https://www.postgresql.org/) 인스톨러(**버전 11 이하**)를 내려받아 *pgAdmin*(자동으로 설치됨)과 함께 설치합니다. (버전 13 이상 사용 시 authenticationok 문제가 발생합니다.)
+1. [PostgreSQL](https://www.postgresql.org/) 인스톨러를 내려받아 *pgAdmin*(자동으로 설치됨)과 함께 설치합니다.
 1. *pgAdmin*을 실행시키고 SQL 파일(`./db.sql`)을 데이터베이스에 입력시킵니다.
 	* 자세한 과정은 [개발자 블로그][dev-blog]를 참고하세요.
 1. 배치 파일(`./server-setup.bat`)을 실행시킵니다.
@@ -31,9 +31,9 @@
 
 #### Linux 환경
 1. 이 레포지토리를 내려받습니다.
-1. 패키지 매니저를 이용하여 [node.js](https://nodejs.org/)와 [npm](https://www.npmjs.com/)을 설치(버전 6 이상, **버전 13 이하**)합니다. (버전 14 이상 사용 시 DB 관련 문제가 발생합니다. 버전 13의 경우 일부 모듈의 지원이 끊겼으므로 버전 12 사용을 권장합니다.)
+1. 패키지 매니저를 이용하여 [node.js](https://nodejs.org/)와 [npm](https://www.npmjs.com/)을 설치(버전 8 이상)합니다.
 1. `npm install -g grunt grunt-cli`를 입력해 [grunt](https://gruntjs.com/)를 설치합니다.
-1. 패키지 매니저를 이용하여 [PostgreSQL](https://www.postgresql.org/)(**버전 11 이하**)과 *psql*을 설치합니다. (버전 13 이상 사용 시 authenticationok 문제가 발생합니다.)
+1. 패키지 매니저를 이용하여 [PostgreSQL](https://www.postgresql.org/)과 *psql*을 설치합니다.
 1. SQL 파일(`./db.sql`)을 데이터베이스에 입력시킵니다.
 	1. 명령어를 다음 예와 같이 입력할 수 있습니다: `sudo -u postgres psql --quiet main < ./db.sql`
 1. 섈 스크립트 파일(`./server-setup.bat`)을 실행시킵니다. (Windows 전용 파일이지만 Linux에서도 작동합니다.)
@@ -66,9 +66,9 @@ This repository provides you what you have to prepare to play **KKuTu**.
 ### How to Install
 #### For Windows
 1. Download or clone this repository to your machine.
-1. Install [node.js](https://nodejs.org/en/) and [npm](https://www.npmjs.com/)(this will be installed automatically). The version should be ≥6, <14.
+1. Install [node.js](https://nodejs.org/en/) and [npm](https://www.npmjs.com/)(this will be installed automatically). The version should be ≥8.
 1. Open *cmd* and run `npm install -g grunt grunt-cli` to install [grunt](https://gruntjs.com/).
-1. Install [PostgreSQL](https://www.postgresql.org/) database server and *pgAdmin*(this will be installed automatically). PostgreSQL version should be <12.
+1. Install [PostgreSQL](https://www.postgresql.org/) database server and *pgAdmin*(this will be installed automatically).
 1. Run *pgAdmin* and put the SQL file(`./db.sql`) into your database.
 	* For further details, visit [my blog][dev-blog].
 1. Run the batch file(`./server-setup.bat`).
@@ -77,9 +77,9 @@ This repository provides you what you have to prepare to play **KKuTu**.
 
 #### For Linux
 1. Download or clone this repository to your machine.
-1. Install [node.js](https://nodejs.org/en/) and [npm](https://www.npmjs.com/) via a package manager. The version should be ≥6, <14.
+1. Install [node.js](https://nodejs.org/en/) and [npm](https://www.npmjs.com/) via a package manager. The version should be ≥8.
 1. Run `npm install -g grunt grunt-cli` to install [grunt](https://gruntjs.com).
-1. Install [PostgreSQL](https://www.postgresql.org/) database server via a package manager. PostgreSQL version should be <12.
+1. Install [PostgreSQL](https://www.postgresql.org/) database server via a package manager.
 1. Put the SQL file(`./db.sql`) into your database.
 	1. Run a command like: `sudo -u postgres psql --quiet main < ./db.sql`
 1. Run the shell script file(`./server-setup.bat`). (It is a batch file for Windows but it will also work on Linux.)
