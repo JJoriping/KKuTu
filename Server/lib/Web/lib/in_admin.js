@@ -186,6 +186,9 @@
 						.append($("<td>").append(putter("ud-" + item._id + "-server", 't', item.server)))
 						.append($("<td>").append(putter("ud-" + item._id + "-lastLogin", 't', item.lastLogin)))
 						.append($("<td>").append(putter("ud-" + item._id + "-black", 'g', item.black)))
+						/* Enhanced User Block System [S] */
+						.append($("<td>").append(putter("ud-" + item._id + "-blockedUntil", 'g', item.blockedUntil)))
+						/* Enhanced User Block System [E] */
 						.append($("<td>").append(putter("ud-" + item._id + "-friends", 'g', JSON.stringify(item.friends || {}))));
 				});
 			});
@@ -206,7 +209,10 @@
 					server: $data.get(6).value,
 					lastLogin: $data.get(7).value,
 					black: $data.get(8).value,
-					friends: $data.get(9).value
+					/* Enhanced User Block System [S] */
+					blockedUntil: $data.get(9).value,
+					friends: $data.get(10).value
+					/* Enhanced User Block System [E] */
 				});
 			});
 			$.post("/gwalli/users", {

@@ -145,14 +145,20 @@ span{
 }
 #account-info:hover{ color: #EEEEEE; }
 #global-notice{
-	padding: 3px 0px;
 	margin-top: 30px;
 	color: #111111;
 	text-align: center;
 	font-weight: bold;
-	background-color: #EEBB33;
 	cursor: pointer;
 	z-index: 5;
+}
+#gn-content{
+	position: absolute;
+	left: 0;
+	right: 0;
+	background-color: #EEBB33;
+	padding: 3px 0px;
+	z-index: -1;
 }
 .searching{
 	color: #EEEEEE;

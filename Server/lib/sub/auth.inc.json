@@ -1,5 +1,9 @@
 {
-    "naver": {
+    "daldalso": {
+        "clientID": "",
+        "clientSecret": "",
+        "callbackURL": "/login/daldalso/callback"
+    }, "naver": {
         "clientID": "",
         "clientSecret": "",
         "callbackURL": "/login/naver/callback"

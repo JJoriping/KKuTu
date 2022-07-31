@@ -44,7 +44,8 @@ Pub.ready = function(isPub){
         user: GLOBAL.PG_USER,
         password: GLOBAL.PG_PASSWORD,
         port: GLOBAL.PG_PORT,
-        database: GLOBAL.PG_DATABASE
+        database: GLOBAL.PG_DATABASE,
+		host: GLOBAL.PG_HOST
     });
 	Redis.on('connect', function(){
 		connectPg();
@@ -83,6 +84,9 @@ Pub.ready = function(isPub){
 			
 			DB.session = new mainAgent.Table("session");
 			DB.users = new mainAgent.Table("users");
+			/* Enhanced User Block System [S] */
+			DB.ip_block = new mainAgent.Table("ip_block");
+			/* Enhanced User Block System [E] */
 			
 			if(exports.ready) exports.ready(Redis, Pg);
 			else JLog.warn("DB.onReady was not defined yet.");
