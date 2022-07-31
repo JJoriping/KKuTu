@@ -401,7 +401,7 @@ exports.init = function(_SID, CHAN){
 				/* Enhanced User Block System [S] */
 				if(GLOBAL.USER_BLOCK_OPTIONS.USE_MODULE && ((GLOBAL.USER_BLOCK_OPTIONS.BLOCK_IP_ONLY_FOR_GUEST && $c.guest) || !GLOBAL.USER_BLOCK_OPTIONS.BLOCK_IP_ONLY_FOR_GUEST)){
 					MainDB.ip_block.findOne([ '_id', $c.remoteAddress ]).on(function($body){
-						if ($body.reasonBlocked) {
+						if ($body && $body.reasonBlocked) {
 							if($body.ipBlockedUntil < Date.now()) {
 								MainDB.ip_block.update([ '_id', $c.remoteAddress ]).set([ 'ipBlockedUntil', 0 ], [ 'reasonBlocked', null ]).on();
 								JLog.info(`IP 주소 ${$c.remoteAddress}의 이용제한이 해제되었습니다.`);
