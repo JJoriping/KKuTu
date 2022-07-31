@@ -27,7 +27,7 @@
     "passport-github": "^1.1.0",
     "passport-google-oauth2": "^0.1.6",
     "passport-instagram": "^1.0.0",
-    "passport-kakao": "0.0.5",
+    "passport-kakao": "^1.0.1",
     "passport-line": "0.0.4",
     "passport-naver": "^1.0.6",
     "passport-spotify": "^1.1.0",
