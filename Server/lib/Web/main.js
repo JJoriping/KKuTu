@@ -134,7 +134,7 @@ DB.ready = function(){
 	}, 4000);
 	JLog.success("DB is ready.");
 
-	DB.updateShop(Language);
+	DB.kkutu_shop_desc.refreshLanguage(Language);
 	
 	Server.listen(80);
 	if(Const.IS_SECURED) {

@@ -258,7 +258,7 @@ Server.post("/gwalli/shop", function(req, res){
 		MainDB.kkutu_shop.upsert([ '_id', item._id ]).set(item.core).on();
 		MainDB.kkutu_shop_desc.upsert([ '_id', item._id ]).set(item.text).on();
 	});
-	MainDB.updateShop(Language);
+	MainDB.kkutu_shop_desc.refreshLanguage(Language);
 	res.sendStatus(200);
 });
 

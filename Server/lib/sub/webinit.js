@@ -33,7 +33,7 @@ function updateLanguage(){
 		delete require.cache[require.resolve(src)];
 		Language[i] = require(src);
 	}
-	MainDB.updateShop(Language);
+	MainDB.kkutu_shop_desc.refreshLanguage(Language);
 }
 function getLanguage(locale, page, shop){
 	var i;
