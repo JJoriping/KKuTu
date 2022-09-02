@@ -258,13 +258,11 @@ Server.post("/gwalli/shop", function(req, res){
 		MainDB.kkutu_shop.upsert([ '_id', item._id ]).set(item.core).on();
 		MainDB.kkutu_shop_desc.upsert([ '_id', item._id ]).set(item.text).on();
 	});
-	updateShop();
+	MainDB.updateShop(Language);
 	res.sendStatus(200);
 });
 
 };
-
-exports.updateShop = updateShop;
 
 function noticeAdmin(req, ...args){
 	JLog.info(`[ADMIN] ${req.originalUrl} ${req.ip} | ${args.join(' | ')}`);
@@ -304,17 +302,4 @@ function parseKKuTuHot(){
 		return R;
 	}
 	return R;
-}
-function updateShop(){
-	MainDB.kkutu_shop_desc.find().on(function($docs){
-		var lang, i;
-		
-		for(lang in Language){
-			var db;
-			
-			Language[lang].SHOP = db = {};
-			for(i in $docs)
-				db[$docs[i]._id] = [ $docs[i][`name_${lang}`], $docs[i][`desc_${lang}`] ];
-		}
-	});
 }

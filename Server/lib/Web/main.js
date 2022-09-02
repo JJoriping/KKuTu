@@ -134,7 +134,7 @@ DB.ready = function(){
 	}, 4000);
 	JLog.success("DB is ready.");
 
-	ROUTES.admin.updateShop();
+	DB.updateShop(Language);
 	
 	Server.listen(80);
 	if(Const.IS_SECURED) {

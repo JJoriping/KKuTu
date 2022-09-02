@@ -86,6 +86,19 @@ Pub.ready = function(isPub){
 			/* Enhanced User Block System [S] */
 			DB.ip_block = new mainAgent.Table("ip_block");
 			/* Enhanced User Block System [E] */
+			DB.updateShop = function(Language){
+				this.kkutu_shop_desc.find().on(function($docs){
+					var lang, i;
+					
+					for(lang in Language){
+						var db;
+						
+						Language[lang].SHOP = db = {};
+						for(i in $docs)
+							db[$docs[i]._id] = [ $docs[i][`name_${lang}`], $docs[i][`desc_${lang}`] ];
+					}
+				});
+			};
 			
 			if(exports.ready) exports.ready(Redis, Pg);
 			else JLog.warn("DB.onReady was not defined yet.");
