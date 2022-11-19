@@ -42,8 +42,6 @@ class ConcatPlugin{
 const sourcePath = resolve(__dirname, "Web/lib");
 const gameSourcePath = resolve(sourcePath, "kkutu");
 const distributionPath = resolve(__dirname, "Web/public/js");
-if(!File.existsSync(resolve(sourcePath, "in_game_kkutu.js")))
-	File.writeFileSync(resolve(sourcePath, "in_game_kkutu.js"));
 const files = File.readdirSync(sourcePath, { withFileTypes: true })
 	.filter(u => u.isFile())
 	.map(u => u.name);
