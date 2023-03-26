@@ -50,6 +50,8 @@
 - 서버가 성공적으로 열린 후 웹 브라우저에서 `127.0.0.1`(다른 사람들은 해당 컴퓨터의 외부 IP 주소)로 접속하여 끄투를 즐길 수 있습니다.
 - 랭킹 및 세션 기능 일부는 [Redis](https://redis.io/) 서버가 실행되어야만 작동합니다. 일단 이를 설치하지 않아도 서버가 작동할 수 있도록 조치했습니다.
 - [Cloudflare](https://www.cloudflare.com/)를 이용하는 경우, DNS 탭의 status를 `DNS only`로 두세요. `DNS and HTTP proxy (CDN)`으로 둘 경우, 방 만들기와 방 입장이 불가합니다.
+- ko_KR.json loginLegal 값의 {서비스 이용약관 주소}와 {개인정보 처리 방침 주소}를 각각 해당 프리서버의 서비스 이용약관과 개인정보 처리 방침으로 연결되는 URL로 수정하고, {서버 이름}을 프리서버 이름으로 수정하는 것을 권장합니다.
+
 
 ### 라이선스
 - 모든 소스 코드에 대해: [GNU 일반 공중 사용 라이선스](https://github.com/JJoriping/KKuTu/blob/master/LICENSE)
