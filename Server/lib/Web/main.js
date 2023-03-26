@@ -26,7 +26,6 @@ var Express	 = require("express");
 var Exession = require("express-session");
 var Redission= require("connect-redis")(Exession);
 var Redis	 = require("redis");
-var Parser	 = require("body-parser");
 var DDDoS	 = require("dddos");
 var Server	 = Express();
 var DB		 = require("./db");
@@ -64,7 +63,7 @@ JLog.info("<< KKuTu Web >>");
 Server.set('views', __dirname + "/views");
 Server.set('view engine', "pug");
 Server.use(Express.static(__dirname + "/public"));
-Server.use(Parser.urlencoded({ extended: true }));
+Server.use(Express.urlencoded({ extended: true }));
 Server.use(Exession({
 	/* use only for redis-installed
 
