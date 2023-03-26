@@ -137,7 +137,7 @@ Server.on('connection', function(socket, info){
 		$c.remoteAddress = GLOBAL.USER_BLOCK_OPTIONS.USE_X_FORWARDED_FOR ? info.connection.remoteAddress : (info.headers['x-forwarded-for'] || info.connection.remoteAddress);
 		if(GLOBAL.USER_BLOCK_OPTIONS.USE_MODULE && ((GLOBAL.USER_BLOCK_OPTIONS.BLOCK_IP_ONLY_FOR_GUEST && $c.guest) || !GLOBAL.USER_BLOCK_OPTIONS.BLOCK_IP_ONLY_FOR_GUEST)){
 			MainDB.ip_block.findOne([ '_id', $c.remoteAddress ]).on(function($body){
-				if ($body.reasonBlocked) {
+				if ($body && $body.reasonBlocked) {
 					$c.socket.send(JSON.stringify({
 						type: 'error',
 						code: 446,
