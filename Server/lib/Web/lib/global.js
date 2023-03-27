@@ -20,8 +20,6 @@
  * 볕뉘 수정사항:
  * getCookie 코드오류로 인한 코드 수정
  */
-var global = {};
-var L;
 
 (function(){
 	var size;
@@ -85,9 +83,9 @@ var L;
 		var explSize;
 		var gn = $("#gn-content").html() || "";
 		
-		global.profile = $("#profile").html();
-		if(global.profile) global.profile = JSON.parse(global.profile);
-		else global.profile = {};
+		globalThis.profile = $("#profile").html();
+		if(globalThis.profile) globalThis.profile = JSON.parse(globalThis.profile);
+		else globalThis.profile = {};
 		
 		$.cookie('test', "good");
 		if($.cookie('test') != "good"){
@@ -120,8 +118,8 @@ var L;
 	// 계정
 		if($.cookie('lc') == "") $.cookie('lc', "ko_KR");
 		
-		if(global.profile.token){
-			$("#account-info").html(global.profile.title || global.profile.name).on('click', function(e){
+		if(globalThis.profile.token){
+			$("#account-info").html(globalThis.profile.title || globalThis.profile.name).on('click', function(e){
 				if(confirm(L['ASK_LOGOUT'])) requestLogout(e);
 			});
 		}else{
@@ -137,8 +135,8 @@ var L;
 		/*if($.cookie('forlogout')){
 			requestLogout();
 		}*/
-		global.watchInput($("#quick-search-tf"));
-		(global.expl = function($mother){
+		globalThis.watchInput($("#quick-search-tf"));
+		(globalThis.expl = function($mother){
 			var $q = $mother ? $mother.find(".expl") : $(".expl");
 			
 			$q.parent().addClass("expl-mother").on('mouseenter', function(e){
@@ -177,8 +175,8 @@ var L;
 					var i, c = 0;
 					
 					$ac.empty();
-					global['wl-'+cid] = res.list.slice(0, 10);
-					global['wi-'+cid] = -1;
+					globalThis['wl-'+cid] = res.list.slice(0, 10);
+					globalThis['wi-'+cid] = -1;
 					for(i in res.list){
 						if(c++ >= 10) break;
 						$ac.append($("<div>")
@@ -205,7 +203,7 @@ var L;
 		}
 		_setTimeout(onWatchInput, 200, $o, prev);
 	}
-	global.watchInput = function($tf){
+	globalThis.watchInput = function($tf){
 		var cid = $tf.attr('id');
 		
 		$tf.after($("<div>")
@@ -221,21 +219,21 @@ var L;
 			var list;
 			
 			if(!dir) return;
-			if(!(list = global['wl-'+cid])) return;
-			if(global['wi-'+cid] == -1) if(dir == -1) dir = 0;
+			if(!(list = globalThis['wl-'+cid])) return;
+			if(globalThis['wi-'+cid] == -1) if(dir == -1) dir = 0;
 			
 			$(".autocomp-select").removeClass("autocomp-select");
-			global['wi-'+cid] += dir;
-			if(global['wi-'+cid] < 0) global['wi-'+cid] += list.length;
-			if(global['wi-'+cid] >= list.length) global['wi-'+cid] = 0;
+			globalThis['wi-'+cid] += dir;
+			if(globalThis['wi-'+cid] < 0) globalThis['wi-'+cid] += list.length;
+			if(globalThis['wi-'+cid] >= list.length) globalThis['wi-'+cid] = 0;
 			
-			$("#aci-" + list[global['wi-'+cid]]._id).addClass("autocomp-select");
+			$("#aci-" + list[globalThis['wi-'+cid]]._id).addClass("autocomp-select");
 			e.preventDefault();
 		});
 		return _setTimeout(onWatchInput, 200, $tf, $tf.val());
 	};
-	global.zeroPadding = function(num, len){ var s = num.toString(); return "000000000000000".slice(0, Math.max(0, len - s.length)) + s; };
-	global.onPopup = function(url){
+	globalThis.zeroPadding = function(num, len){ var s = num.toString(); return "000000000000000".slice(0, Math.max(0, len - s.length)) + s; };
+	globalThis.onPopup = function(url){
 		location.href = url;
 	};
 })();
