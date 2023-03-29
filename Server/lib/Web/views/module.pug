@@ -130,7 +130,7 @@ mixin Expl(text, width)
 			h5= text
 
 mixin Product(id)
-	div(class=id+'Box Product')
+	div(class=id+'Box Product', style='display: ' + (id === 'AD' ? 'block' : 'none'))
 		h5.product-title!= L(id)
 		div.product-body
 			if block
