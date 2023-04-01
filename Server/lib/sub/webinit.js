@@ -17,6 +17,7 @@
  */
 
 var GLOBAL	 = require("./global.json");
+var MainDB	 = require("../Web/db");
 var JLog	 = require("./jjlog");
 var Language = {
 	'ko_KR': require("../Web/lang/ko_KR.json"),
@@ -32,6 +33,7 @@ function updateLanguage(){
 		delete require.cache[require.resolve(src)];
 		Language[i] = require(src);
 	}
+	MainDB.kkutu_shop_desc.refreshLanguage(Language);
 }
 function getLanguage(locale, page, shop){
 	var i;

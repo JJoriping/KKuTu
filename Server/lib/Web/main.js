@@ -47,9 +47,7 @@ var Language = {
 	'en_US': require("./lang/en_US.json")
 };
 //볕뉘 수정
-var ROUTES = [
-	"major", "consume", "admin", "login"
-];
+var ROUTES = { major: {}, consume: {}, admin: {}, login: {} };
 //볕뉘 수정 끝
 var page = WebInit.page;
 var gameServers = [];
@@ -118,6 +116,10 @@ DDDoS.rules[0].logFunction = DDDoS.rules[1].logFunction = function(ip, path){
 Server.use(DDDoS.express());*/
 
 WebInit.init(Server, true);
+Object.keys(ROUTES).forEach((v) => {
+	ROUTES[v] = require(`./routes/${v}`);
+});
+
 DB.ready = function(){
 	setInterval(function(){
 		var q = [ 'createdAt', { $lte: Date.now() - 3600000 * 12 } ];
@@ -132,19 +134,8 @@ DB.ready = function(){
 	}, 4000);
 	JLog.success("DB is ready.");
 
-	DB.kkutu_shop_desc.find().on(function($docs){
-		var i, j;
-
-		for(i in Language) flush(i);
-		function flush(lang){
-			var db;
-
-			Language[lang].SHOP = db = {};
-			for(j in $docs){
-				db[$docs[j]._id] = [ $docs[j][`name_${lang}`], $docs[j][`desc_${lang}`] ];
-			}
-		}
-	});
+	DB.kkutu_shop_desc.refreshLanguage(Language);
+	
 	Server.listen(80);
 	if(Const.IS_SECURED) {
 		const options = Secure();
@@ -203,9 +194,9 @@ function GameClient(id, url){
 		}
 	});
 }
-ROUTES.forEach(function(v){
-	require(`./routes/${v}`).run(Server, WebInit.page);
-});
+
+for(var i of Object.values(ROUTES)) i.run(Server, WebInit.page);
+
 Server.get("/", function(req, res){
 	var server = req.query.server;
 	

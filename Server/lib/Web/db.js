@@ -81,6 +81,19 @@ Pub.ready = function(isPub){
 			DB.kkutu_injeong = new mainAgent.Table("kkutu_injeong");
 			DB.kkutu_shop = new mainAgent.Table("kkutu_shop");
 			DB.kkutu_shop_desc = new mainAgent.Table("kkutu_shop_desc");
+			DB.kkutu_shop_desc.refreshLanguage = function(Language){
+				this.find().on(function($docs){
+					var lang, i;
+					
+					for(lang in Language){
+						var db;
+						
+						Language[lang].SHOP = db = {};
+						for(i in $docs)
+							db[$docs[i]._id] = [ $docs[i][`name_${lang}`], $docs[i][`desc_${lang}`] ];
+					}
+				});
+			};
 			
 			DB.session = new mainAgent.Table("session");
 			DB.users = new mainAgent.Table("users");
