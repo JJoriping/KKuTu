@@ -8,11 +8,11 @@
   ],
   "author": "JJoriping",
   "dependencies": {
-    "body-parser": "^1.15.2",
+    "body-parser": "^1.20.1",
     "colors": "^1.1.2",
     "connect-redis": "^3.2.0",
     "dddos": "^0.1.1",
-    "express": "^4.14.0",
+    "express": "^4.18.2",
     "express-session": "^1.14.2",
     "glob": "^7.1.2",
     "glob-promise": "^3.3.0",
