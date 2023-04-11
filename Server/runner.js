@@ -16,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+const fs = require('fs');
 const Spawn = require("child_process").spawn;
 const JLog = require("./lib/sub/jjlog");
 const PKG = require("./package.json");
@@ -38,6 +39,65 @@ const SCRIPTS = {
 	'program-repo': () => exports.send('external', "https://github.com/JJoriping/KKuTu"),
 	'exit': () => process.exit(0)
 };
+// 해티 수정 (42~97)
+if (SETTINGS.log.enabled) {
+	const winston = require('winston');
+	const winstonDaily = require('winston-daily-rotate-file');
+	const moment = require('moment');
+	function timeStampFormat() {
+		return moment().format('YYYY-MM-DD HH:mm:ss.SSS ZZ');
+	};
+	
+	var logger = winston.createLogger({
+		format: winston.format.simple(),
+		transports: [
+			new (winstonDaily)({
+				name: 'info-file',
+				filename: SETTINGS.log.infopath,
+				datePattern: SETTINGS.log.datepattern,
+				colorize: false,
+				maxsize: SETTINGS.log.maxsize,
+				maxFiles: SETTINGS.log.maxfile,
+				level: 'info',
+				showLevel: true,
+				json: false,
+				timestamp: timeStampFormat
+			}),
+			new (winston.transports.Console)({
+				name: 'debug-console',
+				colorize: true,
+				level: 'debug',
+				showLevel: true,
+				json: false,
+				timestamp: timeStampFormat
+			})
+		],
+		exceptionHandlers: [
+			new (winstonDaily)({
+				name: 'exception-file',
+				filename: SETTINGS.log.exceptionpath,
+				datePattern: SETTINGS.log.datepattern,
+				colorize: false,
+				maxsize: SETTINGS.log.maxsize,
+				maxFiles: SETTINGS.log.maxfile,
+				level: 'error',
+				showLevel: true,
+				json: false,
+				timestamp: timeStampFormat
+			}),
+			new (winston.transports.Console)({
+				name: 'exception-console',
+				colorize: true,
+				level: 'debug',
+				showLevel: true,
+				json: false,
+				timestamp: timeStampFormat
+			})
+		]
+	})
+};
+// 해티 수정 끝
+
 exports.MAIN_MENU = [
 	{
 		label: LANG['menu-server'],
@@ -94,10 +154,14 @@ class ChildProcess{
 		this.process = Spawn(cmd, argv);
 		this.process.stdout.on('data', msg => {
 			exports.send('log', 'n', msg);
+			// 해티 수정
+			if (SETTINGS.log.enabled) logger.info(msg);
 		});
 		this.process.stderr.on('data', msg => {
 			console.error(`${id}: ${msg}`);
 			exports.send('log', 'e', msg);
+			// 해티 수정
+			if (SETTINGS.log.enabled) logger.error("[ERROR]"+msg);
 		});
 		this.process.on('close', code => {
 			let msg;
@@ -108,6 +172,8 @@ class ChildProcess{
 
 			exports.send('log', 'e', msg);
 			exports.send('server-status', getServerStatus());
+			// 해티 수정
+			if (SETTINGS.log.enabled) logger.error("[ERROR]"+msg);
 		});
 	}
 	kill(sig){
@@ -118,13 +184,14 @@ let webServer, gameServers;
 
 function startServer(){
 	stopServer();
+	// 해티 수정(187~194)
 	if(SETTINGS['server-name']) process.env['KKT_SV_NAME'] = SETTINGS['server-name'];
-	
-	webServer = new ChildProcess('W', "node", `${__dirname}/lib/Web/cluster.js`, SETTINGS['web-num-cpu']);
-	gameServers = [];
-	
-	for(let i=0; i<SETTINGS['game-num-inst']; i++){
-		gameServers.push(new ChildProcess('G', "node", `${__dirname}/lib/Game/cluster.js`, i, SETTINGS['game-num-cpu']));
+	if(SETTINGS.web.enabled) webServer = new ChildProcess('W', "node", `${__dirname}/lib/Web/cluster.js`, SETTINGS.web.cpu);
+	if(SETTINGS.game.enabled) {
+		gameServers = [];	
+		for(let i=0; i<SETTINGS.game.inst; i++){
+			gameServers.push(new ChildProcess('G', "node", `${__dirname}/lib/Game/cluster.js`, i, SETTINGS.game.cpu));
+		}
 	}
 	exports.send('server-status', getServerStatus());
 }
@@ -133,7 +200,13 @@ function stopServer(){
 	if(gameServers) gameServers.forEach(v => v.kill());
 }
 function getServerStatus(){
-	if(!webServer || !gameServers) return 0;
-	if(webServer.process && gameServers.every(v => v.process)) return 2;
+	// 해티 수정 (203~209)
+	if(SETTINGS.web.enabled && SETTINGS.game.enabled) {
+		if(!webServer || !gameServers) return 0;
+		if(webServer.process && gameServers.every(v => v.process)) return 2;
+	} else if(SETTINGS.web.enabled || SETTINGS.game.enabled) {
+		if(!webServer && !gameServers) return 0;
+		if(webServer.process || gameServers.every(v => v.process)) return 2;
+	}
 	return 1;
 }

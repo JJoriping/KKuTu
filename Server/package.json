@@ -1,6 +1,6 @@
 {
   "name": "kkutu-server",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "description": "Rule the words! KKuTu Online Server",
   "main": "main.js",
   "scripts": {
@@ -16,5 +16,10 @@
     "electron": "^1.4.15",
     "electron-packager": "^8.5.1",
     "electron-pug": "^1.5.1"
+  },
+  "dependencies": {
+    "moment": "^2.24.0",
+    "winston": "^3.2.1",
+    "winston-daily-rotate-file": "^3.10.0"
   }
 }
