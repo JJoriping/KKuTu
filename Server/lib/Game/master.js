@@ -174,49 +174,49 @@ function processAdmin(id, value){
 		/* Enhanced User Block System [E] */
 		/* Toggle Guest Entrance & User Kick [S] */
 		case 'allowguestenter':
-            if(allowGuestEnter) {
-                allowGuestEnter = false;
-                JLog.info(`[Entrance] ${id} 님이 손님 계정의 출입을 비활성화했습니다.`);
-            } else {
-                allowGuestEnter = true;
-                JLog.info(`[Entrance] ${id} 님이 손님 계정의 출입을 활성화했습니다.`);
-            }
-            return null;
+			if(allowGuestEnter) {
+				allowGuestEnter = false;
+				JLog.info(`[Entrance] ${id} 님이 손님 계정의 출입을 비활성화했습니다.`);
+			} else {
+				allowGuestEnter = true;
+				JLog.info(`[Entrance] ${id} 님이 손님 계정의 출입을 활성화했습니다.`);
+			}
+			return null;
 		case 'allowenter':
-            if(allowEnter) {
-                allowEnter = false;
-                JLog.info(`[Entrance] ${id} 님이 사용자의 출입을 비활성화했습니다.`);
-            } else {
-                allowEnter = true;
-                JLog.info(`[Entrance] ${id} 님이 사용자의 출입을 허용했습니다.`);
-            }
-            return null;
-        case 'kickguest':
-            try {
-                Object.keys(DIC).forEach(o => {
-                    let user = DIC[o];
-                    if((user && user.guest && user.place == 0) || (user && user.guest && (value == 'all'))) {
-                        user.sendError(457);
-                        user.socket.close();
-                    }
-                });
-            } catch (e) {
-                JLog.error(e);
-            }
-            return null;
-        case 'kickuser':
-            try {
-                Object.keys(DIC).forEach(o => {
-                    let user = DIC[o];
-                    if((user && user.place == 0) || (user && (value == 'all'))) {
-                        user.sendError(457);
-                        user.socket.close();
-                    }
-                });
-            } catch (e) {
-                JLog.error(e);
-            }
-            return null;
+			if(allowEnter) {
+				allowEnter = false;
+				JLog.info(`[Entrance] ${id} 님이 사용자의 출입을 비활성화했습니다.`);
+			} else {
+				allowEnter = true;
+				JLog.info(`[Entrance] ${id} 님이 사용자의 출입을 허용했습니다.`);
+			}
+			return null;
+		case 'kickguest':
+			try {
+				Object.keys(DIC).forEach(o => {
+					let user = DIC[o];
+					if((user && user.guest && user.place == 0) || (user && user.guest && (value == 'all'))) {
+					user.sendError(457);
+						user.socket.close();
+					}
+				});
+			} catch (e) {
+				JLog.error(e);
+			}
+			return null;
+		case 'kickuser':
+			try {
+				Object.keys(DIC).forEach(o => {
+					let user = DIC[o];
+					if((user && user.place == 0) || (user && (value == 'all'))) {
+					user.sendError(457);
+						user.socket.close();
+					}
+				});
+			} catch (e) {
+				JLog.error(e);
+			}
+			return null;
 		/* Toggle Guest Entrance & User Kick [E] */
 	}
 	return value;
@@ -439,10 +439,10 @@ exports.init = function(_SID, CHAN){
 				}
 				/* Toggle Guest Entrance & User Kick [S] */
 				if (!allowEnter && !$c.admin) {
-                    $c.sendError(500);
-                    $c.socket.close();
-                    return;
-                }
+					$c.sendError(500);
+					$c.socket.close();
+					return;
+				}
 				/* Toggle Guest Entrance & User Kick [E] */
 				if($c.guest){
 					if(SID != "0"){
@@ -452,11 +452,11 @@ exports.init = function(_SID, CHAN){
 					}
 					/* Toggle Guest Entrance & User Kick [S] */
 					if (!allowGuestEnter) {
-                        $c.sendError(456);
-                        $c.socket.close();
-                        return;
-                    }
-                    /* Toggle Guest Entrance & User Kick [E] */
+						$c.sendError(456);
+						$c.socket.close();
+						return;
+					}
+					/* Toggle Guest Entrance & User Kick [E] */
 					if(KKuTu.NIGHT){
 						$c.sendError(440);
 						$c.socket.close();
