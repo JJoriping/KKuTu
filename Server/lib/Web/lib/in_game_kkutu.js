@@ -857,7 +857,7 @@ $(document).ready(function(){
 			$stage.dialog.dress.hide();
 			return;
 		}
-		if(confirm($data.NICKNAME_LIMIT.TERM > 0 ? confirmNickChangeLimit.replace("{V1}", $data.NICKNAME_LIMIT.TERM) : L.confirmNickChange)) $.post("/profile", data, function(res){
+		if(confirm($data.NICKNAME_LIMIT.TERM > 0 ? L.confirmNickChangeLimit.replace("{V1}", $data.NICKNAME_LIMIT.TERM) : L.confirmNickChange)) $.post("/profile", data, function(res){
 			if(res.error) return fail(res.error);
 			const message = [];
 			if(data.nickname){
