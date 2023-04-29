@@ -789,27 +789,31 @@ $(document).ready(function(){
 		});
 	});
 	$stage.dialog.dressOK.on('click', function(e){
-		var data = {};
+		const data = {};
 		
 		$(e.currentTarget).attr('disabled', true);
 		
-		if($("#dress-nickname").val() !== $data.nickname) data.nickname = $("#dress-nickname").val();
-		if($("#dress-exordial").val() !== $data.exordial) data.exordial = $("#dress-exordial").val();
+		if($("#dress-nickname").val() && $("#dress-nickname").val() !== $data.nickname) data.nickname = $("#dress-nickname").val();
+		if($("#dress-exordial").val() !== undefined && $("#dress-exordial").val() !== $data.exordial) data.exordial = $("#dress-exordial").val();
 		
-		if(data.nickname || !Object.is(data.exordial, undefined)){
-			if(data.nickname && $data.NICKNAME_LIMIT.REGEX.test(data.nickname)) data.nickname = confirm("닉네임 정책에 어긋나는 문자(열)이 포함되어 있습니다.\n닉네임 정책에 어긋나는 부분을 제거하고 변경할까요?") ? data.nickname.replace($data.NICKNAME_LIMIT.REGEX, "") : undefined;
-			if(data.nickname ? confirm($data.NICKNAME_LIMIT.TERM > 0 ? L.sureChangeNickLimit1 + $data.NICKNAME_LIMIT.TERM + L.sureChangeNickLimit2 : L.sureChangeNickNoLimit) : !Object.is(data.exordial, undefined)) $.post("/profile", data, function(res){
-				if(res.error) return fail(res.error);
-				if(data.nickname){
-					$data.users[$data.id].nickname = $data.nickname = data.nickname;
-					$("#account-info").text(data.nickname);
-				}
-				if(!Object.is(data.exordial, undefined)) $data.users[$data.id].exordial = $data.exordial = data.exordial;
-				
-				send("updateProfile", undefined, true);
-				alert(data.nickname ? (!Object.is(data.exordial, undefined) ? L.nickChanged + $data.nickname + L.changed + " " + L.exorChanged + $data.exordial + L.changed : L.nickChanged + $data.nickname + L.changed) : L.exorChanged + $data.exordial + L.changed);
-			});
+		if(data.nickname && $data.NICKNAME_LIMIT.REGEX.test(data.nickname)) data.nickname = confirm(L.confirmNickPolicy) ? data.nickname.replace($data.NICKNAME_LIMIT.REGEX, "") : undefined;
+		if(!data.nickname && data.exordial === undefined){
+			$stage.dialog.dressOK.attr("disabled", false);
+			$stage.dialog.dress.hide();
+			return;
 		}
+		if(confirm($data.NICKNAME_LIMIT.TERM > 0 ? confirmNickChangeLimit.replace("{V1}", $data.NICKNAME_LIMIT.TERM) : L.confirmNickChange)) $.post("/profile", data, function(res){
+			if(res.error) return fail(res.error);
+			const message = [];
+			if(data.nickname){
+				$("#account-info").text($data.users[$data.id].nickname = $data.users[$data.id].profile.title = $data.users[$data.id].profile.name = $data.nickname = data.nickname);
+				message.push(L.nickChanged.replace("{V1}", data.nickname));
+			}
+			if(data.exordial !== undefined) message.push(L.exorChanged.replace("{V1}", $data.users[$data.id].exordial = $data.exordial = data.exordial));
+			
+			send("updateProfile", data, true);
+			alert(message.join("\n"));
+		});
 		$stage.dialog.dressOK.attr("disabled", false);
 		$stage.dialog.dress.hide();
 	});

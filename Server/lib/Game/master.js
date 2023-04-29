@@ -497,20 +497,6 @@ function joinNewUser($c) {
 	narrateFriends($c.id, $c.friends, "on");
 	KKuTu.publish('conn', {user: $c.getData()});
 	
-	/* 이 부분의 주석을 풀면 유저분들의 정보를 알아서 주기적으로 갱신합니다.
-		그러나 접속자 수가 많아질 경우 서버에 부담이 될 수 있습니다.
-	setInterval(() => {
-		$c.send('reloadData', {
-			id: $c.id,
-			nickname: $c.nickname,
-			exordial: $c.exordial,
-			users: KKuTu.getUserList(),
-			rooms: KKuTu.getRoomList(),
-			friends: $c.friends
-		});
-	}, 18000);
-	*/
-
 	JLog.info("New user #" + $c.id);
 }
 
@@ -551,29 +537,16 @@ function processClientRequest($c, msg) {
 
 			$c.publish('yell', {value: msg.value});
 			break;
-		case 'reloadData':
-			$c.send('reloadData', {
-				id: $c.id,
-				nickname: $c.nickname,
-				exordial: $c.exordial,
-				users: KKuTu.getUserList(),
-				rooms: KKuTu.getRoomList(),
-				friends: $c.friends
-			});
 		case 'refresh':
 			$c.refresh();
 			break;
 		case 'updateProfile':
-			$c.refresh().then(function(){
-				for(let i in DIC) DIC[i].send('reloadData', {
-					id: $c.id,
-					nickname: $c.nickname,
-					exordial: $c.exordial,
-					users: KKuTu.getUserList(),
-					rooms: KKuTu.getRoomList(),
-					friends: $c.friends
-				});
-			});
+			msg.id = $c.id;
+			delete msg.type;
+			$c.updateProfile(msg);
+			if(msg.nickname) DIC[$c.id].nickname = DIC[$c.id].profile.title = DIC[$c.id].profile.name = msg.nickname;
+			if(msg.exordial) DIC[$c.id].exordial = msg.exordial;
+			for(let i in DIC) DIC[i].send('updateUser', msg);
 			break;
 		case 'talk':
 			if (!msg.value) return;

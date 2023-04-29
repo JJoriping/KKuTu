@@ -123,32 +123,32 @@ Server.get("/shop", function(req, res){
 
 // POST
 Server.post("/profile", function(req, res){
-	var nickname = req.body.nickname;
-	var exordial = req.body.exordial;
+	let nickname = req.body.nickname;
+	const exordial = req.body.exordial;
+
+	if(!req.session.profile) return res.send({ error: 400 });
 	
-	if(req.session.profile){
-		if(exordial !== undefined)
-			MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'exordial', exordial.slice(0, 100) ]).on();
-		
-		if(nickname){
-			if(nickname.length > 12) nickname = nickname.slice(0, 12);
-			MainDB.users.findOne([ 'nickname', nickname ]).on(function(data){
-				MainDB.users.findOne([ '_id', req.session.profile.id ]).on(function(requester){
-					var changedDate = new Date(Number(requester.nickChanged));
-					var now = Number(new Date());
-					
-					changedDate.setDate(changedDate.getDate() + GLOBAL.NICKNAME_LIMIT.TERM);
-					if(GLOBAL.NICKNAME_LIMIT.TERM > 0 && now < Number(changedDate)) return res.send({ error: 457 });
-					if(data) return res.send({ error: 456 });
-					
-					MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'nickname', nickname ], [ 'nickChanged', now ]).on();
-					req.session.profile = { ...req.session.profile, name: nickname, title: nickname, nickname };
-					MainDB.session.update([ '_id', req.session.id ]).set([ 'profile', req.session.profile ]).on();
-					return res.send({ result: 200 });
-				});
-			});
-		}else return res.send({ result: 200 });
-	}else return res.send({ error: 400 });
+	if(exordial !== undefined) MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'exordial', exordial.slice(0, 100) ]).on();
+	if(!nickname) return res.send({ result: 200 });
+
+	if(nickname.length > 12) nickname = nickname.slice(0, 12);
+	MainDB.users.findOne([ 'nickname', nickname ]).on(function(data){
+		if(data) return res.send({ error: 456 });
+		MainDB.users.findOne([ '_id', req.session.profile.id ]).on(function(requester){
+			const now = Number(new Date());
+			if(GLOBAL.NICKNAME_LIMIT.TERM > 0){
+				const changedDate = new Date(Number(requester.nickChanged));
+				
+				changedDate.setDate(changedDate.getDate() + GLOBAL.NICKNAME_LIMIT.TERM);
+				if(now < Number(changedDate)) return res.send({ error: 457 });
+			}
+			
+			MainDB.users.update([ '_id', req.session.profile.id ]).set([ 'nickname', nickname ], [ 'nickChanged', now ]).on();
+			req.session.profile = { ...req.session.profile, name: nickname, title: nickname, nickname };
+			MainDB.session.update([ '_id', req.session.id ]).set([ 'profile', req.session.profile ]).on();
+			return res.send({ result: 200 });
+		});
+	});
 });
 Server.post("/buy/:id", function(req, res){
 	if(req.session.profile){
