@@ -21,6 +21,9 @@ $(document).ready(function(){
 	
 	$data.PUBLIC = $("#PUBLIC").html() == "true";
 	$data.URL = $("#URL").html();
+	$data.NICKNAME_LIMIT = JSON.parse($("#NICKNAME_LIMIT").text());
+	$data.NICKNAME_LIMIT.REGEX.unshift(null);
+	$data.NICKNAME_LIMIT.REGEX = new (Function.prototype.bind.apply(RegExp, $data.NICKNAME_LIMIT.REGEX));
 	$data.version = $("#version").html();
 	$data.server = location.href.match(/\?.*server=(\d+)/)[1];
 	$data.shop = {};
@@ -786,13 +789,33 @@ $(document).ready(function(){
 		});
 	});
 	$stage.dialog.dressOK.on('click', function(e){
+		const data = {};
+		
 		$(e.currentTarget).attr('disabled', true);
-		$.post("/exordial", { data: $("#dress-exordial").val() }, function(res){
-			$stage.dialog.dressOK.attr('disabled', false);
-			if(res.error) return fail(res.error);
-			
+		
+		if($("#dress-nickname").val() && $("#dress-nickname").val() !== $data.nickname) data.nickname = $("#dress-nickname").val();
+		if($("#dress-exordial").val() !== undefined && $("#dress-exordial").val() !== $data.exordial) data.exordial = $("#dress-exordial").val();
+		
+		if(data.nickname && $data.NICKNAME_LIMIT.REGEX.test(data.nickname)) data.nickname = confirm(L.confirmNickPolicy) ? data.nickname.replace($data.NICKNAME_LIMIT.REGEX, "") : undefined;
+		if(!data.nickname && data.exordial === undefined){
+			$stage.dialog.dressOK.attr("disabled", false);
 			$stage.dialog.dress.hide();
+			return;
+		}
+		if(confirm($data.NICKNAME_LIMIT.TERM > 0 ? L.confirmNickChangeLimit.replace("{V1}", $data.NICKNAME_LIMIT.TERM) : L.confirmNickChange)) $.post("/profile", data, function(res){
+			if(res.error) return fail(res.error);
+			const message = [];
+			if(data.nickname){
+				$("#account-info").text($data.users[$data.id].nickname = $data.users[$data.id].profile.title = $data.users[$data.id].profile.name = $data.nickname = data.nickname);
+				message.push(L.nickChanged.replace("{V1}", data.nickname));
+			}
+			if(data.exordial !== undefined) message.push(L.exorChanged.replace("{V1}", $data.users[$data.id].exordial = $data.exordial = data.exordial));
+			
+			send("updateProfile", data, true);
+			alert(message.join("\n"));
 		});
+		$stage.dialog.dressOK.attr("disabled", false);
+		$stage.dialog.dress.hide();
 	});
 	$("#DressDiag .dress-type").on('click', function(e){
 		var $target = $(e.currentTarget);

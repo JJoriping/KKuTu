@@ -29,16 +29,18 @@ function process(req, accessToken, MainDB, $p, done) {
     $p.token = accessToken;
     $p.sid = req.session.id;
 
-    let now = Date.now();
+    const now = Date.now();
     $p.sid = req.session.id;
     req.session.admin = GLOBAL.ADMIN.includes($p.id);
     req.session.authType = $p.authType;
-    MainDB.session.upsert([ '_id', req.session.id ]).set({
-        'profile': $p,
-        'createdAt': now
-    }).on();
+    
     MainDB.users.findOne([ '_id', $p.id ]).on(($body) => {
-        req.session.profile = $p;
+		$p.nickname = $p.title = $p.name = $body ? $body.nickname : $p.title || $p.name;
+		req.session.profile = $p;
+		MainDB.session.upsert([ '_id', req.session.id ]).set({
+			'profile': $p,
+			'createdAt': now
+		}).on();
         MainDB.users.update([ '_id', $p.id ]).set([ 'lastLogin', now ]).on();
     });
 
