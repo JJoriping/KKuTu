@@ -1501,7 +1501,7 @@ function updateCommunity(){
 		$stage.dialog.commFriends.append($("<div>").addClass("cf-item").attr('id', "cfi-" + i)
 			.append($("<div>").addClass("cfi-status cfi-stat-" + (o.server ? 'on' : 'off')))
 			.append($("<div>").addClass("cfi-server").html(o.server ? L['server_' + o.server] : "-"))
-			.append($("<div>").addClass("cfi-name ellipse").html(p ? (p.title || p.name) : L['hidden']))
+			.append($("<div>").addClass("cfi-name ellipse").text(p ? (p.title || p.name) : L['hidden']))
 			.append($("<div>").addClass("cfi-memo ellipse").text(memo))
 			.append($("<div>").addClass("cfi-menu")
 				.append($("<i>").addClass("fa fa-pencil").on('click', requestEditMemo))
@@ -2743,7 +2743,7 @@ function notice(msg, head){
 	stackChat();
 	$("#Chat,#chat-log-board").append($("<div>").addClass("chat-item chat-notice")
 		.append($("<div>").addClass("chat-head").text(head || L['notice']))
-		.append($("<div>").addClass("chat-body").html(msg))
+		.append($("<div>").addClass("chat-body").text(msg))
 		.append($("<div>").addClass("chat-stamp").text(time.toLocaleTimeString()))
 	);
 	$stage.chat.scrollTop(999999999);
