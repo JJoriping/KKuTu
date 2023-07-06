@@ -7,3 +7,5 @@ Server/lib/Web/public/js/**
 Server/lib/sub/auth.json
 Server/lib/sub/global.json
 .vscode
+.DS_Store
+KKUTU_ERROR.log
