@@ -21,6 +21,7 @@
         "callbackURL": "/login/twitter/callback"
     }, "kakao": {
         "clientID": "",
+        "clientSecret": "",
         "callbackURL": "/login/kakao/callback"
     }, "discord": {
         "clientID": "",
