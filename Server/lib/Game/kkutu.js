@@ -227,8 +227,6 @@ exports.Client = function(socket, profile, sid){
 		*/
 		delete my.profile.token;
 		delete my.profile.sid;
-
-		if(my.profile.title) my.profile.name = "anonymous";
 	}else{
 		gp = guestProfiles[Math.floor(Math.random() * guestProfiles.length)];
 		
@@ -241,6 +239,7 @@ exports.Client = function(socket, profile, sid){
 			image: GUEST_IMAGE
 		};
 	}
+	my.nickname = my.profile.title || my.profile.name;
 	my.socket = socket;
 	my.place = 0;
 	my.team = 0;
@@ -321,13 +320,18 @@ exports.Client = function(socket, profile, sid){
 		};
 		if(!gaming){
 			o.profile = my.profile;
+			o.nickname = my.nickname;
+			o.exordial = my.exordial;
 			o.place = my.place;
 			o.data = my.data;
 			o.money = my.money;
 			o.equip = my.equip;
-			o.exordial = my.exordial;
 		}
 		return o;
+	};
+	my.updateProfile = function(data){
+		if(data.nickname) my.nickname = my.profile.title = my.profile.name = DIC[data.id].nickname = DIC[data.id].profile.title = DIC[data.id].profile.name = data.nickname;
+		if(data.exordial) my.exordial = DIC[data.id].exordial = data.exordial;
 	};
 	my.send = function(type, data){
 		var i, r = data || {};
@@ -420,7 +424,7 @@ exports.Client = function(socket, profile, sid){
 			const blockedUntil = (first || !$user.blockedUntil) ? null : $user.blockedUntil;
 			/* Enhanced User Block System [E] */
 
-			if(first) $user = { money: 0 };
+			if(first) $user = { nickname: my.nickname, money: 0 };
 			if(black == "null") black = false;
 			if(black == "chat"){
 				black = false;
@@ -441,14 +445,20 @@ exports.Client = function(socket, profile, sid){
 					}
 				}
 			}*/
+			my.nickname = $user.nickname;
 			my.exordial = $user.exordial || "";
 			my.equip = $user.equip || {};
 			my.box = $user.box || {};
 			my.data = new exports.Data($user.kkutu);
 			my.money = Number($user.money);
 			my.friends = $user.friends || {};
-			if(first) my.flush();
-			else{
+			if(first){
+				my.flush();
+				DB.users.update([ '_id', my.id ]).set([ 'nickname', my.nickname || "별명 미지정" ]).on(function($body){
+					// TODO: 처리
+					if(!my.nickname) JLog.warn(`OAuth로부터 별명을 받아오지 못한 유저가 있습니다. #${my.id}`);
+				});
+			}else{
 				my.checkExpire();
 				my.okgCount = Math.floor((my.data.playTime || 0) / PER_OKG);
 			}

@@ -266,9 +266,11 @@ CREATE TABLE users (
     "lastLogin" bigint,
     box json,
     equip json,
+    nickname text,
+    "nickChanged" bigint DEFAULT 0 NOT NULL,
     exordial text,
     black text,
-    blockedUntil text,
+    "blockedUntil" text,
     server character varying(16),
     password text,
     friends json
@@ -283,8 +285,8 @@ ALTER TABLE users OWNER TO postgres;
 
 CREATE TABLE ip_block (
     _id character varying(64) NOT NULL,
-    reasonBlocked text,
-    ipBlockedUntil text
+    "reasonBlocked" text,
+    "ipBlockedUntil" text
 );
 
 
@@ -582909,7 +582911,7 @@ COPY session (profile, _id, "createdAt") FROM stdin;
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY users (_id, money, kkutu, "lastLogin", box, equip, exordial, black, server, password, friends) FROM stdin;
+COPY users (_id, money, kkutu, "lastLogin", box, equip, nickname, "nickChanged", exordial, black, "blockedUntil", server, password, friends) FROM stdin;
 \.
 
 

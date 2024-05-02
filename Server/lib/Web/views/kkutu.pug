@@ -53,6 +53,7 @@ block Jungle
 	span#URL= `${locals.PROTOCOL}://${locals.HOST}:${locals.PORT}/${locals._id}`
 	span#MOREMI_PART= locals.MOREMI_PART.join(',')
 	span#AVAIL_EQUIP= locals.AVAIL_EQUIP.join(',')
+	span#NICKNAME_LIMIT= locals.NICKNAME_LIMIT ? JSON.stringify(locals.NICKNAME_LIMIT) : "{}"
 	span#RULE= JSON.stringify(locals.RULE)
 	span#OPTIONS= JSON.stringify(locals.OPTIONS)
 	div#Yell
@@ -67,7 +68,7 @@ block Jungle
 
 block Middle
 	- var VERSION = L('version');
-	- var nick = SESSION.profile ? (SESSION.profile.title || SESSION.profile.name) : null;
+	- var nick = SESSION.profile && SESSION.profile.nickname;
 	div#Intro
 		img#intro(src='/img/kkutu/intro.png')
 		// img#intro-start(src='/img/kkutu/intro_start.gif')
@@ -349,7 +350,10 @@ block Middle
 			h4.dialog-bar-value#replay-players -
 		div.dialog-bar.tail-button
 			button#replay-view= L('replayView')
-	+Dialog('DressDiag', 600, 280, L('dress'))
+	+Dialog('DressDiag', 600, 310, L('dress'))
+		div.dialog-bar
+			h4(style='width: 150px;')= L('myNickname')
+			input#dress-nickname(type='textfield', placeholder=L('myNicknameX'), style='width: 435px;', maxlength=12)
 		div.dialog-bar
 			h4(style='width: 150px;')= L('myExordial')
 			input#dress-exordial(type='textfield', placeholder=L('myExordialX'), style='width: 435px;', maxlength=100)

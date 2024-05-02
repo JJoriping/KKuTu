@@ -236,6 +236,8 @@ function onMessage(data){
 			$data._playTime = data.playTime;
 			$data._okg = data.okg;
 			$data._gaming = false;
+			$data.nickname = data.nickname;
+			$data.exordial = data.exordial;
 			$data.box = data.box;
 			if(data.test) alert(L['welcomeTestServer']);
 			if(location.hash[1]) tryJoin(location.hash.slice(1));
@@ -263,7 +265,7 @@ function onMessage(data){
 			$target = $data.usersR[data.user.id] = data.user;
 			
 			if($target.id == $data.id) loading();
-			else notice(($target.profile.title || $target.profile.name) + L['hasJoined']);
+			else notice(getDisplayName($target) + L['hasJoined']);
 			updateUserList();
 			break;
 		case 'disconnRoom':
@@ -271,7 +273,7 @@ function onMessage(data){
 			
 			if($target){
 				delete $data.usersR[data.id];
-				notice(($target.profile.title || $target.profile.name) + L['hasLeft']);
+				notice(getDisplayName($target) + L['hasLeft']);
 				updateUserList();
 			}
 			break;
@@ -311,7 +313,14 @@ function onMessage(data){
 				if($data._rTime != $data.room.time) animModified('.room-head-time');
 			}
 			break;
+		case 'updateUser':
+			if(data.nickname) $data.users[data.id].nickname = $data.users[data.id].profile.title = $data.users[data.id].profile.name = data.nickname;
+			if(data.exordial) $data.users[data.id].exordial = data.exordial;
+			if($data.room) updateUI($data.room.id == data.place);
+			else updateUI(undefined, true);
+			break;
 		case 'user':
+			delete data.type;
 			$data.setUser(data.id, data);
 			if($data.room) updateUI($data.room.id == data.place);
 			break;
@@ -398,7 +407,7 @@ function onMessage(data){
 			if($data.id != data.target && $data.id != $data.room.master){
 				kickVoting(data.target);
 			}
-			notice(($data._kickTarget.profile.title || $data._kickTarget.profile.name) + L['kickVoting']);
+			notice(getDisplayName($data._kickTarget) + L['kickVoting']);
 			break;
 		case 'kickDeny':
 			notice(getKickText($data._kickTarget.profile, data));
@@ -411,7 +420,7 @@ function onMessage(data){
 			break;
 		case 'inviteNo':
 			$target = $data.users[data.target];
-			notice(($target.profile.title || $target.profile.name) + L['inviteDenied']);
+			notice(getDisplayName($target) + L['inviteDenied']);
 			break;
 		case 'okg':
 			if($data._playTime > data.time){
@@ -605,7 +614,7 @@ function runCommand(cmd){
 				c = 0;
 				cmd[1] = cmd.slice(1).join(' ');
 				for(i in $data.users){
-					if(($data.users[i].profile.title || $data.users[i].profile.name) == cmd[1]){
+					if(getDisplayName($data.users[i]) == cmd[1]){
 						notice("[" + (++c) + "] " + i);
 					}
 				}
@@ -882,7 +891,7 @@ function checkRoom(modify){
 	}
 	if($data._master != $data.room.master){
 		u = $data.users[$data.room.master];
-		notice((u.profile.title || u.profile.name) + L['hasMaster']);
+		notice(getDisplayName(u) + L['hasMaster']);
 	}
 	$data._players = $data.room.players.toString();
 	$data._master = $data.room.master;
@@ -899,7 +908,7 @@ function updateMe(){
 	renderMoremi(".my-image", my.equip);
 	// $(".my-image").css('background-image', "url('"+my.profile.image+"')");
 	$(".my-stat-level").replaceWith(getLevelImage(my.data.score).addClass("my-stat-level"));
-	$(".my-stat-name").html(my.profile.title || my.profile.name);
+	$(".my-stat-name").html(getDisplayName(my));
 	$(".my-stat-record").html(L['globalWin'] + " " + gw + L['W']);
 	$(".my-stat-ping").html(commify(my.money) + L['ping']);
 	$(".my-okg .graph-bar").width(($data._playTime % 600000) / 6000 + "%");
@@ -963,7 +972,7 @@ function userListBar(o, forInvite){
 		.append($("<div>").addClass("jt-image users-image").css('background-image', "url('"+o.profile.image+"')"))
 		.append(getLevelImage(o.data.score).addClass("users-level"))
 		// .append($("<div>").addClass("jt-image users-from").css('background-image', "url('/img/kkutu/"+o.profile.type+".png')"))
-		.append($("<div>").addClass("users-name").html(o.profile.title || o.profile.name))
+		.append($("<div>").addClass("users-name").html(getDisplayName(o)))
 		.on('click', function(e){
 			requestInvite($(e.currentTarget).attr('id').slice(12));
 		});
@@ -972,7 +981,7 @@ function userListBar(o, forInvite){
 		.append($("<div>").addClass("jt-image users-image").css('background-image', "url('"+o.profile.image+"')"))
 		.append(getLevelImage(o.data.score).addClass("users-level"))
 		// .append($("<div>").addClass("jt-image users-from").css('background-image', "url('/img/kkutu/"+o.profile.type+".png')"))
-		.append($("<div>").addClass("users-name ellipse").html(o.profile.title || o.profile.name))
+		.append($("<div>").addClass("users-name ellipse").html(getDisplayName(o)))
 		.on('click', function(e){
 			requestProfile($(e.currentTarget).attr('id').slice(11));
 		});
@@ -1041,7 +1050,7 @@ function normalGameUserBar(o){
 		.append($m = $("<div>").addClass("moremi game-user-image"))
 		.append($("<div>").addClass("game-user-title")
 			.append(getLevelImage(o.data.score).addClass("game-user-level"))
-			.append($bar = $("<div>").addClass("game-user-name ellipse").html(o.profile.title || o.profile.name))
+			.append($bar = $("<div>").addClass("game-user-name ellipse").html(getDisplayName(o)))
 			.append($("<div>").addClass("expl").html(L['LEVEL'] + " " + getLevel(o.data.score)))
 		)
 		.append($n = $("<div>").addClass("game-user-score"));
@@ -1057,7 +1066,7 @@ function miniGameUserBar(o){
 	var $R = $("<div>").attr('id', "game-user-"+o.id).addClass("game-user")
 		.append($("<div>").addClass("game-user-title")
 			.append(getLevelImage(o.data.score).addClass("game-user-level"))
-			.append($bar = $("<div>").addClass("game-user-name ellipse").html(o.profile.title || o.profile.name))
+			.append($bar = $("<div>").addClass("game-user-name ellipse").html(getDisplayName(o)))
 		)
 		.append($n = $("<div>").addClass("game-user-score"));
 	if(o.id == $data.id) $bar.addClass("game-user-my-name");
@@ -1125,7 +1134,7 @@ function updateRoom(gaming){
 				)
 				.append($("<div>").addClass("room-user-title")
 					.append(getLevelImage(o.data.score).addClass("room-user-level"))
-					.append($bar = $("<div>").addClass("room-user-name").html(o.profile.title || o.profile.name))
+					.append($bar = $("<div>").addClass("room-user-name").html(getDisplayName(o)))
 				).on('click', function(e){
 					requestProfile($(e.currentTarget).attr('id').slice(10));
 				})
@@ -1249,6 +1258,7 @@ function drawMyDress(avGroup){
 	renderMoremi($view, my.equip);
 	$(".dress-type.selected").removeClass("selected");
 	$("#dress-type-all").addClass("selected");
+	$("#dress-nickname").val(my.nickname);
 	$("#dress-exordial").val(my.exordial);
 	drawMyGoods(avGroup || true);
 }
@@ -1549,7 +1559,7 @@ function requestRoomInfo(id){
 		
 		$pls.append($("<div>").addClass("ri-player")
 			.append($moremi = $("<div>").addClass("moremi rip-moremi"))
-			.append($p = $("<div>").addClass("ellipse rip-title").html(p.profile.title || p.profile.name))
+			.append($p = $("<div>").addClass("ellipse rip-title").html(getDisplayName(p)))
 			.append($("<div>").addClass("rip-team team-" + rd.t).html($("#team-" + rd.t).html()))
 			.append($("<div>").addClass("rip-form").html(L['pform_' + rd.f]))
 		);
@@ -1571,11 +1581,11 @@ function requestProfile(id){
 		notice(L['error_405']);
 		return;
 	}
-	$("#ProfileDiag .dialog-title").html((o.profile.title || o.profile.name) + L['sProfile']);
+	$("#ProfileDiag .dialog-title").html(getDisplayName(o) + L['sProfile']);
 	$(".profile-head").empty().append($pi = $("<div>").addClass("moremi profile-moremi"))
 		.append($("<div>").addClass("profile-head-item")
 			.append(getImage(o.profile.image).addClass("profile-image"))
-			.append($("<div>").addClass("profile-title ellipse").html(o.profile.title || o.profile.name)
+			.append($("<div>").addClass("profile-title ellipse").html(getDisplayName(o))
 				.append($("<label>").addClass("profile-tag").html(" #" + o.id.toString().substr(0, 5)))
 			)
 		)
@@ -1631,7 +1641,7 @@ function requestInvite(id){
 	var nick;
 	
 	if(id != "AI"){
-		nick = $data.users[id].profile.title || $data.users[id].profile.name;
+		nick = getDisplayName($data.users[id]);
 		if(!confirm(nick + L['sureInvite'])) return;
 	}
 	send('invite', { target: id });
@@ -2007,7 +2017,7 @@ function roundEnd(result, data){
 		$b.append($o = $("<div>").addClass("result-board-item")
 			.append($p = $("<div>").addClass("result-board-rank").html(r.rank + 1))
 			.append(getLevelImage(sc).addClass("result-board-level"))
-			.append($("<div>").addClass("result-board-name").html(o.profile.title || o.profile.name))
+			.append($("<div>").addClass("result-board-name").html(getDisplayName(o)))
 			.append($("<div>").addClass("result-board-score")
 				.html(data.scores ? (L['avg'] + " " + commify(data.scores[r.id]) + L['kpm']) : (commify(r.score || 0) + L['PTS']))
 			)
@@ -2145,7 +2155,7 @@ function drawRanking(ranks){
 		$b.append($o = $("<div>").addClass("result-board-item")
 			.append($("<div>").addClass("result-board-rank").html(r.rank + 1))
 			.append(getLevelImage(r.score).addClass("result-board-level"))
-			.append($("<div>").addClass("result-board-name").html(o.profile.title || o.profile.name))
+			.append($("<div>").addClass("result-board-name").html(getDisplayName(o)))
 			.append($("<div>").addClass("result-board-score").html(commify(r.score) + L['PTS']))
 			.append($("<div>").addClass("result-board-reward").html(""))
 			.append($v = $("<div>").addClass("result-board-lvup").css('display', me ? "block" : "none")
@@ -2840,6 +2850,9 @@ function drawObtain(data){
 	playSound('success');
 	$("#obtain-image").css('background-image', "url(" + iImage(data.key) + ")");
 	$("#obtain-name").html(iName(data.key));
+}
+function getDisplayName(user){
+	return user.nickname || user.profile.title || user.profile.name;
 }
 function renderMoremi(target, equip){
 	var $obj = $(target).empty();
