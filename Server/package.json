@@ -13,8 +13,8 @@
   "author": "JJoriping",
   "license": "GPL-3.0",
   "devDependencies": {
-    "electron": "^1.4.15",
-    "electron-packager": "^8.5.1",
-    "electron-pug": "^1.5.1"
+    "@electron/packager": "^18.3.3",
+    "electron": "^31.0.2",
+    "electron-pug": "^2.0.0"
   }
 }

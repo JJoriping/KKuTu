@@ -49,7 +49,7 @@ ipcRenderer.on('log', (ev, level, msg) => {
 		logs--;
 		$(".log-item:first").remove();
 	}
-	msg = msg.toString()
+	msg = String.fromCharCode(...msg)
 		.replace(/</g, "&lt;")
 		.replace(/&/g, "&amp;")
 		.replace(/(error)/gi, `<label class="lt-error">$1</label>`)

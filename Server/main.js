@@ -23,11 +23,6 @@ const {
 	BrowserWindow,
 	Menu
 } = require('electron');
-// please set the environmental variable KKT_SV_NAME as the name of your server.
-const Pug = require('electron-pug')({ pretty: true }, {
-	version: PKG.version,
-	serverName: SETTINGS['server-name'] || process.env['KKT_SV_NAME']
-});
 const Runner = require("./runner.js");
 
 let mainWindow;
@@ -47,14 +42,24 @@ Runner.send = (...argv) => {
 	mainWindow.webContents.send.apply(mainWindow.webContents, argv);
 };
 
-function main(){
+async function main(){
 	Menu.setApplicationMenu(Menu.buildFromTemplate(Runner.MAIN_MENU));
+
+	// please set the environmental variable KKT_SV_NAME as the name of your server.
+	await require('electron-pug')({ pretty: true }, {
+		version: PKG.version,
+		serverName: SETTINGS['server-name'] || process.env['KKT_SV_NAME']
+	});
 
 	mainWindow = new BrowserWindow({
 		title: `${PKG['name']} ${PKG['version']} - Now loading`,
 		width: 800,
 		height: 600,
-		icon: __dirname + "/../logo.ico"
+		icon: __dirname + "/../logo.ico",
+		webPreferences: {
+			nodeIntegration: true,
+			contextIsolation: false
+		}
 	});
 	mainWindow.loadURL(__dirname + "/views/index.pug");
 }

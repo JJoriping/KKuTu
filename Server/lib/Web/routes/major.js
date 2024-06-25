@@ -16,9 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var Web		 = require("request");
 var MainDB	 = require("../db");
 var JLog	 = require("../../sub/jjlog");
+var fetch    = require("../../sub/fetch");
 var Const	 = require("../../const");
 
 function obtain($user, key, value, term, addValue){
@@ -100,13 +100,16 @@ Server.get("/injeong/:word", function(req, res){
 				if($ij.theme == '~') return res.send({ error: 406 });
 				else return res.send({ error: 403 });
 			}
-			Web.get("https://namu.moe/w/" + encodeURI(word), function(err, _res){
-				if(err) return res.send({ error: 400 });
-				else if(_res.statusCode != 200) return res.send({ error: 405 });
-				MainDB.kkutu_injeong.insert([ '_id', word ], [ 'theme', theme ], [ 'createdAt', now ], [ 'writer', req.session.profile.id ]).on(function($res){
-					res.send({ message: "OK" });
+			fetch("https://namu.moe/w/" + encodeURI(word))
+				.then(function(_res){
+					if(!_res.ok) return res.send({ error: 405 });
+					MainDB.kkutu_injeong.insert([ '_id', word ], [ 'theme', theme ], [ 'createdAt', now ], [ 'writer', req.session.profile.id ]).on(function($res){
+						res.send({ message: "OK" });
+					});
+				})
+				.catch(function(){
+					return res.send({ error: 400 });
 				});
-			});
 		});
 	});
 });
