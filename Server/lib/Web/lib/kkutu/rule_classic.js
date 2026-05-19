@@ -55,7 +55,7 @@ $lib.Classic.turnStart = function(data){
 	ws.onmessage = _onMessage;
 	clearInterval($data._tTime);
 	clearTrespasses();
-	$data._chars = [ data.char, data.subChar ];
+	$data._chars = [ data.char ].concat(data.subChar instanceof Array ? data.subChar : [ data.subChar ]);
 	$data._speed = data.speed;
 	$data._tTime = addInterval(turnGoing, TICK);
 	$data.turnTime = data.turnTime;
@@ -105,8 +105,12 @@ $lib.Classic.turnEnd = function(id, data){
 	}
 	if(data.hint){
 		data.hint = data.hint._id;
-		hi = data.hint.indexOf($data._chars[0]);
-		if(hi == -1) hi = data.hint.indexOf($data._chars[1]);
+		hi = -1;
+		for(var i in $data._chars){
+			if(!$data._chars[i]) continue;
+			hi = data.hint.indexOf($data._chars[i]);
+			if(hi != -1) break;
+		}
 		
 		if(MODE[$data.room.mode] == "KAP") $stage.game.display.empty()
 			.append($("<label>").css('color', "#AAAAAA").html(data.hint.slice(0, hi)))

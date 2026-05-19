@@ -126,7 +126,7 @@ DB.ready = function(){
 	}, 600000);
 	setInterval(function(){
 		gameServers.forEach(function(v){
-			if(v.socket) v.socket.send(`{"type":"seek"}`);
+			if(v.socket && v.socket.readyState === WS.OPEN) v.socket.send(`{"type":"seek"}`);
 			else v.seek = undefined;
 		});
 	}, 4000);
@@ -171,7 +171,7 @@ function GameClient(id, url){
 		if(!data) data = {};
 		data.type = type;
 
-		my.socket.send(JSON.stringify(data));
+		if(my.socket && my.socket.readyState === WS.OPEN) my.socket.send(JSON.stringify(data));
 	};
 	my.socket.on('open', function(){
 		JLog.info(`Game server #${my.id} connected`);

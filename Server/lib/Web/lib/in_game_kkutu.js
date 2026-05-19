@@ -1104,7 +1104,7 @@ $lib.Classic.turnStart = function(data){
 	ws.onmessage = _onMessage;
 	clearInterval($data._tTime);
 	clearTrespasses();
-	$data._chars = [ data.char, data.subChar ];
+	$data._chars = [ data.char ].concat(data.subChar instanceof Array ? data.subChar : [ data.subChar ]);
 	$data._speed = data.speed;
 	$data._tTime = addInterval(turnGoing, TICK);
 	$data.turnTime = data.turnTime;
@@ -1154,8 +1154,12 @@ $lib.Classic.turnEnd = function(id, data){
 	}
 	if(data.hint){
 		data.hint = data.hint._id;
-		hi = data.hint.indexOf($data._chars[0]);
-		if(hi == -1) hi = data.hint.indexOf($data._chars[1]);
+		hi = -1;
+		for(var i in $data._chars){
+			if(!$data._chars[i]) continue;
+			hi = data.hint.indexOf($data._chars[i]);
+			if(hi != -1) break;
+		}
 		
 		if(MODE[$data.room.mode] == "KAP") $stage.game.display.empty()
 			.append($("<label>").css('color', "#AAAAAA").html(data.hint.slice(0, hi)))
@@ -2518,11 +2522,11 @@ function toggleShutBlock(target){
 	}
 }
 function tryDict(text, callback){
-	var text = text.replace(/[^\sa-zA-Zㄱ-ㅎ0-9가-힣]/g, "");
-	var lang = text.match(/[ㄱ-ㅎ가-힣]/) ? 'ko' : 'en';
+	var text = text.replace(/[^\sa-zA-Zㄱ-ㅎ0-9가-힣ぁ-ゖァ-ヺ一-龯々〆〇ー・･]/g, "");
+	var lang = text.match(/[ぁ-ゖァ-ヺ一-龯々〆〇ー]/) ? 'ja' : (text.match(/[ㄱ-ㅎ가-힣]/) ? 'ko' : 'en');
 	
 	if(text.length < 1) return callback({ error: 404 });
-	$.get("/dict/" + text + "?lang=" + lang, callback);
+	$.get("/dict/" + encodeURIComponent(text) + "?lang=" + lang, callback);
 }
 function processRoom(data){
 	var i, j, key, o;
@@ -4362,7 +4366,8 @@ function processWord(word, _mean, _theme, _wcs){
 	return $R;
 }
 function getCharText(char, subChar, wordLength){
-	var res = char + (subChar ? ("("+subChar+")") : "");
+	var sub = subChar instanceof Array ? subChar.join("/") : subChar;
+	var res = char + (sub ? ("("+sub+")") : "");
 	
 	if(wordLength) res += "<label class='jjo-display-word-length'>(" + wordLength + ")</label>";
 	

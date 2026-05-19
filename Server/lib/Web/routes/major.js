@@ -301,6 +301,7 @@ Server.get("/dict/:word", function(req, res){
     
     if(!DB) return res.send({ error: 400 });
     if(!DB.findOne) return res.send({ error: 400 });
+    if(lang == "ja") word = Const.normalizeJaWord(word);
     DB.findOne([ '_id', word ]).on(function($word){
         if(!$word) return res.send({ error: 404 });
         res.send({

@@ -182,6 +182,14 @@ exports.RULE = {
 		ai: false,
 		big: true,
 		ewq: false
+	},
+	'JSH': { lang: "ja",
+		rule: "Classic",
+		opts: [ "man", "mis" ],
+		time: 1,
+		ai: true,
+		big: false,
+		ewq: true
 	}
 };
 exports.getPreScore = function(text, chain, tr){
@@ -193,11 +201,13 @@ exports.getPenalty = function(chain, score){
 exports.GAME_TYPE = Object.keys(exports.RULE);
 exports.EXAMPLE_TITLE = {
 	'ko': "가나다라마바사아자차",
-	'en': "abcdefghij"
+	'en': "abcdefghij",
+	'ja': "あいうえおかきくけこ"
 };
 exports.INIT_SOUNDS = [ "ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ" ];
 exports.MISSION_ko = [ "가", "나", "다", "라", "마", "바", "사", "아", "자", "차", "카", "타", "파", "하" ];
 exports.MISSION_en = [ "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" ];
+exports.MISSION_ja = [ "あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ", "さ", "し", "す", "せ", "そ", "た", "ち", "つ", "て", "と", "な", "に", "ぬ", "ね", "の", "は", "ひ", "ふ", "へ", "ほ", "ま", "み", "む", "め", "も", "や", "ゆ", "よ", "ら", "り", "る", "れ", "ろ", "わ" ];
 
 exports.KO_INJEONG = [
 	"IMS", "VOC", "KRR", "KTV",
@@ -229,7 +239,8 @@ exports.KO_IJP = exports.KO_INJEONG.concat(exports.KO_THEME).filter(function(ite
 exports.EN_IJP = exports.EN_INJEONG.concat(exports.EN_THEME).filter(function(item){ return !exports.IJP_EXCEPT.includes(item); });
 exports.REGION = {
 	'en': "en",
-	'ko': "kr"
+	'ko': "kr",
+	'ja': "jp"
 };
 exports.KOR_STRICT = /(^|,)(1|INJEONG)($|,)/;
 exports.KOR_GROUP = new RegExp("(,|^)(" + [
@@ -238,6 +249,8 @@ exports.KOR_GROUP = new RegExp("(,|^)(" + [
 	"INJEONG"
 ].join('|') + ")(,|$)");
 exports.ENG_ID = /^[a-z]+$/i;
+exports.JA_ID = /^[ぁ-ゖ一-龯々〆〇ー]+$/;
+exports.JA_READING = /^[ぁ-ゖー]+$/;
 exports.KOR_FLAG = {
 	LOANWORD: 1, // 외래어
 	INJEONG: 2,	// 어인정
@@ -251,4 +264,60 @@ exports.WP_REWARD = function(){
 };
 exports.getRule = function(mode){
 	return exports.RULE[exports.GAME_TYPE[mode]];
+};
+
+const JA_SMALL = {
+	"ぁ": "あ", "ぃ": "い", "ぅ": "う", "ぇ": "え", "ぉ": "お",
+	"ゃ": "や", "ゅ": "ゆ", "ょ": "よ", "ゎ": "わ", "っ": "つ",
+	"ゕ": "か", "ゖ": "け"
+};
+const JA_VOWEL = {
+	"あ": "あ", "か": "あ", "が": "あ", "さ": "あ", "ざ": "あ", "た": "あ", "だ": "あ", "な": "あ", "は": "あ", "ば": "あ", "ぱ": "あ", "ま": "あ", "や": "あ", "ゃ": "あ", "ら": "あ", "わ": "あ", "ゎ": "あ",
+	"い": "い", "き": "い", "ぎ": "い", "し": "い", "じ": "い", "ち": "い", "ぢ": "い", "に": "い", "ひ": "い", "び": "い", "ぴ": "い", "み": "い", "り": "い", "ゐ": "い",
+	"う": "う", "く": "う", "ぐ": "う", "す": "う", "ず": "う", "つ": "う", "づ": "う", "ぬ": "う", "ふ": "う", "ぶ": "う", "ぷ": "う", "む": "う", "ゆ": "う", "ゅ": "う", "る": "う", "ゔ": "う",
+	"え": "え", "け": "え", "げ": "え", "せ": "え", "ぜ": "え", "て": "え", "で": "え", "ね": "え", "へ": "え", "べ": "え", "ぺ": "え", "め": "え", "れ": "え", "ゑ": "え",
+	"お": "お", "こ": "お", "ご": "お", "そ": "お", "ぞ": "お", "と": "お", "ど": "お", "の": "お", "ほ": "お", "ぼ": "お", "ぽ": "お", "も": "お", "よ": "お", "ょ": "お", "ろ": "お", "を": "お", "ん": "ん"
+};
+
+exports.toHiragana = function(text){
+	return (text || "").normalize("NFKC").replace(/[ァ-ヶ]/g, function(ch){
+		return String.fromCharCode(ch.charCodeAt(0) - 0x60);
+	});
+};
+exports.normalizeJaWord = function(text){
+	return exports.toHiragana(text)
+		.replace(/[ 　\t\r\n・･=＝\-‐‑‒–—―、。,.，．/／()（）［］\[\]{}｛｝<>＜＞「」『』【】"'＂＇]/g, "")
+		.replace(/[^ぁ-ゖ一-龯々〆〇ー]/g, "");
+};
+exports.getJaStart = function(text){
+	var ch = exports.normalizeJaWord(text).charAt(0);
+	return JA_SMALL[ch] || ch;
+};
+exports.getJaChar = function(text){
+	var word = exports.normalizeJaWord(text);
+	var i, ch;
+	
+	for(i=word.length-1; i>=0; i--){
+		ch = word.charAt(i);
+		if(ch == "ー") continue;
+		if(word.charAt(i + 1) == "ー") return JA_VOWEL[ch] || JA_SMALL[ch] || ch;
+		return JA_SMALL[ch] || ch;
+	}
+	return "";
+};
+exports.getJaSubChar = function(char){
+	return null;
+};
+exports.getJaTitle = function(text){
+	var word = exports.normalizeJaWord(text);
+	var res = "";
+	var i, ch, next;
+	
+	for(i=0; i<word.length; i++){
+		ch = word.charAt(i);
+		next = word.charAt(i + 1);
+		if(ch == "ー") continue;
+		res += (next == "ー") ? (JA_VOWEL[ch] || JA_SMALL[ch] || ch) : (JA_SMALL[ch] || ch);
+	}
+	return res;
 };

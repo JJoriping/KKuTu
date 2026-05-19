@@ -645,11 +645,11 @@ function toggleShutBlock(target){
 	}
 }
 function tryDict(text, callback){
-	var text = text.replace(/[^\sa-zA-Zㄱ-ㅎ0-9가-힣]/g, "");
-	var lang = text.match(/[ㄱ-ㅎ가-힣]/) ? 'ko' : 'en';
+	var text = text.replace(/[^\sa-zA-Zㄱ-ㅎ0-9가-힣ぁ-ゖァ-ヺ一-龯々〆〇ー・･]/g, "");
+	var lang = text.match(/[ぁ-ゖァ-ヺ一-龯々〆〇ー]/) ? 'ja' : (text.match(/[ㄱ-ㅎ가-힣]/) ? 'ko' : 'en');
 	
 	if(text.length < 1) return callback({ error: 404 });
-	$.get("/dict/" + text + "?lang=" + lang, callback);
+	$.get("/dict/" + encodeURIComponent(text) + "?lang=" + lang, callback);
 }
 function processRoom(data){
 	var i, j, key, o;
@@ -2489,7 +2489,8 @@ function processWord(word, _mean, _theme, _wcs){
 	return $R;
 }
 function getCharText(char, subChar, wordLength){
-	var res = char + (subChar ? ("("+subChar+")") : "");
+	var sub = subChar instanceof Array ? subChar.join("/") : subChar;
+	var res = char + (sub ? ("("+sub+")") : "");
 	
 	if(wordLength) res += "<label class='jjo-display-word-length'>(" + wordLength + ")</label>";
 	
