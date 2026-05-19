@@ -23,7 +23,21 @@ const passport = require('passport');
 const glob = require('glob-promise');
 const GLOBAL	 = require("../../sub/global.json");
 const config = require('../../sub/auth.json');
-const path = require('path')
+const path = require('path');
+const crypto = require('crypto');
+
+function hashPassword(password) {
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+    return `${salt}:${hash}`;
+}
+
+function verifyPassword(password, storedPassword) {
+    if (!storedPassword || !storedPassword.includes(':')) return false;
+    const [salt, hash] = storedPassword.split(':');
+    const verifyHash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+    return hash === verifyHash;
+}
 
 function process(req, accessToken, MainDB, $p, done) {
     $p.token = accessToken;
@@ -42,7 +56,7 @@ function process(req, accessToken, MainDB, $p, done) {
         MainDB.users.update([ '_id', $p.id ]).set([ 'lastLogin', now ]).on();
     });
 
-    done(null, $p);
+    if (done) done(null, $p);
 }
 
 exports.run = (Server, page) => {
@@ -100,6 +114,82 @@ exports.run = (Server, page) => {
 			});
 		}
 	});
+
+    Server.post("/login/local", (req, res) => {
+        const { username, password, remember } = req.body;
+        if (!username || !password) {
+            JLog.warn("Local login failed: Missing username or password");
+            return res.redirect("/login?desc=loginFail");
+        }
+
+        const userId = "local:" + username;
+        MainDB.users.findOne([ '_id', userId ]).on(($user) => {
+            if ($user && verifyPassword(password, $user.password)) {
+                let now = Date.now();
+                const profile = {
+                    authType: "local",
+                    id: userId,
+                    name: username,
+                    title: username,
+                    sid: req.session.id,
+                    birth: [ 4, 16, 0 ], // Default birth for local users
+                    _age: { min: 20, max: undefined }
+                };
+                
+                req.session.admin = GLOBAL.ADMIN.includes(userId);
+                req.session.authType = "local";
+                req.session.profile = profile;
+
+                if (remember) {
+                    req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+                } else {
+                    req.session.cookie.expires = false; // Session cookie
+                }
+
+                MainDB.session.upsert([ '_id', req.session.id ]).set({
+                    'profile': profile,
+                    'createdAt': now
+                }).on(() => {
+                    MainDB.users.update([ '_id', userId ]).set([ 'lastLogin', now ]).on(() => {
+                        JLog.info("Local login success: " + userId);
+                        res.redirect("/");
+                    });
+                });
+            } else {
+                JLog.warn("Local login failed: Invalid credentials for " + userId);
+                res.redirect("/login?desc=loginFail");
+            }
+        });
+    });
+
+    Server.post("/register", (req, res) => {
+        const { username, password, passwordConfirm } = req.body;
+        if (!username || !password || username.length < 2 || password.length < 4) {
+            JLog.warn("Registration failed: Invalid input length");
+            return res.redirect("/login?desc=registerFail");
+        }
+        if (password !== passwordConfirm) {
+            JLog.warn("Registration failed: Password mismatch");
+            return res.redirect("/login?desc=registerFail");
+        }
+
+        const userId = "local:" + username;
+        MainDB.users.findOne([ '_id', userId ]).on(($user) => {
+            if ($user) {
+                JLog.warn("Registration failed: User already exists - " + userId);
+                return res.redirect("/login?desc=registerFail");
+            }
+
+            const hashedPassword = hashPassword(password);
+            MainDB.users.insert([ '_id', userId ], [ 'password', hashedPassword ], [ 'money', 0 ]).on(() => {
+                JLog.info("Registration success: " + userId);
+                res.redirect("/login?desc=registerSuccess");
+            }, null, (err) => {
+                JLog.error("Registration failed: DB error - " + err.toString());
+                res.redirect("/login?desc=registerFail");
+            });
+        });
+    });
 
 	Server.get("/logout", (req, res) => {
 		if(!req.session.profile){

@@ -675,6 +675,9 @@ $(document).ready(function(){
 		location.href = "/";
 	});
 	$stage.dialog.settingOK.on('click', function(e){
+		var locale = $("#locale").val();
+		var beforeLocale = $.cookie('lc') || "ko_KR";
+		
 		applyOptions({
 			mb: $("#mute-bgm").is(":checked"),
 			me: $("#mute-effect").is(":checked"),
@@ -687,7 +690,9 @@ $(document).ready(function(){
 			ou: $("#only-unlock").is(":checked")
 		});
 		$.cookie('kks', JSON.stringify($data.opts));
+		$.cookie('lc', locale);
 		$stage.dialog.setting.hide();
+		if(locale != beforeLocale) location.reload();
 	});
 	$stage.dialog.profileLevel.on('click', function(e){
 		$("#PracticeDiag .dialog-title").html(L['robot']);
@@ -2090,8 +2095,7 @@ function onMessage(data){
         case 'recaptcha':
             var $introText = $("#intro-text");
             $introText.empty();
-            $introText.html('게스트는 캡챠 인증이 필요합니다.' +
-                '<br/>로그인을 하시면 캡챠 인증을 건너뛰실 수 있습니다.' +
+            $introText.html(L['guestCaptchaNotice'] +
                 '<br/><br/>');
             $introText.append($('<div class="g-recaptcha" id="recaptcha" style="display: table; margin: 0 auto;"></div>'));
 
@@ -2369,15 +2373,15 @@ function onMessage(data){
 			}else if(data.code == 444){
 				i = data.message;
 				if(i.indexOf("생년월일") != -1){
-					alert("생년월일이 올바르게 입력되지 않아 게임 이용이 제한되었습니다. 잠시 후 다시 시도해 주세요.");
+					alert(L['birthDateError']);
 					break;
 				}
 			/* Enhanced User Block System [S] */
 				if(!data.blockedUntil) break;
 				
 				var blockedUntil = new Date(parseInt(data.blockedUntil));
-				var block = "\n제한 시점: " + blockedUntil.getFullYear() + "년 " + blockedUntil.getMonth() + 1 + "월 " +
-				blockedUntil.getDate() + "일 " + blockedUntil.getHours() + "시 " + blockedUntil.getMinutes() + "분까지";
+				var block = "\n" + L['restrictUntil'] + blockedUntil.getFullYear() + L['YEAR'] + " " + (blockedUntil.getMonth() + 1) + L['MONTH'] + " " +
+				blockedUntil.getDate() + L['DATE'] + " " + blockedUntil.getHours() + L['HOUR'] + " " + blockedUntil.getMinutes() + L['MINUTE'] + L['until'];
 				
 				alert("[#444] " + L['error_444'] + i + block);
 				break;
@@ -2386,14 +2390,14 @@ function onMessage(data){
 				if(!data.ipBlockedUntil) break;
 				
 				var blockedUntil = new Date(parseInt(data.ipBlockedUntil));
-				var block = "\n제한 시점: " + blockedUntil.getFullYear() + "년 " + blockedUntil.getMonth() + 1 + "월 " +
-				blockedUntil.getDate() + "일 " + blockedUntil.getHours() + "시 " + blockedUntil.getMinutes() + "분까지";
+				var block = "\n" + L['restrictUntil'] + blockedUntil.getFullYear() + L['YEAR'] + " " + (blockedUntil.getMonth() + 1) + L['MONTH'] + " " +
+				blockedUntil.getDate() + L['DATE'] + " " + blockedUntil.getHours() + L['HOUR'] + " " + blockedUntil.getMinutes() + L['MINUTE'] + L['until'];
 				
 				alert("[#446] " + L['error_446'] + i + block);
 				break;
 			/* Enhanced User Block System [E] */
 			} else if (data.code === 447) {
-				alert("자동화 봇 방지를 위한 캡챠 인증에 실패했습니다. 메인 화면에서 다시 시도해 주세요.");
+				alert(L['captchaFail']);
 				break;
 			}
 			alert("[#" + data.code + "] " + L['error_'+data.code] + i);

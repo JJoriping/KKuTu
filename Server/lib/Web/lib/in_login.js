@@ -24,5 +24,11 @@
 (function(){
 	$(document).ready(function(){
 		//볕뉘 수정 구문삭제(21~105)
+		$(".local-login-form").each(function() {
+			var $form = $(this);
+			var $btn = $form.find("button[type='submit']");
+			var $inputs = $form.find("input");
+			$btn.hotkey($inputs, 13);
+		});
 	});
 })();

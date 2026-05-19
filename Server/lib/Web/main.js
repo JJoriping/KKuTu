@@ -44,7 +44,8 @@ var fs		 = require('fs');
 
 var Language = {
 	'ko_KR': require("./lang/ko_KR.json"),
-	'en_US': require("./lang/en_US.json")
+	'en_US': require("./lang/en_US.json"),
+	'ja_JP': require("./lang/ja_JP.json")
 };
 //볕뉘 수정
 var ROUTES = [
@@ -120,7 +121,7 @@ Server.use(DDDoS.express());*/
 WebInit.init(Server, true);
 DB.ready = function(){
 	setInterval(function(){
-		var q = [ 'createdAt', { $lte: Date.now() - 3600000 * 12 } ];
+		var q = [ 'createdAt', { $lte: Date.now() - 3600000 * 24 * 30 } ];
 
 		DB.session.remove(q).on();
 	}, 600000);

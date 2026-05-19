@@ -16,82 +16,248 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#holder{
-	width: 200px;
+#portal-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	padding-top: 20px;
+}
+
+#portal-top {
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 20px;
+}
+
+#language-selector {
+	display: flex;
+	align-items: center;
+	background: rgba(255, 255, 255, 0.1);
+	padding: 5px 10px;
+	border-radius: 5px;
+	color: #fff;
+}
+
+#language-selector i {
+	margin-right: 8px;
+}
+
+#locale-select {
+	background: transparent;
+	border: none;
+	color: #fff;
+	font-size: 14px;
+	cursor: pointer;
+	outline: none;
+}
+
+#locale-select option {
+	background: #333;
+	color: #fff;
+}
+
+#portal-center {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-bottom: 40px;
+}
+
+.logo-container {
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+#holder {
+	width: 100%;
 	text-align: center;
 	text-shadow: 0px 0px 4px #333;
 	font-weight: bold;
+	font-size: 24px;
+	margin-bottom: 10px;
 }
-#logo{
-	margin-top: -20px;
+
+#logo {
+	max-width: 300px;
 }
-#kkutu-bulletin{
+
+.jjoriping-container {
+	position: relative;
+	width: 325px;
+	height: 150px;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+}
+
+.jjoriping {
+	position: relative;
+	width: 100%;
+}
+
+.jjoObj {
+	position: absolute;
+	top: -50px;
+}
+
+.jjoEyeL { left: 25px; }
+.jjoNose { left: 125px; }
+.jjoEyeR { left: 225px; }
+
+.jjoDisplayBar {
+	width: 325px;
+	height: 85px;
+	background: rgba(0, 0, 0, 0.6);
+	border-radius: 10px;
+	overflow: hidden;
+	display: flex;
+}
+
+#game-start {
+	width: 100%;
+	height: 100%;
+	font-size: 24px;
+	font-weight: bold;
+	border: none;
+	background: transparent;
+	color: #fff;
+	cursor: pointer;
+	transition: background 0.3s, font-size 0.3s;
+}
+
+#game-start:hover {
+	font-size: 28px;
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+#portal-bottom {
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
+	align-items: flex-start;
+	flex-wrap: wrap;
+}
+
+.server-section {
+	width: 320px;
+}
+
+.menu-section {
+	width: 320px;
+	display: flex;
+	flex-direction: column;
+}
+
+#menu-bar a {
+	display: block;
+	padding: 15px;
+	border-radius: 5px;
+	margin-bottom: 10px;
+	font-size: 16px;
+	text-align: center;
+	box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+	color: #fff;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+#kkutu-bulletin {
 	border: 0px;
 	margin-bottom: 5px;
 }
 
-#menu-bar a{
-	display: block;
-	float: left;
-	padding: 10px 5px;
+.server-list-box {
+	background-color: rgba(0, 0, 0, 0.4);
 	border-radius: 5px;
-	margin: 0px 3px;
-	width: 120px;
-	font-size: 15px;
-	text-align: center;
-	box-shadow: 0px 1px 1px #333;
+	overflow: hidden;
 }
 
-#game-start{
-	float: left;
-	width: 315px;
-	height: 70px;
-	font-size: 20px;
+.server-list-title {
+	padding: 10px;
+	background-color: rgba(0, 0, 0, 0.4);
+	margin: 0;
+	display: flex;
+	align-items: center;
+}
+
+#server-refresh {
+	margin-right: 10px;
+	cursor: pointer;
+}
+
+.server {
+	padding: 8px 10px;
+	font-size: 14px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.server:last-child {
+	border-bottom: none;
+}
+
+.server-status {
+	border-radius: 50%;
+	width: 12px;
+	height: 12px;
+	margin-right: 10px;
+}
+
+.ss-o { background-color: #3E3; }
+.ss-p { background-color: #EE3; }
+.ss-q { background-color: #F55; }
+.ss-x { background-color: #777; }
+
+.server-name {
+	width: 80px;
 	font-weight: bold;
-	border: none;
-	border-bottom-left-radius: inherit;
-	border-bottom-right-radius: inherit;
 }
-	#game-start:hover{ font-size: 24px; background-color: rgba(0, 0, 0, 0.5); }
-.server-list-box{
-	float: right;
-	width: 320px;
-	background-color: rgba(0, 0, 0, 0.4);
-}
-.server-list-title{
-	padding: 2px 0px;
-	width: 100%;
-	background-color: rgba(0, 0, 0, 0.4);
-}
-#server-refresh{
-	margin: 0px 5px;
-	cursor: pointer;
-}
-.server{
-	float: left;
-	margin: 2px 0px;
-	width: 320px;
-	height: 16px;
-	font-size: 13px;
-	cursor: pointer;
-}
-	.server>div{ float: left; }
-	.server-status{ border-radius: 6px; margin: 2px; width: 12px; height: 12px; }
-		.ss-o{ background-color: #3E3; }
-		.ss-p{ background-color: #EE3; }
-		.ss-q{ background-color: #F55; }
-		.ss-x{ background-color: #777; }
-	.server-name{ width: 60px; }
-	.server-people{ width: 190px; height: 100%; }
-		.server-people>.graph-bar{ background-image: url(/img/blue_gauge.png); }
-		.server-people>label{ position: relative; display: block; top: -14px; width: 100%; text-align: center; font-size: 11px; }
-	.server-enter{ width: 50px; text-align: center; }
-	.server:hover{ background-color: rgba(255, 255, 255, 0.1); }
 
-#Background{
+.server-people {
+	flex-grow: 1;
+	height: 16px;
+	background: rgba(255,255,255,0.1);
+	border-radius: 8px;
+	overflow: hidden;
+	position: relative;
+	margin: 0 10px;
+}
+
+.graph-bar {
+	height: 100%;
+	background-image: url(/img/blue_gauge.png);
+	background-size: cover;
+}
+
+.server-people label {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	text-align: center;
+	font-size: 11px;
+	line-height: 16px;
+	color: #fff;
+}
+
+.server-enter {
+	width: 50px;
+	text-align: center;
+}
+
+.server:hover {
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+#Background {
 	animation: BGScroll 4s linear infinite;
 }
-@keyframes BGScroll{
-	from{ background-position: 0px 0px; }
-	to{ background-position: -200px -200px; }
+
+@keyframes BGScroll {
+	from { background-position: 0px 0px; }
+	to { background-position: -200px -200px; }
 }

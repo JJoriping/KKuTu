@@ -29,6 +29,27 @@ html
 		span#locale= JSON.stringify(LANG)
 		//볕뉘 수정 구문삭제(30)
 		div.login-with= locals.text ? L(locals.text) : L('loginWith')
+		
+		div.local-login-container
+			form(action="/login/local" method="POST").local-login-form
+				input(type="text" name="username" placeholder=L('username') required)
+				input(type="password" name="password" placeholder=L('password') required)
+				div.auto-login-container
+					input(type="checkbox" name="remember" id="remember")
+					label(for="remember")= L('autoLogin')
+				button(type="submit" style="background-color: #4A90E2; color: white;")= L('login')
+			
+			hr(style="border: 0; border-top: 1px solid #444; margin: 10px 0; width: 100%;")
+			
+			form(action="/register" method="POST").local-login-form
+				input(type="text" name="username" placeholder=L('username') required)
+				input(type="password" name="password" placeholder=L('password') required)
+				input(type="password" name="passwordConfirm" placeholder=L('password') + " " + L('OK') required)
+				button(type="submit" style="background-color: #555; color: white;")= L('register')
+				div.local-register-rule= L('registerRule')
+
+		hr(style="border: 0; border-top: 1px solid #444; margin: 20px auto; width: 200px;")
+
 		//볕뉘 수정
 		each val in loginList
 			a(href="/login/" + val.vendor)

@@ -35,7 +35,7 @@ const SCRIPTS = {
 		].join('\n'));
 	},
 	'program-blog': () => exports.send('external', "http://blog.jjo.kr/"),
-	'program-repo': () => exports.send('external', "https://github.com/JJoriping/KKuTu"),
+	'program-repo': () => exports.send('external', "https://github.com/jeong-jimin-github/KKuTu"),
 	'exit': () => process.exit(0)
 };
 exports.MAIN_MENU = [

@@ -185,7 +185,7 @@ exports.RULE = {
 	},
 	'JSH': { lang: "ja",
 		rule: "Classic",
-		opts: [ "man", "mis" ],
+		opts: [ "man", "ext", "mis" ],
 		time: 1,
 		ai: true,
 		big: false,

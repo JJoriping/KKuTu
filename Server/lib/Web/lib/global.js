@@ -78,7 +78,9 @@ var L;
 	};
 	$(document).ready(function(e){
 		const LANG = {
-			'ko_KR': "한국어"
+			'ko_KR': "한국어",
+			'en_US': "English",
+			'ja_JP': "日本語"
 		};
 		var $gn = $("#global-notice").hide();
 		var $c;
@@ -119,6 +121,16 @@ var L;
 	
 	// 계정
 		if($.cookie('lc') == "") $.cookie('lc', "ko_KR");
+		$(".language-select").each(function(){
+			var $select = $(this);
+			
+			if(!$select.children().length){
+				Object.keys(LANG).forEach(function(key){
+					$select.append($("<option>").attr('value', key).html(LANG[key]));
+				});
+			}
+			$select.val($.cookie('lc') || "ko_KR");
+		});
 		
 		if(global.profile.token){
 			$("#account-info").html(global.profile.title || global.profile.name).on('click', function(e){

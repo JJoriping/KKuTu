@@ -4,9 +4,10 @@
   "description": "Rule the words! KKuTu Online Server",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "start-headless": "node start-headless.js"
   },
-  "repository": "https://github.com/JJoriping/KKuTu",
+  "repository": "https://github.com/jeong-jimin-github/KKuTu",
   "keywords": [
     "kkutu"
   ],

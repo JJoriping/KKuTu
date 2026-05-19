@@ -620,6 +620,9 @@ $(document).ready(function(){
 		location.href = "/";
 	});
 	$stage.dialog.settingOK.on('click', function(e){
+		var locale = $("#locale").val();
+		var beforeLocale = $.cookie('lc') || "ko_KR";
+		
 		applyOptions({
 			mb: $("#mute-bgm").is(":checked"),
 			me: $("#mute-effect").is(":checked"),
@@ -632,7 +635,9 @@ $(document).ready(function(){
 			ou: $("#only-unlock").is(":checked")
 		});
 		$.cookie('kks', JSON.stringify($data.opts));
+		$.cookie('lc', locale);
 		$stage.dialog.setting.hide();
+		if(locale != beforeLocale) location.reload();
 	});
 	$stage.dialog.profileLevel.on('click', function(e){
 		$("#PracticeDiag .dialog-title").html(L['robot']);

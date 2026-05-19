@@ -32,59 +32,59 @@ block CSS
 
 block Middle
 	div#index
-		h4(style='text-align: center;') 목차
+		h4(style='text-align: center;')= L('index')
 		ol#list
-			li: label 소개
+			li: label= L('intro')
 			li
-				label 인터페이스
+				label= L('interface')
 				ul
-					li: label 로비
-					li: label 게임 대기실
-					li: label 게임 화면
+					li: label= L('lobby')
+					li: label= L('gameWaitingRoom')
+					li: label= L('gameScreen')
 					//- li: label 리플레이 화면
 			li
-				label 게임 유형
+				label= L('gameMode')
 				ul
-					li: label 영어 끄투
-					li: label 영어 끝말잇기
-					li: label 한국어 쿵쿵따
-					li: label 한국어 끝말잇기
-					li: label 자음퀴즈
-					li: label 한국어 십자말풀이
-					li: label 한국어 타자 대결
-					li: label 영어 타자 대결
-					li: label 한국어 앞말잇기
-					li: label 훈민정음
-					li: label 한국어 단어 대결
-					li: label 영어 단어 대결
-					li: label 한국어 솎솎
-					li: label 영어 솎솎
-					li: label 일본어 끝말잇기
+					li: label= L('modeEKT')
+					li: label= L('modeESH')
+					li: label= L('modeKKT')
+					li: label= L('modeKSH')
+					li: label= L('modeCSQ')
+					li: label= L('modeKCW')
+					li: label= L('modeKTY')
+					li: label= L('modeETY')
+					li: label= L('modeKAP')
+					li: label= L('modeHUN')
+					li: label= L('modeKDA')
+					li: label= L('modeEDA')
+					li: label= L('modeKSS')
+					li: label= L('modeESS')
+					li: label= L('modeJSH')
 			li
-				label 특수 규칙
+				label= L('misc')
 				ul
-					li: label 팀
-					li: label 매너
-					li: label 어인정
-					li: label 미션
-					li: label 우리말
-					li: label 속담
-					li: label 깐깐
-					li: label 3232
-					li: label 2글자 금지
+					li: label= L('team')
+					li: label= L('optManner')
+					li: label= L('optInjeong')
+					li: label= L('optMission')
+					li: label= L('optLoanword')
+					li: label= L('optProverb')
+					li: label= L('optStrict')
+					li: label= L('optSami')
+					li: label= L('optNo2')
 			li
-				label 사용자 정보
+				label= L('userInfo')
 				ul
-					li: label 손님
-					li: label 레벨과 경험치
-					li: label 핑
-					li: label 모레미
-					li: label 글자 조합소
+					li: label= L('guest')
+					li: label= L('levelAndExp')
+					li: label= L('ping')
+					li: label= L('myMoremi')
+					li: label= L('charFactory')
 			li
-				label 기타
+				label= L('etc')
 				ul
-					li: label 한국어 데이터베이스
-					li: label 영어 데이터베이스
+					li: label= L('mcKorean') + ' ' + L('database')
+					li: label= L('mcEnglish') + ' ' + L('database')
 	div#contents
 		div#page-head
 		div.page-body#intro(style='display: block;')

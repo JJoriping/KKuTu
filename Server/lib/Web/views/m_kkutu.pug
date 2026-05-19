@@ -89,7 +89,10 @@ block Middle
 		button#ExitBtn.for-master.for-normal.for-gaming(style='display: none; background-color: #FFADAD;'): +FA('times')
 		button#ReplayBtn.for-lobby(style='display: none; background-color: #D9FF82;'): +FA('video-camera')
 		button#LeaderboardBtn.for-lobby(style='display: none; background-color: #FFADD3;'): +FA('trophy')
-	+Dialog('SettingDiag', 300, 240, L('settingsText'))
+	+Dialog('SettingDiag', 300, 350, L('settingsText'))
+		div.dialog-bar
+			h4= L('language')
+			select#locale.language-select.dialog-bar-value
 		div.dialog-bar
 			h4= L('mute')
 			+SettingOption('mute-bgm', L('bgm'))
@@ -339,11 +342,11 @@ block Middle
 	+Dialog('HelpDiag', 300, 400, L('helpText'))
 		iframe#help-board(width=300, height=375)
 	+Product('UserList')
-		div 불러오는 중
+		div= L('LOADING')
 	+Product('RoomList')
-		div 불러오는 중
+		div= L('LOADING')
 	+Product('Shop')
-		div 불러오는 중
+		div= L('LOADING')
 	+Product('Room')
 		div.team-selector
 			div.team-button#team-0.team-0= L('teamSolo')

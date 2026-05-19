@@ -137,14 +137,14 @@ iframe{
 	z-index: 2;
 }
 	.dialog-bar{ float: left; margin: 3px 0px; width: 100%; }
-	.dialog-bar h4{ float: left; padding-top: 6px; width: 100px; text-align: center; }
+	.dialog-bar h4{ float: left; padding-top: 6px; width: 100px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 	.dialog-bar-value{ width: calc(100% - 100px) !important; text-align: left !important; }
 	.dialog-bar input, .dialog-bar select{ float: left; width: 187px; height: 14px; box-sizing: inherit; outline: none; }
-	.dialog-bar label{ font-size: 13px; }
+	.dialog-bar label{ font-size: 13px; cursor: pointer; }
 	.dialog-bar button{ float: left; }
-		.dialog-opt{ float: left; width: 100px; }
+		.dialog-opt{ float: left; min-width: 100px; width: auto; padding-right: 5px; box-sizing: border-box; }
 	.tail-button{ margin-top: 7px; }
-	.tail-button button{ float: right; margin-right: 5px; width: 80px; height: 20px; }
+	.tail-button button{ float: right; margin-right: 5px; min-width: 80px; width: auto; padding: 0 10px; height: 20px; }
 	.dialog .closeBtn{
 		float: right;
 		border-radius: 6px;

@@ -40,3 +40,58 @@ button{
 	text-align: center;
 }
 .login-legal a{ color: #DDDDDD; }
+
+.local-login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.local-login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 200px;
+}
+
+.local-login-form input {
+    width: 100%;
+    height: 30px;
+    margin-bottom: 5px;
+    padding: 0 10px;
+    background-color: #333;
+    border: 1px solid #444;
+    color: white;
+    box-sizing: border-box;
+}
+
+.auto-login-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+    color: #888;
+    font-size: 12px;
+}
+
+.auto-login-container input[type="checkbox"] {
+    width: auto;
+    height: auto;
+    margin: 0 5px 0 0;
+}
+
+.local-login-form button, .local-register-form button {
+    width: 200px;
+    height: 30px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0px 2px 2px #141414;
+}
+
+.local-register-rule {
+    color: #888;
+    font-size: 11px;
+    margin-top: 5px;
+    text-align: center;
+}

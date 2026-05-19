@@ -77,6 +77,7 @@ function processAdmin(id, value){
 		return p2;
 	});
 	switch(cmd){
+		case "tell":
 		case "yell":
 			KKuTu.publish('yell', { value: value });
 			return null;

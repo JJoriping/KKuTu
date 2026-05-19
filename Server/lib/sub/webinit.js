@@ -20,7 +20,8 @@ var GLOBAL	 = require("./global.json");
 var JLog	 = require("./jjlog");
 var Language = {
 	'ko_KR': require("../Web/lang/ko_KR.json"),
-	'en_US': require("../Web/lang/en_US.json")
+	'en_US': require("../Web/lang/en_US.json"),
+	'ja_JP': require("../Web/lang/ja_JP.json")
 };
 
 function updateLanguage(){
@@ -45,20 +46,30 @@ function getLanguage(locale, page, shop){
 	
 	return R;
 }
+function getCookie(req, key){
+	var cookies = (req.headers.cookie || "").split(/;\s*/);
+	var i, kv;
+	
+	for(i in cookies){
+		kv = cookies[i].split("=");
+		if(kv[0] == key) return decodeURIComponent(kv.slice(1).join("="));
+	}
+	return "";
+}
 function page(req, res, file, data){
 	if(data == undefined)	data = {};
 	if(req.session.createdAt){
-		if(new Date() - req.session.createdAt > 3600000){
+		var maxAge = req.session.cookie.maxAge || 3600000 * 12;
+		if(new Date() - req.session.createdAt > maxAge){
 			delete req.session.profile;
 		}
-	}else{
-		req.session.createdAt = new Date();
 	}
+	req.session.createdAt = new Date(); // Update on every request
 	var addr = req.ip || "";
 	var sid = req.session.id || "";
 	
 	data.published = global.isPublic;
-	data.lang = req.query.locale || "ko_KR";
+	data.lang = req.query.locale || getCookie(req, "lc") || "ko_KR";
 	if(!Language[data.lang]) data.lang = "ko_KR";
 	// URL ...?locale=en_US will show the page in English
 	

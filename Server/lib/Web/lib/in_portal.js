@@ -27,13 +27,21 @@
 			total: $("#server-total"),
 			start: $("#game-start"),
 			ref: $("#server-refresh"),
-			refi: $("#server-refresh>i")
+			refi: $("#server-refresh>i"),
+			locale: $("#locale-select")
 		};
 
 		$("#Background").attr('src', "").addClass("jt-image").css({
 			'background-image': "url(/img/kkutu/gamebg.png)",
 			'background-size': "200px 200px"
 		});
+
+		$stage.locale.on("change", function() {
+			var locale = $(this).val();
+			document.cookie = "lc=" + locale + "; path=/";
+			location.reload();
+		});
+
 		$stage.start.prop('disabled', true).on('click', function(e){
 			var i, j;
 
