@@ -141,7 +141,7 @@ function sqlWhere(q){
 			if(!c.length) return "TRUE";
 			return Escape("%I NOT IN (%s)", item[0], c.map(function(i){ return Escape("%V", i); }).join(','));
 		}
-		if(item[1] instanceof RegExp) return Escape("%K ~ %L", item[0], item[1].source);
+		if(item[1] instanceof RegExp) return "TRUE";
 		return Escape("%K=%V", item[0], item[1]);
 	}
 	return q.map(wSearch).join(' AND ');
@@ -159,7 +159,7 @@ function sqlSet(q, inc){
 		JLog.warn("[sqlSet] Cannot increase a value in JSON object.");
 		return null; //Escape("%K=jsonb_set(%K,%V,CAST(CAST(%k AS bigint)+%V AS text),true)", k, k, p, ok, Number(v));
 	} : function(k, p, ok, v){
-		return Escape("%K=jsonb_set(%K,%V,%V,true)", k, k, p, v);
+		return Escape("%K=json_set(COALESCE(%K,'{}'),%L,%V)", k, k, "$." + p.join('.'), v);
 	}
 	return q.map(function(item){
 		var c = item[0].split('.');
@@ -201,6 +201,35 @@ function isDataAvailable(data, chk){
 		}
 	}
 	
+	return true;
+}
+function hasRegexInQuery(q){
+	var i;
+	
+	for(i in q){
+		if(q[i] && q[i][1] instanceof RegExp) return true;
+	}
+	return false;
+}
+function getByPath(data, path){
+	var cursor = data;
+	var keys = path.split('.');
+	var i;
+	
+	for(i in keys){
+		if(cursor == null) return undefined;
+		cursor = cursor[keys[i]];
+	}
+	return cursor;
+}
+function matchRegexQuery(data, q){
+	var i, value;
+	
+	for(i in q){
+		if(!q[i] || !(q[i][1] instanceof RegExp)) continue;
+		value = getByPath(data, q[i][0]);
+		if(!q[i][1].test(String(value || ""))) return false;
+	}
 	return true;
 }
 exports.Agent = function(type, origin){
@@ -279,6 +308,7 @@ exports.Agent = function(type, origin){
 				var sql;
 				var sq = _my.second['$set'];
 				var uq;
+				var regexQuery = hasRegexInQuery(q);
 				
 				function preCB(err, res){
 					if(err){
@@ -290,10 +320,21 @@ exports.Agent = function(type, origin){
 						}
 						return;
 					}
-					if(res){
+					if(res && res.rows){
 						if(mode == "findOne"){
-							if(res.rows) res = res.rows[0];
-						}else if(res.rows) res = res.rows;
+							res = regexQuery ? res.rows : res.rows[0];
+						}else{
+							res = res.rows;
+						}
+					}
+					if(regexQuery){
+						if(mode == "findOne"){
+							if(res instanceof Array){
+								res = res.filter(function(item){ return matchRegexQuery(item, q); })[0];
+							}else if(res && !matchRegexQuery(res, q)) res = undefined;
+						}else if(res instanceof Array){
+							res = res.filter(function(item){ return matchRegexQuery(item, q); });
+						}
 					}
 					callback(err, res);
 					/*
@@ -318,7 +359,7 @@ exports.Agent = function(type, origin){
 				}
 				switch(mode){
 					case "findOne":
-						_my.findLimit = 1;
+						if(!regexQuery) _my.findLimit = 1;
 					case "find":
 						sql = Escape("SELECT %s FROM %I", sqlSelect(_my.second), col);
 						if(q) sql += Escape(" WHERE %s", sqlWhere(q));

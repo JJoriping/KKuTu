@@ -24,8 +24,6 @@
 var WS		 = require("ws");
 var Express	 = require("express");
 var Exession = require("express-session");
-var Redission= require("connect-redis")(Exession);
-var Redis	 = require("redis");
 var Parser	 = require("body-parser");
 var DDDoS	 = require("dddos");
 var Server	 = Express();
@@ -67,12 +65,6 @@ Server.set('view engine', "pug");
 Server.use(Express.static(__dirname + "/public"));
 Server.use(Parser.urlencoded({ extended: true }));
 Server.use(Exession({
-	/* use only for redis-installed
-
-	store: new Redission({
-		client: Redis.createClient(),
-		ttl: 3600 * 12
-	}),*/
 	secret: 'kkutu',
 	resave: false,
 	saveUninitialized: true
