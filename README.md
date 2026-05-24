@@ -1,99 +1,152 @@
 # KKuTu
-- Made by [JJoriping](http://blog.jjo.kr/)
-- Special thanks to
-	* [샌드박스 :: SDBX](http://cafe.naver.com/sdbx)
-	* [SWMaestro](http://www.swmaestro.kr)
-	* You to have interested in this repository :)
-- [KKuTu Wiki](https://github.com/jeong-jimin-github/KKuTu/wiki)
-- [프리 서버 목록](http://jjo.kr/kkutu)
-- Languages
-	* [한국어](#한국어)
-	* [English](#english)
+
+글자로 놀자! **끄투 온라인( KK uTu Online )** 서버 저장소입니다.  
+This is the source repository for **KKuTu Online** server.
+
+- Original creator: [JJoriping](http://blog.jjo.kr/)
+- Wiki: https://github.com/jeong-jimin-github/KKuTu/wiki
+- Languages: [한국어](#한국어) · [English](#english)
+
+---
+
+## 스크린샷 / Screenshots
+
+| Lobby | Room | Team |
+|---|---|---|
+| ![KKuTu Lobby](Server/lib/Web/public/img/kkutu/help/lobby.png) | ![KKuTu Room](Server/lib/Web/public/img/kkutu/help/room.png) | ![KKuTu Team](Server/lib/Web/public/img/kkutu/help/team.png) |
+
+| Game | Mission | Replay |
+|---|---|---|
+| ![KKuTu Game](Server/lib/Web/public/img/kkutu/help/game.png) | ![KKuTu Mission](Server/lib/Web/public/img/kkutu/help/mission.png) | ![KKuTu Replay](Server/lib/Web/public/img/kkutu/help/replay.png) |
+
+---
 
 ## 한국어
-> 글자로 놀자! 끄투 온라인
 
-**끄투**는 여러분의 어휘력을 발휘할 수 있는 다양한 단어 게임들이 모여 있는 캐주얼 게임입니다.
-로봇과 혼자서 게임을 할 수도 있고, 서버에 접속해 있는 다른 사람들과 함께 할 수도 있죠.
-이 저장소는 여러분이 **끄투**를 즐기기 위해 준비해야 할 것들에 대해 알리고 있습니다.
+### 소개
 
-### 설치 방법
-#### Windows 환경
-1. 이 레포지토리를 내려받습니다.
-1. [node.js](https://nodejs.org/ko/) 인스톨러를 내려받아 설치(버전 8 이상)합니다. [npm](https://www.npmjs.com/)과 함께 설치되어야 합니다.
-1. 명령 프롬프트에서 `npm install -g grunt grunt-cli`를 입력해 [grunt](https://gruntjs.com/)를 설치합니다.
-1. 배치 파일(`./server-setup.bat`)을 실행시킵니다.
-1. 배치 파일(`./Server/run.bat`)을 실행시킵니다.
-	* 되도록 이 배치 파일을 직접 종료하지 말고 이를 실행시켜 나타나는 창을 종료하세요.
+**끄투**는 어휘력 기반의 멀티플레이 단어 게임입니다.  
+이 저장소는 서버를 직접 설치/운영하려는 사용자를 위한 소스 코드와 리소스를 제공합니다.
 
-#### Linux 환경
-1. 이 레포지토리를 내려받습니다.
-1. 패키지 매니저를 이용하여 [node.js](https://nodejs.org/)와 [npm](https://www.npmjs.com/)을 설치(버전 8 이상)합니다.
-1. `npm install -g grunt grunt-cli`를 입력해 [grunt](https://gruntjs.com/)를 설치합니다.
-1. 섈 스크립트 파일(`./server-setup.bat`)을 실행시킵니다. (Windows 전용 파일이지만 Linux에서도 작동합니다.)
-1. 경로 `./Server`에서 다음 명령어들을 차례대로 실행합니다:
-	1. (게임 서버) `node lib/Game/cluster.js 0 1`
-	1. (웹 서버) `node lib/Web/cluster.js 1`
+### 요구 사항
 
-#### 공통
-- SQLite 데이터베이스 파일을 사용하려면 설정 파일(`./Server/lib/sub/global.json`)에 `SQLITE_PATH`를 **반드시** 지정해야 합니다.
-- 폴더 `./Server/lib/sub`에 oAuth 설정 파일(`auth.json`)과 전역 설정 파일(`global.json`)을 **반드시** 만들어 주세요. 본 레포지토리에는 각 파일의 양식이 들어가 있습니다.
-- 일본어 끝말잇기 사전을 갱신하려면 프로젝트 루트에서 `node tools/import_jmdict.js <JMdict_e.gz 경로> <sqlite 스키마 파일 경로>`를 실행하세요.
-- 만화/애니메이션 어인정 단어(한국어/일본어)를 최신 코퍼스로 보강하려면 프로젝트 루트에서 `python3 tools/import_anime_db.py`를 실행하세요. (한국어: 끄코위키 목록, 일본어: HuggingFace MAL 데이터셋)
-- 단어 목록을 GUI로 보고 테마별로 필터링하려면 프로젝트 루트에서 `python3 tools/word_theme_gui.py`를 실행하세요.
-- 본 레포지토리에는 [WordNet](https://wordnet.princeton.edu/) 및 [JMdict/EDICT](https://www.edrdg.org/wiki/index.php/JMdict-EDICT_Dictionary_Project) 자료가 포함되어 있습니다. 서버를 운영할 때 반드시 사용자에게 이에 대한 라이선스를 안내해야 합니다.
-- 호스트 `127.0.0.2`는 웹 서버와 게임 서버 사이의 연결을 위해 예약된 주소이므로 이 주소를 사용하지 말아야 합니다.
-- 서버가 정상적으로 설치된 다음부터는 서버를 실행시키기 위해서 가장 마지막 단계만 수행하면 됩니다.
-- 서버가 성공적으로 열린 후 웹 브라우저에서 `127.0.0.1`(다른 사람들은 해당 컴퓨터의 외부 IP 주소)로 접속하여 끄투를 즐길 수 있습니다.
-- Redis 서버 없이도 랭킹 및 세션 기능이 동작하도록 변경되었습니다.
-- [Cloudflare](https://www.cloudflare.com/)를 이용하는 경우, DNS 탭의 status를 `DNS only`로 두세요. `DNS and HTTP proxy (CDN)`으로 둘 경우, 방 만들기와 방 입장이 불가합니다.
+- Node.js (권장: 18 이상)
+- npm
+- SQLite (파일 기반 DB, 외부 PostgreSQL/Redis 불필요)
+
+### 빠른 시작 (Windows)
+
+1. 저장소를 클론/다운로드합니다.
+2. `npm install -g grunt grunt-cli` 를 실행합니다.
+3. 루트에서 `server-setup.bat` 를 실행합니다.
+4. `Server/lib/sub/auth.json`, `Server/lib/sub/global.json` 파일을 생성/수정합니다.
+5. `Server/run.bat` 를 실행합니다.
+
+### 빠른 시작 (Linux/macOS)
+
+1. 저장소를 클론합니다.
+2. `npm install -g grunt grunt-cli` 를 실행합니다.
+3. `cd Server && node setup`
+4. `cd Server/lib && npx grunt default pack`
+5. `Server/lib/sub/auth.json`, `Server/lib/sub/global.json` 파일을 생성/수정합니다.
+6. 서버 실행:
+   - 게임 서버: `node Server/lib/Game/cluster.js 0 1`
+   - 웹 서버: `node Server/lib/Web/cluster.js 1`
+
+### 필수 설정 (`Server/lib/sub/global.json`)
+
+아래 항목을 반드시 맞춰 주세요.
+
+- `SQLITE_PATH`: SQLite DB 파일 경로 (예: `/kkutu/kkutu.db`)
+- `MAIN_PORTS`, `GAME_SERVER_HOST`, `ADMIN` 등 서버 운영 기본값
+- HTTPS 사용 시 `IS_SECURED`, `SSL_OPTIONS`
+
+> 참고: 기존 PostgreSQL/Redis 기반 설정 없이 동작하도록 구성되어 있습니다.
+
+### 데이터/도구
+
+- 일본어 사전 반영:
+  - `node tools/import_jmdict.js <JMdict_e.gz 경로> <sqlite 스키마 파일 경로>`
+- 일본어 테이블 반영 스크립트:
+  - `node tools/apply_japanese_db.js` (환경 설정 필요)
+- 애니메이션 어인정 단어 보강:
+  - `python3 tools/import_anime_db.py`
+- 단어 테마 GUI:
+  - `python3 tools/word_theme_gui.py`
+
+### Docker Compose
+
+`docker-compose.yml`은 SQLite 볼륨(`kkutu_data`)을 사용하도록 구성되어 있습니다.
+
+- `web`, `game` 서비스에 `SQLITE_PATH=/kkutu/kkutu.db` 적용
+- 별도 PostgreSQL 컨테이너 없이 실행
 
 ### 라이선스
-- 모든 소스 코드에 대해: [GNU 일반 공중 사용 라이선스](https://github.com/jeong-jimin-github/KKuTu/blob/master/LICENSE)
-- 모든 이미지 및 소리에 대해: [크리에이티브 커먼즈 라이선스 CC BY](https://creativecommons.org/licenses/by/4.0/)
-	- 다만 본 레포지토리에서 제공하는 소스 코드로 끄투 서비스를 운영하기 위해 이들을 사용하는 경우 저작자 표시(BY)를 생략할 수 있습니다.
+
+- 소스 코드: [GNU GPL-3.0](LICENSE)
+- 이미지/사운드: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+
+---
 
 ## English
-> Rule the words! KKuTu Online
 
-**KKuTu** is a casual game containing various word games that let players use their vocabulary.
-Players can play alone with a robot, or play with other players who have entered to a server.
-This repository provides you what you have to prepare to play **KKuTu**.
+### Overview
 
-### How to Install
-#### For Windows
-1. Download or clone this repository to your machine.
-1. Install [node.js](https://nodejs.org/en/) and [npm](https://www.npmjs.com/)(this will be installed automatically). The version should be ≥8.
-1. Open *cmd* and run `npm install -g grunt grunt-cli` to install [grunt](https://gruntjs.com/).
-1. Run the batch file(`./server-setup.bat`).
-1. Run the batch file(`./Server/run.bat`).
-	* If you want to close the server, it is recommended that closing not the command prompt window, but the window generated by the command.
+**KKuTu** is a multiplayer word game platform.  
+This repository contains server code and assets for self-hosting.
 
-#### For Linux
-1. Download or clone this repository to your machine.
-1. Install [node.js](https://nodejs.org/en/) and [npm](https://www.npmjs.com/) via a package manager. The version should be ≥8.
-1. Run `npm install -g grunt grunt-cli` to install [grunt](https://gruntjs.com).
-1. Run the shell script file(`./server-setup.bat`). (It is a batch file for Windows but it will also work on Linux.)
-1. Run these on working directory `./Server` in order:
-	1. (Game server) `node lib/Game/cluster.js 0 1`
-	1. (Web server) `node lib/Web/cluster.js 1`
+### Requirements
 
-#### Common
-- You MUST edit the file(`./Server/lib/sub/global.json`) and set `SQLITE_PATH` to your SQLite DB file path.
-- You MUST create two files(`./Server/lib/sub/auth.json`, `./Server/lib/sub/global.json`) to turn on this server.
-- To refresh the Japanese Shiritori dictionary, run `node tools/import_jmdict.js <path-to-JMdict_e.gz> <path-to-sqlite-schema-file>` from the repository root.
-- To enrich Korean/Japanese anime-themed injeong entries with current corpora, run `python3 tools/import_anime_db.py` from the repository root. (Korean: KKuKo Wiki list, Japanese: HuggingFace MAL dataset)
-- To browse words in a GUI and filter by theme, run `python3 tools/word_theme_gui.py` from the repository root.
-- This repository contains some data from [WordNet](https://wordnet.princeton.edu/) and [JMdict/EDICT](https://www.edrdg.org/wiki/index.php/JMdict-EDICT_Dictionary_Project). Please provide users the licenses of WordNet and JMdict/EDICT when you operate this server.
-- The host `127.0.0.2` is reserved for connections between your web server and game server.
-- Once the server is successfully installed, you can do just the last step of above-mentioned guideline whenever you want to run the server.
-- You can open a browser and go to `127.0.0.1`(or external IP address for other people) to play **KKuTu**.
-- Ranking and session features now work without a Redis server.
-- If you use Cloudflare, you should set status of DNS Tab to 'DNS only'. The status 'DNS and HTTP proxy (CDN)' could disable to open and enter to a room.
+- Node.js (recommended: 18+)
+- npm
+- SQLite (file-based DB, no external PostgreSQL/Redis required)
+
+### Quick Start (Windows)
+
+1. Clone/download this repository.
+2. Run `npm install -g grunt grunt-cli`.
+3. Run `server-setup.bat` in the repository root.
+4. Create/update `Server/lib/sub/auth.json` and `Server/lib/sub/global.json`.
+5. Run `Server/run.bat`.
+
+### Quick Start (Linux/macOS)
+
+1. Clone this repository.
+2. Run `npm install -g grunt grunt-cli`.
+3. `cd Server && node setup`
+4. `cd Server/lib && npx grunt default pack`
+5. Create/update `Server/lib/sub/auth.json` and `Server/lib/sub/global.json`.
+6. Start servers:
+   - Game: `node Server/lib/Game/cluster.js 0 1`
+   - Web: `node Server/lib/Web/cluster.js 1`
+
+### Required Config (`Server/lib/sub/global.json`)
+
+Please set at least:
+
+- `SQLITE_PATH`: SQLite DB file path (e.g. `/kkutu/kkutu.db`)
+- server basics such as `MAIN_PORTS`, `GAME_SERVER_HOST`, `ADMIN`
+- HTTPS options (`IS_SECURED`, `SSL_OPTIONS`) if needed
+
+### Data Utilities
+
+- Import/update Japanese dictionary:
+  - `node tools/import_jmdict.js <path-to-JMdict_e.gz> <path-to-sqlite-schema-file>`
+- Apply Japanese DB section:
+  - `node tools/apply_japanese_db.js` (requires proper environment config)
+- Import anime-themed injeong corpus:
+  - `python3 tools/import_anime_db.py`
+- Word theme GUI:
+  - `python3 tools/word_theme_gui.py`
+
+### Docker Compose
+
+The included `docker-compose.yml` uses SQLite volume storage (`kkutu_data`):
+
+- `web` and `game` services use `SQLITE_PATH=/kkutu/kkutu.db`
+- no separate PostgreSQL container is required
 
 ### License
-- [GNU General Public License](https://github.com/jeong-jimin-github/KKuTu/blob/master/LICENSE) for all source codes in this repository.
-- [Creative Commons License CC BY](https://creativecommons.org/licenses/by/4.0/) for all images and sounds in this repository.
-	- But if you use these for operating KKuTu service provided by this repository, you may omit the attribution(BY).
 
-[dev-blog]: http://blog.jjo.kr/220935346136
+- Source code: [GNU GPL-3.0](LICENSE)
+- Images and sounds: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
