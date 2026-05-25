@@ -32,9 +32,9 @@ var Recaptcha = require('../sub/recaptcha');
 var MainDB;
 
 var Server;
-var DIC = {};
-var DNAME = {};
-var ROOM = {};
+var DIC = exports.DIC = {};
+var DNAME = exports.DNAME = {};
+var ROOM = exports.ROOM = {};
 
 var T_ROOM = {};
 var T_USER = {};

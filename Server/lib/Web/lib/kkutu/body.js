@@ -145,18 +145,37 @@ function route(func, a0, a1, a2, a3, a4){
 	$lib[r.rule][func].call(this, a0, a1, a2, a3, a4);
 }
 function connectToRoom(chan, rid){
-	var url = $data.URL.replace(/:(\d+)/, function(v, p1){
-		return ":" + (Number(p1) + 416 + Number(chan) - 1);
-	}) + "&" + chan + "&" + rid;
-	
 	if(rws) return;
-	rws = new _WebSocket(url);
-	
+
 	loading(L['connectToRoom'] + "\n<center><button id='ctr-close'>" + L['ctrCancel'] + "</button></center>");
 	$("#ctr-close").on('click', function(){
 		loading();
 		if(rws) rws.close();
 	});
+
+	// Path-based URL (unified mode): reuse the existing ws connection
+	if(!/:(\d+)/.test($data.URL)){
+		rws = {
+			_closed: false,
+			readyState: ws ? ws.readyState : 3,
+			send: function(data){ if(ws && ws.readyState === 1) ws.send(data); },
+			close: function(){
+				if(rws && !rws._closed){
+					rws._closed = true;
+					var self = rws;
+					rws = undefined;
+					if(self.onclose) self.onclose({});
+				}
+			}
+		};
+		setTimeout(function(){ if(rws && rws.onopen) rws.onopen({}); }, 0);
+	} else {
+		var url = $data.URL.replace(/:(\d+)/, function(v, p1){
+			return ":" + (Number(p1) + 416 + Number(chan) - 1);
+		}) + "&" + chan + "&" + rid;
+		rws = new _WebSocket(url);
+	}
+
 	rws.onopen = function(e){
 		console.log("room-conn", chan, rid);
 	};
@@ -293,7 +312,10 @@ function onMessage(data){
 			}
 			break;
 		case 'roomStuck':
-			rws.close();
+			if(rws) rws.close();
+			break;
+		case 'leaveRoom':
+			if(rws) rws.close();
 			break;
 		case 'preRoom':
 			connectToRoom(data.channel, data.id);

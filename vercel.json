@@ -19,10 +19,11 @@
   ],
   "functions": {
     "Server/lib/Web/main.js": {
-      "maxDuration": 30
+      "maxDuration": 800
     }
   },
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "UNIFIED_GAME": "true"
   }
 }

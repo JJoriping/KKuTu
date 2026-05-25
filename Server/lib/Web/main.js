@@ -22,6 +22,7 @@
  */
 
 var WS		 = require("ws");
+var http	 = require("http");
 var Express	 = require("express");
 var Exession = require("express-session");
 var Parser	 = require("body-parser");
@@ -32,6 +33,10 @@ var WebInit	 = require("../sub/webinit");
 var GLOBAL	 = require("../sub/global");
 var passport = require('passport');
 var Const	 = require("../const");
+
+// Unified mode: run the game server in-process rather than connecting to external ports
+var UNIFIED_GAME = !!(process.env.VERCEL || process.env.VERCEL_ENV || process.env.UNIFIED_GAME);
+var gameServer = UNIFIED_GAME ? require('../Game/game-server') : null;
 
 var Language = {
 	'ko_KR': require("./lang/ko_KR.json"),
@@ -90,7 +95,7 @@ DB.ready = function(){
 
 		DB.session.remove(q).on();
 	}, 600000);
-	setInterval(function(){
+	if(!UNIFIED_GAME) setInterval(function(){
 		gameServers.forEach(function(v){
 			if(v.socket && v.socket.readyState === WS.OPEN) v.socket.send(`{"type":"seek"}`);
 			else v.seek = undefined;
@@ -112,34 +117,57 @@ DB.ready = function(){
 		}
 	});
 
+	if(UNIFIED_GAME) {
+		gameServer.init(DB);
+	}
+
 	// Only listen directly when not running under Vercel (local/Docker)
 	if(!process.env.VERCEL && !process.env.VERCEL_ENV){
 		var port = Number(process.env.PORT) || 80;
-		Server.listen(port, function(){
+		var httpServer = http.createServer(Server);
+		if(UNIFIED_GAME) {
+			gameServer.attach(httpServer);
+		}
+		httpServer.listen(port, function(){
 			JLog.success("Web server listening on port " + port);
 		});
-		if(Const.IS_SECURED){
+		if(Const.IS_SECURED && !UNIFIED_GAME){
 			var Secure = require('../sub/secure');
 			var https = require('https');
 			var options = Secure();
 			https.createServer(options, Server).listen(443);
 		}
+	} else if(UNIFIED_GAME) {
+		// On Vercel: attach WebSocket upgrade handler
+		// Note: Vercel Pro with maxDuration:800 is required for persistent WS connections
+		var vercelHttpServer = http.createServer(Server);
+		gameServer.attach(vercelHttpServer);
 	}
 };
 
-Const.MAIN_PORTS.forEach(function(v, i){
-	var KEY = process.env['WS_KEY'] || String(i + 1);
-	var protocol = Const.IS_SECURED ? 'wss' : 'ws';
-	var host = GLOBAL.GAME_SERVER_HOST;
+if(UNIFIED_GAME) {
+	// In unified mode, the game server runs in-process
+	gameServers[0] = {
+		id: "1",
+		socket: null,
+		get seek(){ return gameServer.getSeek ? gameServer.getSeek() : 0; },
+		send: function(){}
+	};
+	JLog.info("Unified game server mode enabled.");
+} else {
+	Const.MAIN_PORTS.forEach(function(v, i){
+		var KEY = process.env['WS_KEY'] || String(i + 1);
+		var protocol = Const.IS_SECURED ? 'wss' : 'ws';
+		var host = GLOBAL.GAME_SERVER_HOST;
 
-	if(!host || host === 'localhost' && process.env.VERCEL_ENV){
-		// Skip game server connections on Vercel when no external game host configured
-		gameServers[i] = { id: KEY, socket: null, seek: undefined, send: function(){} };
-		JLog.warn(`Game server #${i} skipped (GAME_SERVER_HOST not configured)`);
-		return;
-	}
-	gameServers[i] = new GameClient(KEY, `${protocol}://${host}:${v}/${KEY}`);
-});
+		if(!host){
+			gameServers[i] = { id: KEY, socket: null, seek: undefined, send: function(){} };
+			JLog.warn(`Game server #${i} skipped (GAME_SERVER_HOST not configured)`);
+			return;
+		}
+		gameServers[i] = new GameClient(KEY, `${protocol}://${host}:${v}/${KEY}`);
+	});
+}
 
 function GameClient(id, url){
 	var my = this;
@@ -207,12 +235,17 @@ Server.get("/", function(req, res){
 		}else{
 			delete req.session.profile;
 		}
-		page(req, res, Const.MAIN_PORTS[server] ? "kkutu" : "portal", {
+		var wsProto = Const.IS_SECURED ? 'wss' : 'ws';
+		var wsUrl = UNIFIED_GAME
+			? `${wsProto}://${req.hostname}/game/0/${id}`
+			: `${wsProto}://${GLOBAL.GAME_SERVER_HOST || req.hostname}:${Const.MAIN_PORTS[server || 0]}/${id}`;
+		page(req, res, (UNIFIED_GAME || Const.MAIN_PORTS[server]) ? "kkutu" : "portal", {
 			'_page': "kkutu",
 			'_id': id,
 			'PORT': Const.MAIN_PORTS[server],
 			'HOST': req.hostname,
-			'PROTOCOL': Const.IS_SECURED ? 'wss' : 'ws',
+			'PROTOCOL': wsProto,
+			'WS_URL': wsUrl,
 			'TEST': req.query.test,
 			'MOREMI_PART': Const.MOREMI_PART,
 			'AVAIL_EQUIP': Const.AVAIL_EQUIP,

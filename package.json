@@ -4,9 +4,11 @@
   "description": "Rule the words! KKuTu Online Server",
   "main": "Server/lib/Web/main.js",
   "scripts": {
-    "start": "node Server/lib/Web/main.js",
+    "start": "UNIFIED_GAME=true node Server/lib/Web/main.js",
+    "start-legacy": "node Server/lib/Web/main.js",
     "start-headless": "node Server/start-headless.js",
-    "vercel-build": "echo 'No build step required'"
+    "build": "cd Server/lib && npm install && npx grunt",
+    "vercel-build": "cd Server/lib && npm install && npx grunt"
   },
   "dependencies": {
     "body-parser": "^1.15.2",

@@ -32,6 +32,11 @@ var guestProfiles = [];
 var CHAN;
 var channel = process.env['CHANNEL'] || 0;
 
+var UNIFIED_MODE = false;
+exports.setUnifiedMode = function(){ UNIFIED_MODE = true; };
+function isMaster(){ return Cluster.isMaster || UNIFIED_MODE; }
+function isWorker(){ return Cluster.isWorker || UNIFIED_MODE; }
+
 const NUM_SLAVES = 4;
 const GUEST_IMAGE = "/img/kkutu/guest.png";
 const MAX_OKG = 18;
@@ -47,7 +52,7 @@ exports.init = function(_DB, _DIC, _ROOM, _GUEST_PERMISSION, _CHAN){
 	GUEST_PERMISSION = _GUEST_PERMISSION;
 	CHAN = _CHAN;
 	_rid = 100;
-	// 망할 셧다운제 if(Cluster.isMaster) setInterval(exports.processAjae, 60000);
+	// 망할 셧다운제 if(isMaster()) setInterval(exports.processAjae, 60000);
 	DB.kkutu_shop.find().on(function($shop){
 		SHOP = {};
 		
@@ -103,11 +108,11 @@ exports.narrate = function(list, type, data){
 exports.publish = function(type, data, _room){
 	var i;
 	
-	if(Cluster.isMaster){
+	if(isMaster()){
 		for(i in DIC){
 			DIC[i].send(type, data);
 		}
-	}else if(Cluster.isWorker){
+	}else if(isWorker()){
 		if(type == "room") process.send({ type: "room-publish", data: data, password: _room });
 		else for(i in DIC){
 			DIC[i].send(type, data);
@@ -215,7 +220,7 @@ exports.Client = function(socket, profile, sid){
 		my.id = profile.id;
 		my.profile = profile;
 		/* 망할 셧다운제
-		if(Cluster.isMaster){
+		if(isMaster()){
 			my.isAjae = Ajae.checkAjae(profile.birth, profile._age);
 		}else{
 			my.isAjae = true;
@@ -242,18 +247,19 @@ exports.Client = function(socket, profile, sid){
 		};
 	}
 	my.socket = socket;
+	my.sid = sid;
 	my.place = 0;
 	my.team = 0;
 	my.ready = false;
 	my.game = {};
-	
+
 	my.subPlace = 0;
 	my.error = false;
 	my.blocked = false;
 	my.spam = 0;
 	my._pub = new Date();
 	
-	if(Cluster.isMaster){
+	if(isMaster()){
 		my.onOKG = function(time){
 			// ?? 이럴 일이 없어야 한다.
 		};
@@ -289,7 +295,7 @@ exports.Client = function(socket, profile, sid){
 		
 		JLog.log(`Chan @${channel} Msg #${my.id}: ${msg}`);
 		try{ data = JSON.parse(msg); }catch(e){ data = { error: 400 }; }
-		if(Cluster.isWorker) process.send({ type: "tail-report", id: my.id, chan: channel, place: my.place, msg: data.error ? msg : data });
+		if(isWorker()) process.send({ type: "tail-report", id: my.id, chan: channel, place: my.place, msg: data.error ? msg : data });
 		
 		exports.onClientMessage(my, data);
 	});
@@ -354,7 +360,7 @@ exports.Client = function(socket, profile, sid){
 			if(my.blocked){
 				if(st < Const.BLOCKED_LENGTH){
 					if(++my.numSpam >= Const.KICK_BY_SPAM){
-						if(Cluster.isWorker) process.send({ type: "kick", target: my.id });
+						if(isWorker()) process.send({ type: "kick", target: my.id });
 						return my.socket.close();
 					}
 					return my.send('blocked');
@@ -366,7 +372,7 @@ exports.Client = function(socket, profile, sid){
 		else for(i in DIC){
 			if(DIC[i].place == my.place) DIC[i].send(type, data);
 		}
-		if(Cluster.isWorker && type == 'user') process.send({ type: "user-publish", data: data });
+		if(isWorker() && type == 'user') process.send({ type: "user-publish", data: data });
 	};
 	my.chat = function(msg, code){
 		if(my.noChat) return my.send('chat', { notice: true, code: 443 });
@@ -458,7 +464,7 @@ exports.Client = function(socket, profile, sid){
 				else R.go({ result: 444, black: black });
 			}
 			/* Enhanced User Block System [E] */
-			else if(Cluster.isMaster && $user.server) R.go({ result: 409, black: $user.server });
+			else if(isMaster() && $user.server) R.go({ result: 409, black: $user.server });
 			else if(exports.NIGHT && my.isAjae === false) R.go({ result: 440 });
 			else R.go({ result: 200 });
 		});
@@ -509,7 +515,7 @@ exports.Client = function(socket, profile, sid){
 			$room = ROOM[room.id];
 			
 			if(!$room){
-				if(Cluster.isMaster){
+				if(isMaster()){
 					for(i in CHAN) CHAN[i].send({ type: "room-invalid", room: room });
 				}else{
 					process.send({ type: "room-invalid", room: room });
@@ -529,7 +535,7 @@ exports.Client = function(socket, profile, sid){
 			if($room.players.indexOf(my.id) != -1){
 				return my.sendError(409);
 			}
-			if(Cluster.isMaster){
+			if(isMaster()){
 				my.send('preRoom', { id: $room.id, pw: room.password, channel: $room.channel });
 				CHAN[$room.channel].send({ type: "room-reserve", session: sid, room: room, spec: spec, pass: pass });
 				
@@ -556,7 +562,7 @@ exports.Client = function(socket, profile, sid){
 				4. 일꾼이 만들었다고 마스터에게 알린다.
 				5. 마스터가 방 정보를 반영한다.
 			*/
-			if(Cluster.isMaster){
+			if(isMaster()){
 				var av = getFreeChannel();
 				
 				room.id = _rid;
@@ -906,13 +912,13 @@ exports.Room = function(room, channel){
 		if(my.players.push(client.id) == 1){
 			my.master = client.id;
 		}
-		if(Cluster.isWorker){
+		if(isWorker()){
 			client.ready = false;
 			client.team = 0;
 			client.cameWhenGaming = false;
 			client.form = "J";
-			
-			if(!my.practice) process.send({ type: "room-come", target: client.id, id: my.id });
+
+			if(!my.practice && !UNIFIED_MODE) process.send({ type: "room-come", target: client.id, id: my.id });
 			my.export(client.id);
 		}
 	};
@@ -920,13 +926,13 @@ exports.Room = function(room, channel){
 		if(!my.practice) client.place = my.id;
 		var len = my.players.push(client.id);
 		
-		if(Cluster.isWorker){
+		if(isWorker()){
 			client.ready = false;
 			client.team = 0;
 			client.cameWhenGaming = true;
 			client.form = (len > my.limit) ? "O" : "S";
 			
-			process.send({ type: "room-spectate", target: client.id, id: my.id, pw: password });
+			if(!UNIFIED_MODE) process.send({ type: "room-spectate", target: client.id, id: my.id, pw: password });
 			my.export(client.id, false, true);
 		}
 	};
@@ -958,7 +964,7 @@ exports.Room = function(room, channel){
 						if(me && my.rule.ewq){
 							clearTimeout(my.game._rrt);
 							my.game.loading = false;
-							if(Cluster.isWorker) my.turnEnd();
+							if(isWorker()) my.turnEnd();
 						}
 						my.game.seq.splice(x, 1);
 						if(my.game.turn > x){
@@ -983,10 +989,10 @@ exports.Room = function(room, channel){
 			client.subPlace = 0;
 		}else client.place = 0;
 		
-		if(Cluster.isWorker){
+		if(isWorker()){
 			if(!my.practice){
-				client.socket.close();
-				process.send({ type: "room-go", target: client.id, id: my.id, removed: !ROOM.hasOwnProperty(my.id) });
+				if(!UNIFIED_MODE) client.socket.close();
+				if(!UNIFIED_MODE) process.send({ type: "room-go", target: client.id, id: my.id, removed: !ROOM.hasOwnProperty(my.id) });
 			}
 			my.export(client.id, kickVote);
 		}
@@ -1355,7 +1361,7 @@ exports.Room = function(room, channel){
 function getFreeChannel(){
 	var i, list = {};
 	
-	if(Cluster.isMaster){
+	if(isMaster()){
 		var mk = 1;
 		
 		for(i in CHAN){
