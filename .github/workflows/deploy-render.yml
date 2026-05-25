@@ -8,6 +8,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     env:
       RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
 
@@ -102,8 +104,6 @@ jobs:
               'autoDeploy': 'yes',
               'serviceDetails': {
                   'env': 'node',
-                  'plan': 'free',
-                  'region': 'oregon',
                   'buildCommand': 'cd Server/lib && npm install && npx grunt',
                   'startCommand': 'node Server/lib/Web/main.js',
                   'healthCheckPath': '/health'
@@ -158,33 +158,24 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JOB_STATUS: ${{ job.status }}
           GH_RUN_ID: ${{ github.run_id }}
-          GH_SHA: ${{ github.sha }}
           GH_BRANCH: ${{ github.ref_name }}
         run: |
+          TITLE="Deploy $JOB_STATUS (run $GH_RUN_ID)"
           {
-            echo "## Render Deploy Diagnostic"
+            echo "Status: $JOB_STATUS"
+            echo "Branch: $GH_BRANCH"
+            echo "Run: $GH_RUN_ID"
             echo ""
-            echo "**Status**: $JOB_STATUS"
-            echo "**Branch**: $GH_BRANCH"
-            echo "**Commit**: $GH_SHA"
-            echo "**Run**: $GH_RUN_ID"
+            echo "OWNER_ID: $OWNER_ID"
+            echo "DB_ID: $DB_ID"
+            echo "WEB_ID: $WEB_ID"
+            echo "DATABASE_URL length: ${#DATABASE_URL}"
             echo ""
-            echo "| Variable | Value |"
-            echo "|----------|-------|"
-            echo "| OWNER_ID | \`$OWNER_ID\` |"
-            echo "| DB_ID | \`$DB_ID\` |"
-            echo "| WEB_ID | \`$WEB_ID\` |"
-            echo "| DATABASE_URL | $([ -n "$DATABASE_URL" ] && echo "set (${#DATABASE_URL} chars)" || echo "empty") |"
-            echo ""
-            echo "**Web service creation response:**"
-            echo '```json'
+            echo "Web service API response:"
             echo "$WEB_CREATION_RESP"
-            echo '```'
-          } > /tmp/diag.md
-          gh issue create \
-            --title "Deploy $JOB_STATUS $(date -u '+%Y-%m-%d %H:%M') UTC" \
-            --body-file /tmp/diag.md \
-            || echo "gh issue create failed"
+          } > /tmp/diag.txt
+          gh issue create --title "$TITLE" --body-file /tmp/diag.txt \
+            || echo "gh issue create failed (exit $?)"
 
       - name: Print service URL
         if: env.WEB_ID != ''
