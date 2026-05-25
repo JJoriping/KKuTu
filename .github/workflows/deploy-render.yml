@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
-      RENDER_OWNER_ID: ${{ secrets.RENDER_OWNER_ID }}
 
     steps:
       - uses: actions/checkout@v4
@@ -20,45 +19,41 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Deploy to Render (Blueprint)
-        id: deploy
+      - name: Get owner ID and existing services
+        id: info
         run: |
-          # 1. 오너 ID 가져오기
-          if [ -z "$RENDER_OWNER_ID" ]; then
-            OWNER_RESP=$(curl -sf -H "Authorization: Bearer $RENDER_API_KEY" \
-              https://api.render.com/v1/owners)
-            OWNER_ID=$(echo "$OWNER_RESP" | python3 -c \
-              "import sys,json; d=json.load(sys.stdin); print(d[0]['owner']['id'])")
-            echo "OWNER_ID=$OWNER_ID" >> $GITHUB_ENV
-          else
-            OWNER_ID="$RENDER_OWNER_ID"
-            echo "OWNER_ID=$OWNER_ID" >> $GITHUB_ENV
-          fi
-          echo "Owner ID: $OWNER_ID"
+          # 오너 ID
+          OWNER_RESP=$(curl -sf -H "Authorization: Bearer $RENDER_API_KEY" \
+            https://api.render.com/v1/owners)
+          echo "Owner response: $OWNER_RESP"
+          OWNER_ID=$(echo "$OWNER_RESP" | python3 -c \
+            "import sys,json; d=json.load(sys.stdin); print(d[0]['owner']['id'])")
+          echo "OWNER_ID=$OWNER_ID" >> $GITHUB_ENV
 
-          # 2. 기존 서비스 목록 확인
+          # 기존 서비스/DB 확인
           SERVICES=$(curl -sf -H "Authorization: Bearer $RENDER_API_KEY" \
-            "https://api.render.com/v1/services?ownerId=$OWNER_ID&limit=20")
-          echo "Services: $SERVICES"
-
+            "https://api.render.com/v1/services?ownerId=$OWNER_ID&limit=50")
           WEB_ID=$(echo "$SERVICES" | python3 -c \
-            "import sys,json; svcs=json.load(sys.stdin); \
-             found=[s['service']['id'] for s in svcs if s['service']['name']=='kkutu']; \
-             print(found[0] if found else '')" 2>/dev/null || echo "")
-
-          DB_ID=$(echo "$SERVICES" | python3 -c \
-            "import sys,json; svcs=json.load(sys.stdin); \
-             found=[s['service']['id'] for s in svcs if s['service']['name']=='kkutu-db']; \
-             print(found[0] if found else '')" 2>/dev/null || echo "")
-
+            "import sys,json; s=json.load(sys.stdin); \
+             r=[x['service']['id'] for x in s if x['service']['name']=='kkutu']; \
+             print(r[0] if r else '')" 2>/dev/null || echo "")
           echo "WEB_ID=$WEB_ID" >> $GITHUB_ENV
+
+          # PostgreSQL DB 확인
+          DBS=$(curl -sf -H "Authorization: Bearer $RENDER_API_KEY" \
+            "https://api.render.com/v1/postgres?ownerId=$OWNER_ID&limit=50" || echo "[]")
+          DB_ID=$(echo "$DBS" | python3 -c \
+            "import sys,json; d=json.load(sys.stdin); \
+             r=[x.get('id','') for x in d if x.get('name','')=='kkutu-db']; \
+             print(r[0] if r else '')" 2>/dev/null || echo "")
           echo "DB_ID=$DB_ID" >> $GITHUB_ENV
+          echo "WEB_ID=$WEB_ID  DB_ID=$DB_ID"
 
       - name: Create PostgreSQL database (if not exists)
         if: env.DB_ID == ''
         run: |
           echo "Creating PostgreSQL database..."
-          DB_RESP=$(curl -sf -X POST \
+          DB_RESP=$(curl -s -X POST \
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Content-Type: application/json" \
             -d "{
@@ -75,13 +70,13 @@ jobs:
           NEW_DB_ID=$(echo "$DB_RESP" | python3 -c \
             "import sys,json; d=json.load(sys.stdin); print(d['id'])")
           echo "DB_ID=$NEW_DB_ID" >> $GITHUB_ENV
-          echo "Created DB: $NEW_DB_ID"
-          # DB가 준비될 때까지 대기
+
+          # DB가 available 될 때까지 대기
           for i in $(seq 1 30); do
             STATUS=$(curl -sf -H "Authorization: Bearer $RENDER_API_KEY" \
               "https://api.render.com/v1/postgres/$NEW_DB_ID" | \
-              python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('status',''))" 2>/dev/null)
-            echo "DB status: $STATUS"
+              python3 -c "import sys,json; print(json.load(sys.stdin).get('status',''))" 2>/dev/null)
+            echo "[$i] DB status: $STATUS"
             if [ "$STATUS" = "available" ]; then break; fi
             sleep 10
           done
@@ -90,81 +85,98 @@ jobs:
         run: |
           DB_INFO=$(curl -sf -H "Authorization: Bearer $RENDER_API_KEY" \
             "https://api.render.com/v1/postgres/$DB_ID")
+          # externalConnectionString 시도
           DB_URL=$(echo "$DB_INFO" | python3 -c \
             "import sys,json; d=json.load(sys.stdin); \
-             print(d.get('connectionInfo',{}).get('externalConnectionString',''))" 2>/dev/null || echo "")
+             ci=d.get('connectionInfo',{}); \
+             print(ci.get('externalConnectionString') or ci.get('externalUrl') or '')" 2>/dev/null || echo "")
+          # 없으면 databaseUrl
           if [ -z "$DB_URL" ]; then
             DB_URL=$(echo "$DB_INFO" | python3 -c \
-              "import sys,json; d=json.load(sys.stdin); print(d.get('databaseUrl',''))" 2>/dev/null || echo "")
+              "import sys,json; print(json.load(sys.stdin).get('databaseUrl',''))" 2>/dev/null || echo "")
           fi
           echo "DATABASE_URL=$DB_URL" >> $GITHUB_ENV
-          echo "Got DB URL (masked): ${DB_URL:0:30}..."
+          echo "DB URL set (${#DB_URL} chars)"
 
       - name: Create web service (if not exists)
         if: env.WEB_ID == ''
         run: |
           echo "Creating web service..."
           SESSION_SECRET=$(python3 -c "import secrets; print(secrets.token_hex(32))")
-          WEB_RESP=$(curl -sf -X POST \
+
+          # Render API v1: serviceDetails 안에 plan/region/build/start 넣어야 함
+          PAYLOAD=$(python3 -c "
+import json, os
+payload = {
+  'type': 'web_service',
+  'name': 'kkutu',
+  'ownerId': os.environ['OWNER_ID'],
+  'repo': 'https://github.com/${{ github.repository }}',
+  'branch': '${{ github.ref_name }}',
+  'autoDeploy': 'yes',
+  'serviceDetails': {
+    'env': 'node',
+    'plan': 'free',
+    'region': 'singapore',
+    'buildCommand': 'cd Server/lib && npm install && npx grunt',
+    'startCommand': 'node Server/lib/Web/main.js',
+    'healthCheckPath': '/health',
+    'pullRequestPreviewsEnabled': 'no',
+    'numInstances': 1
+  },
+  'envVars': [
+    {'key': 'NODE_ENV', 'value': 'production'},
+    {'key': 'UNIFIED_GAME', 'value': 'true'},
+    {'key': 'SESSION_SECRET', 'value': '$SESSION_SECRET'},
+    {'key': 'DATABASE_URL', 'value': os.environ['DATABASE_URL']},
+    {'key': 'IS_PUBLIC', 'value': 'true'}
+  ]
+}
+print(json.dumps(payload))
+")
+          echo "Payload: $PAYLOAD"
+
+          WEB_RESP=$(curl -s -X POST \
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Content-Type: application/json" \
-            -d "{
-              \"type\": \"web_service\",
-              \"name\": \"kkutu\",
-              \"ownerId\": \"$OWNER_ID\",
-              \"plan\": \"free\",
-              \"region\": \"singapore\",
-              \"repo\": \"https://github.com/${{ github.repository }}\",
-              \"branch\": \"${{ github.ref_name }}\",
-              \"buildCommand\": \"cd Server/lib && npm install && npx grunt\",
-              \"startCommand\": \"node Server/lib/Web/main.js\",
-              \"healthCheckPath\": \"/health\",
-              \"autoDeploy\": \"yes\",
-              \"envVars\": [
-                {\"key\": \"NODE_ENV\", \"value\": \"production\"},
-                {\"key\": \"UNIFIED_GAME\", \"value\": \"true\"},
-                {\"key\": \"SESSION_SECRET\", \"value\": \"$SESSION_SECRET\"},
-                {\"key\": \"DATABASE_URL\", \"value\": \"$DATABASE_URL\"},
-                {\"key\": \"IS_PUBLIC\", \"value\": \"true\"}
-              ]
-            }" \
+            -d "$PAYLOAD" \
             https://api.render.com/v1/services)
-          echo "Web Response: $WEB_RESP"
+          echo "Web service response: $WEB_RESP"
+
           NEW_WEB_ID=$(echo "$WEB_RESP" | python3 -c \
-            "import sys,json; d=json.load(sys.stdin); print(d['service']['id'])")
+            "import sys,json; d=json.load(sys.stdin); print(d['service']['id'])" 2>/dev/null || echo "")
+          if [ -z "$NEW_WEB_ID" ]; then
+            echo "ERROR: Failed to create web service"
+            exit 1
+          fi
           echo "WEB_ID=$NEW_WEB_ID" >> $GITHUB_ENV
           echo "Created web service: $NEW_WEB_ID"
 
-      - name: Trigger deploy (existing service)
+      - name: Trigger redeploy (existing service)
         if: env.WEB_ID != ''
         run: |
-          echo "Triggering redeploy for service $WEB_ID..."
-          DEPLOY_RESP=$(curl -sf -X POST \
+          echo "Redeploying service $WEB_ID ..."
+          curl -s -X POST \
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Content-Type: application/json" \
-            -d "{\"clearCache\": \"do_not_clear\"}" \
-            "https://api.render.com/v1/services/$WEB_ID/deploys")
-          echo "Deploy response: $DEPLOY_RESP"
-          DEPLOY_ID=$(echo "$DEPLOY_RESP" | python3 -c \
-            "import sys,json; d=json.load(sys.stdin); print(d['id'])" 2>/dev/null || echo "")
-          echo "Deploy ID: $DEPLOY_ID"
+            -d '{"clearCache":"do_not_clear"}' \
+            "https://api.render.com/v1/services/$WEB_ID/deploys"
+          echo ""
 
-      - name: Wait for deploy and print URL
+      - name: Print service URL
         run: |
-          echo "Waiting for service to be live..."
-          for i in $(seq 1 20); do
+          for i in $(seq 1 12); do
             INFO=$(curl -sf -H "Authorization: Bearer $RENDER_API_KEY" \
-              "https://api.render.com/v1/services/$WEB_ID")
-            STATUS=$(echo "$INFO" | python3 -c \
-              "import sys,json; d=json.load(sys.stdin); print(d['service'].get('suspended',''))" 2>/dev/null)
+              "https://api.render.com/v1/services/$WEB_ID" 2>/dev/null || echo "{}")
             URL=$(echo "$INFO" | python3 -c \
-              "import sys,json; d=json.load(sys.stdin); print(d['service'].get('serviceDetails',{}).get('url',''))" 2>/dev/null)
-            echo "Status: $STATUS | URL: $URL"
+              "import sys,json; d=json.load(sys.stdin); \
+               print(d.get('service',d).get('serviceDetails',{}).get('url',''))" 2>/dev/null || echo "")
             if [ -n "$URL" ]; then
               echo ""
               echo "✅ 배포 완료!"
-              echo "🌐 URL: $URL"
+              echo "🌐 URL: https://$URL"
               break
             fi
+            echo "[$i] 서비스 URL 대기 중..."
             sleep 15
           done
