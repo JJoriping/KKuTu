@@ -118,10 +118,9 @@ print(url)
         if: env.WEB_ID == ''
         run: |
           echo "Creating web service..."
-          SESSION_SECRET=$(python3 -c "import secrets; print(secrets.token_hex(32))")
 
           PAYLOAD=$(python3 -c "
-import json, os
+import json, os, secrets
 payload = {
   'type': 'web_service',
   'name': 'kkutu',
@@ -135,14 +134,12 @@ payload = {
     'region': 'oregon',
     'buildCommand': 'cd Server/lib && npm install && npx grunt',
     'startCommand': 'node Server/lib/Web/main.js',
-    'healthCheckPath': '/health',
-    'pullRequestPreviewsEnabled': 'no',
-    'numInstances': 1
+    'healthCheckPath': '/health'
   },
   'envVars': [
     {'key': 'NODE_ENV', 'value': 'production'},
     {'key': 'UNIFIED_GAME', 'value': 'true'},
-    {'key': 'SESSION_SECRET', 'value': os.environ['SESSION_SECRET']},
+    {'key': 'SESSION_SECRET', 'value': secrets.token_hex(32)},
     {'key': 'DATABASE_URL', 'value': os.environ.get('DATABASE_URL', '')},
     {'key': 'IS_PUBLIC', 'value': 'true'}
   ]
