@@ -101,6 +101,16 @@ DB.ready = function(){
 			else v.seek = undefined;
 		});
 	}, 4000);
+	// Render free tier: ping self every 14 min to prevent spin-down
+	if(process.env.RENDER && process.env.RENDER_EXTERNAL_URL) {
+		setInterval(function(){
+			http.get(process.env.RENDER_EXTERNAL_URL + '/health', function(res){
+				res.resume();
+			}).on('error', function(){});
+		}, 14 * 60 * 1000);
+		JLog.info("Render keep-alive enabled.");
+	}
+
 	JLog.success("DB is ready.");
 
 	DB.kkutu_shop_desc.find().on(function($docs){
@@ -274,6 +284,10 @@ Server.get("/servers", function(req, res){
 		list[i] = v.seek;
 	});
 	res.send({ list: list, max: Const.KKUTU_MAX });
+});
+
+Server.get("/health", function(req, res){
+	res.json({ status: "ok", uptime: process.uptime() });
 });
 
 Server.get("/legal/:page", function(req, res){

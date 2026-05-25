@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: kkutu
+    env: node
+    plan: free
+    buildCommand: cd Server/lib && npm install && npx grunt
+    startCommand: node Server/lib/Web/main.js
+    healthCheckPath: /health
+    envVars:
+      - key: UNIFIED_GAME
+        value: "true"
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kkutu-db
+          property: connectionString
+
+databases:
+  - name: kkutu-db
+    plan: free
+    databaseName: kkutu
+    user: kkutu
