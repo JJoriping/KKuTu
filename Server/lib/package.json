@@ -32,11 +32,14 @@
     "passport-spotify": "^1.1.0",
     "passport-twitch": "^1.0.3",
     "passport-twitter": "^1.0.4",
-    "sqlite3": "^5.1.7",
+    "pg": "^8.11.3",
     "pg-escape": "^0.2.0",
     "pug": "^2.0.4",
     "request": "^2.88.2",
     "ws": "^3.3.1"
+  },
+  "optionalDependencies": {
+    "sqlite3": "^5.1.7"
   },
   "license": "GPL-3.0"
 }

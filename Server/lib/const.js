@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var GLOBAL = require("./sub/global.json");
+var GLOBAL = require("./sub/global");
 
 exports.KKUTU_MAX = 400;
 exports.MAIN_PORTS = GLOBAL.MAIN_PORTS;

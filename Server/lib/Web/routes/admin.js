@@ -18,7 +18,7 @@
 
 var File	 = require("fs");
 var MainDB	 = require("../db");
-var GLOBAL	 = require("../../sub/global.json");
+var GLOBAL	 = require("../../sub/global");
 var JLog	 = require("../../sub/jjlog");
 var Lizard	 = require("../../sub/lizard.js");
 

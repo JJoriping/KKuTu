@@ -7,3 +7,7 @@ Server/lib/Web/public/js/**
 Server/lib/sub/auth.json
 Server/lib/sub/global.json
 .vscode
+.env
+.env.local
+node_modules
+*.db

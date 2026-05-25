@@ -23,7 +23,7 @@ var https = require('https');
 var HTTPS_Server;
 // var Heapdump = require("heapdump");
 var KKuTu = require('./kkutu');
-var GLOBAL = require("../sub/global.json");
+var GLOBAL = require("../sub/global");
 var Const = require("../const");
 var JLog = require('../sub/jjlog');
 var Secure = require('../sub/secure');
@@ -63,11 +63,8 @@ const PORT = process.env['KKUTU_PORT'];
 
 process.on('uncaughtException', function(err){
 	var text = `:${PORT} [${new Date().toLocaleString()}] ERROR: ${err.toString()}\n${err.stack}\n`;
-	
-	File.appendFile("/jjolol/KKUTU_ERROR.log", text, function(res){
-		JLog.error(`ERROR OCCURRED ON THE MASTER!`);
-		console.log(text);
-	});
+	JLog.error(`ERROR OCCURRED ON THE MASTER!`);
+	console.log(text);
 });
 function processAdmin(id, value){
 	var cmd, temp, i, j;

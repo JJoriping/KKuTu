@@ -25,31 +25,24 @@ var WS		 = require("ws");
 var Express	 = require("express");
 var Exession = require("express-session");
 var Parser	 = require("body-parser");
-var DDDoS	 = require("dddos");
 var Server	 = Express();
 var DB		 = require("./db");
-//볕뉘 수정 구문삭제 (28)
 var JLog	 = require("../sub/jjlog");
 var WebInit	 = require("../sub/webinit");
-var GLOBAL	 = require("../sub/global.json");
-var Secure = require('../sub/secure');
-//볕뉘 수정
+var GLOBAL	 = require("../sub/global");
 var passport = require('passport');
-//볕뉘 수정 끝
 var Const	 = require("../const");
-var https	 = require('https');
-var fs		 = require('fs');
 
 var Language = {
 	'ko_KR': require("./lang/ko_KR.json"),
 	'en_US': require("./lang/en_US.json"),
 	'ja_JP': require("./lang/ja_JP.json")
 };
-//볕뉘 수정
+
 var ROUTES = [
 	"major", "consume", "admin", "login"
 ];
-//볕뉘 수정 끝
+
 var page = WebInit.page;
 var gameServers = [];
 
@@ -65,11 +58,10 @@ Server.set('view engine', "pug");
 Server.use(Express.static(__dirname + "/public"));
 Server.use(Parser.urlencoded({ extended: true }));
 Server.use(Exession({
-	secret: 'kkutu',
+	secret: process.env.SESSION_SECRET || 'kkutu',
 	resave: false,
 	saveUninitialized: true
 }));
-//볕뉘 수정
 Server.use(passport.initialize());
 Server.use(passport.session());
 Server.use((req, res, next) => {
@@ -79,36 +71,17 @@ Server.use((req, res, next) => {
 	next();
 });
 Server.use((req, res, next) => {
+	// Vercel handles HTTPS termination; trust the x-forwarded-proto header
 	if(Const.IS_SECURED) {
-		if(req.protocol == 'http') {
+		var proto = req.headers['x-forwarded-proto'] || req.protocol;
+		if(proto === 'http') {
 			let url = 'https://'+req.get('host')+req.path;
 			res.status(302).redirect(url);
-		} else {
-			next();
+			return;
 		}
-	} else {
-		next();
 	}
+	next();
 });
-//볕뉘 수정 끝
-/* use this if you want
-
-DDDoS = new DDDoS({
-	maxWeight: 6,
-	checkInterval: 10000,
-	rules: [{
-		regexp: "^/(cf|dict|gwalli)",
-		maxWeight: 20,
-		errorData: "429 Too Many Requests"
-	}, {
-		regexp: ".*",
-		errorData: "429 Too Many Requests"
-	}]
-});
-DDDoS.rules[0].logFunction = DDDoS.rules[1].logFunction = function(ip, path){
-	JLog.warn(`DoS from IP ${ip} on ${path}`);
-};
-Server.use(DDDoS.express());*/
 
 WebInit.init(Server, true);
 DB.ready = function(){
@@ -138,28 +111,42 @@ DB.ready = function(){
 			}
 		}
 	});
-	Server.listen(80);
-	if(Const.IS_SECURED) {
-		const options = Secure();
-		https.createServer(options, Server).listen(443);
+
+	// Only listen directly when not running under Vercel (local/Docker)
+	if(!process.env.VERCEL && !process.env.VERCEL_ENV){
+		var port = Number(process.env.PORT) || 80;
+		Server.listen(port, function(){
+			JLog.success("Web server listening on port " + port);
+		});
+		if(Const.IS_SECURED){
+			var Secure = require('../sub/secure');
+			var https = require('https');
+			var options = Secure();
+			https.createServer(options, Server).listen(443);
+		}
 	}
 };
+
 Const.MAIN_PORTS.forEach(function(v, i){
-	var KEY = process.env['WS_KEY'];
-	var protocol;
-	if(Const.IS_SECURED) {
-		protocol = 'wss';
-	} else {
-		protocol = 'ws';
+	var KEY = process.env['WS_KEY'] || String(i + 1);
+	var protocol = Const.IS_SECURED ? 'wss' : 'ws';
+	var host = GLOBAL.GAME_SERVER_HOST;
+
+	if(!host || host === 'localhost' && process.env.VERCEL_ENV){
+		// Skip game server connections on Vercel when no external game host configured
+		gameServers[i] = { id: KEY, socket: null, seek: undefined, send: function(){} };
+		JLog.warn(`Game server #${i} skipped (GAME_SERVER_HOST not configured)`);
+		return;
 	}
-	gameServers[i] = new GameClient(KEY, `${protocol}://${GLOBAL.GAME_SERVER_HOST}:${v}/${KEY}`);
+	gameServers[i] = new GameClient(KEY, `${protocol}://${host}:${v}/${KEY}`);
 });
+
 function GameClient(id, url){
 	var my = this;
 
 	my.id = id;
 	my.socket = new WS(url, { perMessageDeflate: false, rejectUnauthorized: false});
-	
+
 	my.send = function(type, data){
 		if(!data) data = {};
 		data.type = type;
@@ -178,7 +165,6 @@ function GameClient(id, url){
 		delete my.socket;
 	});
 	my.socket.on('message', function(data){
-		var _data = data;
 		var i;
 
 		data = JSON.parse(data);
@@ -196,18 +182,17 @@ function GameClient(id, url){
 		}
 	});
 }
+
 ROUTES.forEach(function(v){
 	require(`./routes/${v}`).run(Server, WebInit.page);
 });
+
 Server.get("/", function(req, res){
 	var server = req.query.server;
-	
-	//볕뉘 수정 구문삭제(220~229, 240)
+
 	DB.session.findOne([ '_id', req.session.id ]).on(function($ses){
-		// var sid = (($ses || {}).profile || {}).sid || "NULL";
 		if(global.isPublic){
 			onFinish($ses);
-			// DB.jjo_session.findOne([ '_id', sid ]).limit([ 'profile', true ]).on(onFinish);
 		}else{
 			if($ses) $ses.profile.sid = $ses._id;
 			onFinish($ses);
@@ -258,8 +243,9 @@ Server.get("/servers", function(req, res){
 	res.send({ list: list, max: Const.KKUTU_MAX });
 });
 
-//볕뉘 수정 구문 삭제(274~353)
-
 Server.get("/legal/:page", function(req, res){
 	page(req, res, "legal/"+req.params.page);
 });
+
+// Export the Express app for Vercel (serverless function)
+module.exports = Server;

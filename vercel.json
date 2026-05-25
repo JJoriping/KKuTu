@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "Server/lib/Web/main.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "Server/lib/**"
+        ]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "Server/lib/Web/main.js"
+    }
+  ],
+  "functions": {
+    "Server/lib/Web/main.js": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

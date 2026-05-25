@@ -2,7 +2,7 @@
  * Created by horyu1234 on 2017-11-14.
  */
 const request = require('request');
-const GLOBAL = require("./global.json");
+const GLOBAL = require("./global");
 
 exports.verifyRecaptcha = function (responseToken, remoteIp, callback) {
     const verifyUrl = `https://google.com/recaptcha/api/siteverify?secret=${GLOBAL.GOOGLE_RECAPTCHA_SECRET_KEY}&response=${responseToken}&remoteip=${remoteIp}`;

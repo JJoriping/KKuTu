@@ -40,7 +40,7 @@ var KKuTu = require('./kkutu');
 var Lizard = require('../sub/lizard');
 var MainDB = require('../Web/db');
 var JLog = require('../sub/jjlog');
-var GLOBAL = require('../sub/global.json');
+var GLOBAL = require('../sub/global');
 
 var DIC = {};
 var DNAME = {};

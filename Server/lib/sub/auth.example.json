@@ -1,0 +1,36 @@
+{
+  "github": {
+    "clientID": "YOUR_GITHUB_CLIENT_ID",
+    "clientSecret": "YOUR_GITHUB_CLIENT_SECRET",
+    "callbackURL": "https://your-domain.vercel.app/login/github/callback"
+  },
+  "google": {
+    "clientID": "YOUR_GOOGLE_CLIENT_ID",
+    "clientSecret": "YOUR_GOOGLE_CLIENT_SECRET",
+    "callbackURL": "https://your-domain.vercel.app/login/google/callback"
+  },
+  "discord": {
+    "clientID": "YOUR_DISCORD_CLIENT_ID",
+    "clientSecret": "YOUR_DISCORD_CLIENT_SECRET",
+    "callbackURL": "https://your-domain.vercel.app/login/discord/callback"
+  },
+  "kakao": {
+    "clientID": "YOUR_KAKAO_REST_API_KEY",
+    "callbackURL": "https://your-domain.vercel.app/login/kakao/callback"
+  },
+  "naver": {
+    "clientID": "YOUR_NAVER_CLIENT_ID",
+    "clientSecret": "YOUR_NAVER_CLIENT_SECRET",
+    "callbackURL": "https://your-domain.vercel.app/login/naver/callback"
+  },
+  "facebook": {
+    "clientID": "YOUR_FACEBOOK_APP_ID",
+    "clientSecret": "YOUR_FACEBOOK_APP_SECRET",
+    "callbackURL": "https://your-domain.vercel.app/login/facebook/callback"
+  },
+  "twitter": {
+    "consumerKey": "YOUR_TWITTER_CONSUMER_KEY",
+    "consumerSecret": "YOUR_TWITTER_CONSUMER_SECRET",
+    "callbackURL": "https://your-domain.vercel.app/login/twitter/callback"
+  }
+}

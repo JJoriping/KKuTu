@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var GLOBAL	 = require("./global.json");
+var GLOBAL	 = require("./global");
 var JLog	 = require("./jjlog");
 var Language = {
 	'ko_KR': require("../Web/lang/ko_KR.json"),
