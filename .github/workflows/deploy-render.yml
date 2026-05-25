@@ -20,9 +20,7 @@ jobs:
           node-version: '18'
 
       - name: Get owner ID and existing services
-        id: info
         run: |
-          # 오너 ID
           OWNER_RESP=$(curl -sf -H "Authorization: Bearer $RENDER_API_KEY" \
             https://api.render.com/v1/owners)
           echo "Owner response: $OWNER_RESP"
@@ -30,7 +28,6 @@ jobs:
             "import sys,json; d=json.load(sys.stdin); print(d[0]['owner']['id'])")
           echo "OWNER_ID=$OWNER_ID" >> $GITHUB_ENV
 
-          # 기존 웹 서비스 확인 — 응답: [{cursor, service:{id,name,...}}, ...]
           SERVICES=$(curl -sf -H "Authorization: Bearer $RENDER_API_KEY" \
             "https://api.render.com/v1/services?ownerId=$OWNER_ID&limit=50")
           echo "Services response: $SERVICES"
@@ -40,7 +37,6 @@ jobs:
              print(r[0] if r else '')" 2>/dev/null || echo "")
           echo "WEB_ID=$WEB_ID" >> $GITHUB_ENV
 
-          # PostgreSQL DB 확인 — 응답: [{cursor, postgres:{id,name,...}}, ...]
           DBS=$(curl -sf -H "Authorization: Bearer $RENDER_API_KEY" \
             "https://api.render.com/v1/postgres?ownerId=$OWNER_ID&limit=50" || echo "[]")
           echo "Postgres response: $DBS"
@@ -49,12 +45,11 @@ jobs:
              r=[x['postgres']['id'] for x in d if x.get('postgres',{}).get('name','')=='kkutu-db']; \
              print(r[0] if r else '')" 2>/dev/null || echo "")
           echo "DB_ID=$DB_ID" >> $GITHUB_ENV
-          echo "WEB_ID=$WEB_ID  DB_ID=$DB_ID"
+          echo "=== WEB_ID=$WEB_ID  DB_ID=$DB_ID ==="
 
       - name: Create PostgreSQL database (if not exists)
         if: env.DB_ID == ''
         run: |
-          echo "Creating PostgreSQL database..."
           DB_RESP=$(curl -s -X POST \
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Content-Type: application/json" \
@@ -69,23 +64,21 @@ jobs:
             }" \
             https://api.render.com/v1/postgres)
           echo "DB Response: $DB_RESP"
-          # POST 응답: {postgres:{id,...}} 또는 {id,...} 형태 모두 처리
           NEW_DB_ID=$(echo "$DB_RESP" | python3 -c \
             "import sys,json; d=json.load(sys.stdin); \
-             print(d['postgres']['id'] if 'postgres' in d else d['id'])")
+             pg=d.get('postgres',d); print(pg.get('id',''))" 2>/dev/null || echo "")
           if [ -z "$NEW_DB_ID" ]; then
-            echo "ERROR: could not parse DB id from response"
+            echo "ERROR: could not parse DB id"
             exit 1
           fi
           echo "DB_ID=$NEW_DB_ID" >> $GITHUB_ENV
 
-          # DB가 available 될 때까지 대기
           for i in $(seq 1 30); do
-            DB_STATUS_RESP=$(curl -sf -H "Authorization: Bearer $RENDER_API_KEY" \
+            S=$(curl -sf -H "Authorization: Bearer $RENDER_API_KEY" \
               "https://api.render.com/v1/postgres/$NEW_DB_ID" || echo "{}")
-            STATUS=$(echo "$DB_STATUS_RESP" | python3 -c \
+            STATUS=$(echo "$S" | python3 -c \
               "import sys,json; d=json.load(sys.stdin); \
-               pg=d.get('postgres', d); print(pg.get('status',''))" 2>/dev/null || echo "")
+               pg=d.get('postgres',d); print(pg.get('status',''))" 2>/dev/null || echo "")
             echo "[$i] DB status: $STATUS"
             if [ "$STATUS" = "available" ]; then break; fi
             sleep 10
@@ -95,9 +88,8 @@ jobs:
         run: |
           DB_INFO=$(curl -sf -H "Authorization: Bearer $RENDER_API_KEY" \
             "https://api.render.com/v1/postgres/$DB_ID")
-          echo "DB info keys: $(echo "$DB_INFO" | python3 -c "import sys,json; print(list(json.load(sys.stdin).keys()))" 2>/dev/null)"
-          # GET /postgres/:id 응답: {postgres:{connectionInfo:{externalConnectionString,...},...}}
-          DB_URL=$(echo "$DB_INFO" | python3 -c "
+          echo "DB info: $DB_INFO"
+          DB_URL=$(echo "$DB_INFO" | python3 - << 'PYEOF'
 import sys, json
 d = json.load(sys.stdin)
 pg = d.get('postgres', d)
@@ -107,46 +99,46 @@ url = (ci.get('externalConnectionString') or
        pg.get('databaseUrl') or
        pg.get('connectionString') or '')
 print(url)
-" 2>/dev/null || echo "")
+PYEOF
+)
           echo "DATABASE_URL=$DB_URL" >> $GITHUB_ENV
           echo "DB URL length: ${#DB_URL}"
-          if [ -z "$DB_URL" ]; then
-            echo "WARNING: DB URL is empty — service will use SQLite fallback"
-          fi
 
       - name: Create web service (if not exists)
         if: env.WEB_ID == ''
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_BRANCH: ${{ github.ref_name }}
         run: |
-          echo "Creating web service..."
-
-          PAYLOAD=$(python3 -c "
+          PAYLOAD=$(python3 - << 'PYEOF'
 import json, os, secrets
 payload = {
-  'type': 'web_service',
-  'name': 'kkutu',
-  'ownerId': os.environ['OWNER_ID'],
-  'repo': 'https://github.com/${{ github.repository }}',
-  'branch': '${{ github.ref_name }}',
-  'autoDeploy': 'yes',
-  'serviceDetails': {
-    'env': 'node',
-    'plan': 'free',
-    'region': 'oregon',
-    'buildCommand': 'cd Server/lib && npm install && npx grunt',
-    'startCommand': 'node Server/lib/Web/main.js',
-    'healthCheckPath': '/health'
-  },
-  'envVars': [
-    {'key': 'NODE_ENV', 'value': 'production'},
-    {'key': 'UNIFIED_GAME', 'value': 'true'},
-    {'key': 'SESSION_SECRET', 'value': secrets.token_hex(32)},
-    {'key': 'DATABASE_URL', 'value': os.environ.get('DATABASE_URL', '')},
-    {'key': 'IS_PUBLIC', 'value': 'true'}
-  ]
+    "type": "web_service",
+    "name": "kkutu",
+    "ownerId": os.environ["OWNER_ID"],
+    "repo": "https://github.com/" + os.environ["GH_REPO"],
+    "branch": os.environ["GH_BRANCH"],
+    "autoDeploy": "yes",
+    "serviceDetails": {
+        "env": "node",
+        "plan": "free",
+        "region": "oregon",
+        "buildCommand": "cd Server/lib && npm install && npx grunt",
+        "startCommand": "node Server/lib/Web/main.js",
+        "healthCheckPath": "/health"
+    },
+    "envVars": [
+        {"key": "NODE_ENV",       "value": "production"},
+        {"key": "UNIFIED_GAME",   "value": "true"},
+        {"key": "SESSION_SECRET", "value": secrets.token_hex(32)},
+        {"key": "DATABASE_URL",   "value": os.environ.get("DATABASE_URL", "")},
+        {"key": "IS_PUBLIC",      "value": "true"}
+    ]
 }
 print(json.dumps(payload))
-")
-          echo "Payload (redacted secrets): $(echo "$PAYLOAD" | python3 -c "import sys,json; p=json.load(sys.stdin); [e.update({'value':'***'}) for e in p.get('envVars',[]) if e['key'] in ('SESSION_SECRET','DATABASE_URL')]; print(json.dumps(p, indent=2))")"
+PYEOF
+)
+          echo "Payload built successfully"
 
           WEB_RESP=$(curl -s -X POST \
             -H "Authorization: Bearer $RENDER_API_KEY" \
@@ -154,6 +146,11 @@ print(json.dumps(payload))
             -d "$PAYLOAD" \
             https://api.render.com/v1/services)
           echo "Web service response: $WEB_RESP"
+
+          # Save response so the diagnostic step can report it
+          echo "WEB_CREATION_RESP<<__DELIM__" >> $GITHUB_ENV
+          echo "$WEB_RESP" >> $GITHUB_ENV
+          echo "__DELIM__" >> $GITHUB_ENV
 
           NEW_WEB_ID=$(echo "$WEB_RESP" | python3 -c \
             "import sys,json; d=json.load(sys.stdin); print(d['service']['id'])" 2>/dev/null || echo "")
@@ -167,15 +164,50 @@ print(json.dumps(payload))
       - name: Trigger redeploy (existing service)
         if: env.WEB_ID != ''
         run: |
-          echo "Redeploying service $WEB_ID ..."
-          REDEPLOY_RESP=$(curl -s -X POST \
+          echo "Redeploying $WEB_ID ..."
+          REDEPLOY=$(curl -s -X POST \
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Content-Type: application/json" \
             -d '{"clearCache":"do_not_clear"}' \
             "https://api.render.com/v1/services/$WEB_ID/deploys")
-          echo "Redeploy response: $REDEPLOY_RESP"
+          echo "Redeploy response: $REDEPLOY"
+
+      - name: Post diagnostic to GitHub issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JOB_STATUS: ${{ job.status }}
+          GH_RUN_ID: ${{ github.run_id }}
+          GH_SHA: ${{ github.sha }}
+          GH_BRANCH: ${{ github.ref_name }}
+        run: |
+          cat > /tmp/diag.md << MDEOF
+## Render Deploy Diagnostic
+
+**Status**: $JOB_STATUS
+**Branch**: $GH_BRANCH
+**Commit**: $GH_SHA
+**Run**: $GH_RUN_ID
+
+| Variable | Value |
+|----------|-------|
+| OWNER_ID | \`$OWNER_ID\` |
+| DB_ID | \`$DB_ID\` |
+| WEB_ID | \`$WEB_ID\` |
+| DATABASE_URL set | $([ -n "$DATABASE_URL" ] && echo "yes (${#DATABASE_URL} chars)" || echo "no") |
+
+**Web service creation response:**
+\`\`\`json
+$WEB_CREATION_RESP
+\`\`\`
+MDEOF
+          gh issue create \
+            --title "Deploy $JOB_STATUS $(date -u '+%Y-%m-%d %H:%M') UTC" \
+            --body-file /tmp/diag.md \
+            || echo "gh issue create failed"
 
       - name: Print service URL
+        if: env.WEB_ID != ''
         run: |
           for i in $(seq 1 12); do
             INFO=$(curl -sf -H "Authorization: Bearer $RENDER_API_KEY" \
@@ -185,11 +217,10 @@ print(json.dumps(payload))
                svc=d.get('service',d); \
                print(svc.get('serviceDetails',{}).get('url',''))" 2>/dev/null || echo "")
             if [ -n "$URL" ]; then
-              echo ""
               echo "✅ 배포 완료!"
               echo "🌐 URL: https://$URL"
               break
             fi
-            echo "[$i] 서비스 URL 대기 중..."
+            echo "[$i] URL 대기 중..."
             sleep 15
           done
